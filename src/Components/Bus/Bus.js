@@ -15,7 +15,7 @@ const Buses =()=> {
         fetchData();
 
     }
-    useEffect(loadDatas, [buslist]);
+    useEffect(loadDatas, []);
 
     return(
         <div className='container'>
