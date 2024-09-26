@@ -1,0 +1,24 @@
+  .navbar-nav.nav-link.homepage-nav-links {
+    padding: 0 15px;
+  }
+  
+  .navbar-toggler.homepage-navbar-toggler {
+    border-color: white;
+  }
+  
+
+  .nav-link.homepage-nav-link.active {
+    border-bottom: 2px solid white;
+  }
+  
+  .nav-link.homepage-nav-link {
+    color: white !important;
+    font-size: 18px;
+    border-bottom: 5px solid transparent;
+    text-decoration: none;
+  }
+  .nav-link.homepage-nav-link:hover {
+    border-bottom: 2px solid white;
+  }
+  
+
