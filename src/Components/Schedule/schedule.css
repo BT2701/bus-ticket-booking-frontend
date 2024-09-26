@@ -158,3 +158,35 @@ h1, h2, h3 {
     color: black;
     /* color: rgb(3, 125, 173); */
 }
+.schedule-seat-img{
+    cursor: pointer;
+}
+
+
+.schedule-right-bot{
+    margin-top: 2em;
+}
+.schedule-selected-seat-container{
+    display: flex;
+}
+.schedule-selected-seat-box{
+    width: 25px;
+    height: 25px;
+    border: 1px solid gray;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 5px;
+    margin: 0 1em 0.5em 0.5em;
+}
+.schedule-total-prices{
+    margin-top: 1em;
+    display: flex;
+    text-align: center;
+    /* align-items: center; */
+}
+.schedule-total-prices>span{
+    font-size: 18px;
+    text-align: center;
+    margin-left: 1em;
+    margin-bottom: 1em;
+}

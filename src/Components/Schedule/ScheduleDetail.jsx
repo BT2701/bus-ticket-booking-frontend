@@ -5,6 +5,7 @@ import Selected from '../../Static/IMG/selected.png'
 import Available from '../../Static/IMG/available.png'
 import BusDefault from '../../Static/IMG/bus.png'
 import Guy from '../../Static/IMG/guy.jpg'
+import { Button } from 'react-bootstrap'; // For Bootstrap Button
 
 const ScheduleDetail = () => {
   return (
@@ -84,7 +85,7 @@ const ScheduleDetail = () => {
                             <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
                                 {seat ? (
                                     <>
-                                        <img width="32" src={Available} alt="seat icon" />
+                                        <img width="32" src={Available} alt="seat icon" className='schedule-seat-img' />
                                         <span
                                             className={`absolute text-sm font-semibold lg:text-[10px]  'text-[#A2ABB3]' top-1 schedule-seat-name`}
                                         >
@@ -124,7 +125,7 @@ const ScheduleDetail = () => {
                               <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
                                   {seat ? (
                                       <>
-                                          <img width="32" src={Available} alt="seat icon" />
+                                          <img width="32" src={Available} alt="seat icon" className='schedule-seat-img'/>
                                           <span
                                               className={`absolute text-sm font-semibold lg:text-[10px] 'text-[#A2ABB3]' top-1 schedule-seat-name`}
                                           >
@@ -148,20 +149,31 @@ const ScheduleDetail = () => {
               <div className="ml-4 mt-5 flex flex-col gap-4 text-[13px] font-normal schedule-seat-note">
                 <span className="mr-8 flex items-center seat-noted">
                   <img src={Booked} alt="" />
-                  Đã bán
+                  Booked
                 </span>
                 <span className="mr-8 flex items-center seat-noted">
-                  <img src={Available} alt="" />Còn trống
+                  <img src={Available} alt="" />Available
                 </span><span className=" flex items-center seat-noted">
                   <img src={Selected} alt="" />
-                  Đang chọn
+                  Selected
                 </span>
 
               </div>
             </div>
           </div>
         </div>
-        <div className="schedule-right-bot"></div>
+        <div className="schedule-right-bot">
+          <h5>Selected Seats:</h5>
+          <div className="schedule-selected-seat-container">
+            <div className="schedule-selected-seat-box">1</div>
+            <div className="schedule-selected-seat-box">2</div>
+            <div className="schedule-selected-seat-box">3</div>
+          </div>
+          <div className="schedule-total-prices">
+            <h5>Total Prices:</h5> <span>500000VND</span>
+          </div>
+          <Button className='btn btn-primary'>Processed to Checkout</Button>
+        </div>
       </div>
     </div>
   );
