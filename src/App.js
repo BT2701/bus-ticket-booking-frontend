@@ -1,4 +1,4 @@
-import logo from "./logo.svg";
+import "./App.css";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,8 +7,9 @@ import {
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "./App.css";
-import Buses from "./Components/Bus/BusDetail";
+import "./Static/css/base.css";
+import { PageProvider } from "./Context/PageProvider";
+import Buses from "./Components/Bus/Bus";
 import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import Forgot from "./Components/Auth/Forgot";
@@ -18,11 +19,10 @@ import Schedule from "./Components/Schedule/Schedule";
 import Homepage from "./Components/Home/Homepage";
 import Header from "./Components/OutContent/Header";
 import Footer from "./Components/OutContent/Footer";
-import Trip from "./Components/Schedule/Trip";
 import Contact from "./Components/Contact/Contact";
 import About from "./Components/About/About";
-import "./static/css/base.css";
-import { PageProvider } from "./Context/PageProvider";
+import Detail from "./Components/Bus/Detail";
+import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 
 const App = () => {
   return (
@@ -51,12 +51,13 @@ const MainApp = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/homepage" />} />
           <Route path="/buses" element={<Buses />} />
+          <Route path="/detail" element={<Detail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/search" element={<Search />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/homepage" element={<Homepage />} />
-          <Route path="/trip" element={<Trip />} />
+          <Route path="/schedule/detail" element={<ScheduleDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
         </Routes>
