@@ -6,6 +6,9 @@ import Available from '../../Static/IMG/available.png'
 import BusDefault from '../../Static/IMG/bus.png'
 import Guy from '../../Static/IMG/guy.jpg'
 import { Button } from 'react-bootstrap'; // For Bootstrap Button
+import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const ScheduleDetail = () => {
   return (
@@ -16,19 +19,19 @@ const ScheduleDetail = () => {
         </div>
         <div className="schedule-left-bot">
           <div className="schedule-left-bot-box">
-            <label>License Plate</label>
+            <label>Biển Số:</label>
             <span>78E1.08743</span>
           </div>
           <div className="schedule-left-bot-box">
-            <label>Bus Type</label>
+            <label>Loại Xe:</label>
             <span>Vip</span>
           </div>
           <div className="schedule-left-bot-box">
-            <label>Seat Count</label>
+            <label>Số Ghế:</label>
             <span>24</span>
           </div>
           <div className="schedule-left-bot-box">
-            <label>Driver</label>
+            <label>Tài Xế:</label>
             <div className="schedule-left-bot-box-driver">
               <img src={Guy} alt="driver" />
               <span>Trưởng BT</span>
@@ -40,33 +43,33 @@ const ScheduleDetail = () => {
       <div className="schedule-right">
         <div className="schedule-right-top">
           <div className="schedule-right-top-title">
-            <h3>Your Destination</h3>
+            <h4>Điểm Đến Của Bạn</h4>
           </div>
           <div className="schedule-right-top-route">
             <div className="location">
-              <label>From:</label>
+              <label>Từ:</label>
               <span>Location1</span>
             </div>
             <div className="schedule-right-top-route-line"></div>
             <div className="location">
-              <label>To:</label>
+              <label>Đến:</label>
               <span>Location2</span>
             </div>
           </div>
           <div className="schedule-right-top-timeline">
-            <label>Bus Leaving At:</label>
+            <label>Xe Rời Bến Lúc:</label>
             <span>4:00 AM</span>
           </div>
         </div>
         <div className="schedule-right-center">
           <div className="min-w-sm mx-auto flex w-[100%] max-w-2xl flex-col px-3 py-1 sm:px-6 2lg:mx-0 2lg:w-auto">
             <div className="flex max-w-xs items-start justify-between pt-5 text-xl font-medium text-black">
-              <p className="flex flex-col schedule-choose-title">Choose A Seat</p>
+              <p className="flex flex-col schedule-choose-title">Chọn Chỗ</p>
             </div>
             <div className="my-4 flex flex-row text-center font-medium gap-4 sm:gap-6 schedule-seat-container ">
               <div className="flex min-w-[50%] flex-col md:min-w-[153px] schedule-seat">
                 <div className="icon-gray flex w-full justify-center p-2 text-sm">
-                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Downstairs</span>
+                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Tầng Dưới</span>
                 </div>
                 <div className="divide mb-4 2lg:hidden"></div>
                 <table>
@@ -106,7 +109,7 @@ const ScheduleDetail = () => {
               <div className="schedule-seat-line"></div>
               <div className="flex min-w-[50%] flex-col md:min-w-[153px] schedule-seat">
                 <div className="icon-gray flex w-full justify-center p-2 text-sm">
-                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Upstairs</span>
+                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Tầng Trên</span>
                 </div>
                 <div className="divide mb-4 2lg:hidden"></div>
                 <table>
@@ -149,13 +152,13 @@ const ScheduleDetail = () => {
               <div className="ml-4 mt-5 flex flex-col gap-4 text-[13px] font-normal schedule-seat-note">
                 <span className="mr-8 flex items-center seat-noted">
                   <img src={Booked} alt="" />
-                  Booked
+                  Đã Được Đặt
                 </span>
                 <span className="mr-8 flex items-center seat-noted">
-                  <img src={Available} alt="" />Available
+                  <img src={Available} alt="" />Trống
                 </span><span className=" flex items-center seat-noted">
                   <img src={Selected} alt="" />
-                  Selected
+                  Đã Chọn
                 </span>
 
               </div>
@@ -163,19 +166,23 @@ const ScheduleDetail = () => {
           </div>
         </div>
         <div className="schedule-right-bot">
-          <h5>Selected Seats:</h5>
+          <h6>Chỗ Đã Chọn:</h6>
           <div className="schedule-selected-seat-container">
             <div className="schedule-selected-seat-box">1</div>
             <div className="schedule-selected-seat-box">2</div>
             <div className="schedule-selected-seat-box">3</div>
           </div>
           <div className="schedule-total-prices">
-            <h5>Total Prices:</h5> <span>500000VND</span>
+            <h6>Tổng Tiền:</h6> <span>500000VND</span>
           </div>
-          <Button className='btn btn-primary'>Processed to Checkout</Button>
+          <Link className='btn btn-primary' to={'/schedule/detail/payment'}>Xác Nhận</Link>
         </div>
       </div>
+      <div className="schedule-back">
+        <Link to={'/schedule'} className='btn btn-secondary'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }}/>Quay lại</Link>
+      </div>
     </div>
+    
   );
 };
 

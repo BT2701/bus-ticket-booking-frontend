@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const CarriageWay = () => {
   return (
     <div className="container m-0 p-0">
@@ -50,9 +52,9 @@ const CarriageWay = () => {
               Giảm 50% tới đa 250K
             </span>
             <p className="text-muted mb-1">Còn 22 chỗ trống</p>
-            <button className="btn btn-warning text-white mb-2">
+            <Link className="btn btn-warning text-white mb-2" to={'/schedule/detail'}>
               Chọn chuyến
-            </button>
+            </Link>
             <p className="text-danger fw-bold">KHÔNG CẦN THANH TOÁN TRƯỚC</p>
           </div>
         </div>
