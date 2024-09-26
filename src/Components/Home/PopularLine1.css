@@ -1,0 +1,21 @@
+.custom-card {
+    border-radius: 10px;
+  }
+
+  .card-img-top {
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .route-price {
+    font-weight: bold;
+    color: #28a745;
+  }
+
+  .route-info {
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #666;
+  }
+

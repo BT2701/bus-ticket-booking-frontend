@@ -1,0 +1,65 @@
+
+    .popularlineCard {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        height:300px
+    }
+
+
+    .popularlineCard img{
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px 10px 0 0;
+    }
+    .popularlineCard .popularlineCard-infor {
+        bottom: 15px;
+        left: 15px;
+        right: 15px;
+        border-radius: 5px;
+        transform: translate3d(0px, 0%, 0px);
+        transition: all 800ms ease 0.35s;
+        padding: 25px 30px;
+        box-shadow: 0px 5px 24.25px 0.75px rgba(0,0,0,0.1);
+        background: #ffffff;
+        position: absolute;
+        color:black;
+    }
+    
+    .popularlineCard .popularlineCard-overlay {
+        left: 15px;
+        right: 15px;
+        opacity: 1;
+        padding: 0 20px;
+        position: absolute;
+        top: 15px;
+        bottom: 15px;
+        transform: translate3d(0px, -110%, 0px);
+        transition: all 700ms ease 0.35s;
+        box-shadow: 0px 5px 24.25px 0.75px rgba(0,0,0,0.1)
+    }
+    
+    .popularlineCard:hover .popularlineCard-overlay {
+        transform: translate3d(0px, 0, 0px);
+        transition-delay: 0.1s;
+        background:  rgba(0,0,0,0.7);
+        border-radius: 5px
+    }
+    
+    .popularlineCard:hover .popularlineCard-infor {
+        transform: translate3d(0px, 130px, 0px);
+        transition-delay: 0.2s
+    }
+    
+    .popularlineCard .social-icon-style1 {
+        border-top: 2px dotted rgba(255,255,255,0.3);
+        margin-top: 15px;
+        padding-top: 20px
+    }
+
+    
+    @media screen and (max-width: 991px) {
+        .popularlineCard .popularlineCard-infor {
+            padding:20px
+        }
+    }

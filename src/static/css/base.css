@@ -1,0 +1,10 @@
+/* variables.css */
+:root {
+    --primary-color: #3498db;
+  }
+  
+
+.bg-color-primary{
+    background-color: var(--primary-color);
+}
+
