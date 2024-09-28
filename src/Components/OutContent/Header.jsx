@@ -81,7 +81,7 @@ const Header = () => {
                       onClick={() => {
                         setPage("invoice");
                       }}
-                      to="#"
+                      to="invoice"
                     >
                       Hóa đơn
                     </Link>
