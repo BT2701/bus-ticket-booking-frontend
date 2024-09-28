@@ -23,6 +23,8 @@ import About from "./Components/About/About";
 import Detail from "./Components/Bus/Detail";
 import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 import Payment from "./Components/Payment/Payment";
+import Invoice from "./Components/Invoice/TicketLookup";
+
 
 const App = () => {
   return (
@@ -60,6 +62,8 @@ const MainApp = () => {
           <Route path="/schedule/detail/payment" element={<Payment/>}/>
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
+          <Route path="/invoice" element={<Invoice />} />
+
         </Routes>
       </div>
       <Footer />
