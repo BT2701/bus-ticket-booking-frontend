@@ -10,17 +10,22 @@ h1, h2, h3 {
 .schedule-container{
     display: flex;
     overflow-x: hidden;
+    margin-top: 2em;
 }
 .schedule-left{
     display: flex;
     flex-direction: column;
     max-width: 50%;
     width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-right: 5em;
+    margin-left: -4em;
 }
 .schedule-left-top{
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 2em;
 }
 .schedule-left-top>img{
     max-width: 500px;
@@ -39,12 +44,12 @@ h1, h2, h3 {
     justify-content: left;
 }
 .schedule-left-bot-box>label{
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     width: 8em;
 }
 .schedule-left-bot-box>span{
-    font-size: 20px;
+    font-size: 18px;
     color: rgb(3, 108, 108);
 }
 .schedule-left-bot-box-driver{
@@ -62,7 +67,7 @@ h1, h2, h3 {
     border: 1px solid rgb(2, 45, 69);
 }
 .schedule-left-bot-box-driver>span{
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
     padding-left: 0.5em;
     margin: 1px;
@@ -100,12 +105,12 @@ h1, h2, h3 {
     justify-content: center;
 }
 .schedule-right-top-route>.location>label,.schedule-right-top-timeline>label{
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     margin-right: 0.5em;
 }
 .schedule-right-top-route>.location>span,.schedule-right-top-timeline>span{
-    font-size: 20px;
+    font-size: 15px;
 }
 .schedule-right-top-timeline{
     display: flex;
@@ -141,7 +146,7 @@ h1, h2, h3 {
 }
 
 .schedule-choose-title{
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
 }
 
@@ -173,10 +178,11 @@ h1, h2, h3 {
     width: 25px;
     height: 25px;
     border: 1px solid gray;
-    font-size: 18px;
+    font-size: 15px;
     text-align: center;
     border-radius: 5px;
     margin: 0 1em 0.5em 0.5em;
+    background-color: rgb(5, 167, 232);
 }
 .schedule-total-prices{
     margin-top: 1em;
@@ -185,8 +191,14 @@ h1, h2, h3 {
     /* align-items: center; */
 }
 .schedule-total-prices>span{
-    font-size: 18px;
+    font-size: 15px;
     text-align: center;
     margin-left: 1em;
     margin-bottom: 1em;
+    color: rgb(195, 3, 3);
+}
+.schedule-back{
+    position: absolute;
+    top: 136%;
+    left: 1em;
 }

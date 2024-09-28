@@ -1,0 +1,107 @@
+.payment-container{
+    display: flex;
+    margin: 1em 5em;
+}
+.payment-left{
+    max-width: 70%;
+    width: 100%;
+    padding-right: 15em;
+    
+}
+.payment-left>h4{
+    margin-bottom: 1em;
+}
+.payment-left-information{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75em;
+}
+.payment-left-information>input{
+    border: 0 solid black;
+    border-bottom: 1px solid gray;
+    background-color: rgba(5, 125, 136, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box-shadow */
+    transition: box-shadow 0.3s ease; /* Hiệu ứng chuyển tiếp */
+}
+.payment-left-information>input:focus {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Tăng box-shadow khi focus */
+}
+.custom-select-container{
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Box-shadow */
+}
+.custom-select-container:focus {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Tăng box-shadow khi focus */
+}
+
+
+/*  */
+.payment-right{
+    max-width: 30%;
+    width: 100%;
+}
+.payment-booking-status{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: rgba(5, 125, 136, 0.1);
+    margin-top: 3em;
+    margin-bottom: 1em;
+}
+.payment-booking-status-title{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid gray;
+    border-radius: 5px;
+}
+.payment-booking-status-title>h5{
+    width: 100%;
+    text-align: center;
+    font-weight: 900;
+}
+.payment-booking-status-infor{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.payment-booking-status-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5em;
+}
+.payment-booking-status-content>label{
+    font-weight: 550;
+}
+.payment-booking-status-line1{
+    width: 40%;
+    height: 1px;
+    background-color: gray;
+    margin-bottom: -0.6em;
+}
+.payment-booking-status-line2{
+    width: 15%;
+    height: 1px;
+    background-color: gray;
+    margin-bottom: -0.6em;
+}
+.payment-total{
+    color: rgb(208, 4, 4);
+}
+.payment-btn{
+    width: 100%;
+}
+.payment-back{
+    position: absolute;
+    margin-left: -3.5em;
+}
+.payment-back>.btn{
+    background-color: white;
+    color: gray;
+    border: 0 solid black;
+}

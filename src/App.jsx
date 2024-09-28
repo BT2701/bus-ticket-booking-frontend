@@ -15,7 +15,6 @@ import Register from "./Components/Auth/Register";
 import Forgot from "./Components/Auth/Forgot";
 import Profile from "./Components/User/Profile";
 import Search from "./Components/Search/Search";
-import Schedule from "./Components/Schedule/Schedule";
 import Homepage from "./Components/Home/Homepage";
 import Header from "./Components/OutContent/Header";
 import Footer from "./Components/OutContent/Footer";
@@ -23,6 +22,7 @@ import Contact from "./Components/Contact/Contact";
 import About from "./Components/About/About";
 import Detail from "./Components/Bus/Detail";
 import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
+import Payment from "./Components/Payment/Payment";
 
 const App = () => {
   return (
@@ -53,11 +53,11 @@ const MainApp = () => {
           <Route path="/buses" element={<Buses />} />
           <Route path="/detail" element={<Detail />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/schedule" element={<Search />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/schedule" element={<Schedule />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/schedule/detail" element={<ScheduleDetail />} />
+          <Route path="/schedule/detail/payment" element={<Payment/>}/>
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
         </Routes>

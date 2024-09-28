@@ -55,7 +55,7 @@ const Header = () => {
                       onClick={() => {
                         setPage("search");
                       }}
-                      to="/search"
+                      to="/schedule"
                     >
                       Tuyến xe
                     </Link>
