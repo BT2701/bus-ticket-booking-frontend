@@ -24,11 +24,13 @@ import Detail from "./Components/Bus/Detail";
 import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 import Payment from "./Components/Payment/Payment";
 import Invoice from "./Components/Invoice/TicketLookup";
+import { ScheduleProvider } from "./Context/ScheduleContext";
 
 
 const App = () => {
   return (
     //   <UserProvider>
+    <ScheduleProvider>
     <PageProvider>
       <Router>
         <Routes>
@@ -40,6 +42,7 @@ const App = () => {
         </Routes>
       </Router>
     </PageProvider>
+    </ScheduleProvider>
 
     //   </UserProvider>
   );
