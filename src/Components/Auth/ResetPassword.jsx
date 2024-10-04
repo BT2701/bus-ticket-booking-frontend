@@ -7,14 +7,13 @@ import {
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import ApiService from "../Utils/apiService";
-import { useUserContext } from "../../Context/UserProvider";
 import notificationWithIcon from "../Utils/notification";
 
 const ResetPassword =()=>{
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    const { state: user, dispatch } = useUserContext();
+    // const { state: user, dispatch } = useUserContext();
     const location = useLocation();
     
     
