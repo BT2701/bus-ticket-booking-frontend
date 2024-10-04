@@ -24,24 +24,31 @@ import Detail from "./Components/Bus/Detail";
 import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 import Payment from "./Components/Payment/Payment";
 import Invoice from "./Components/Invoice/TicketLookup";
+import { useUserContext } from "./Context/UserProvider";
+import { useEffect } from "react";
+import { getSessionUser } from "./Components/Utils/authentication";
+import ResetPassword from "./Components/Auth/ResetPassword";
 
 
 const App = () => {
+  const { dispatch } = useUserContext();
+  useEffect(() => {
+    const user = getSessionUser();
+    dispatch({
+      type: 'SET_USER',
+      payload: user
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
-    //   <UserProvider>
-    <PageProvider>
-      <Router>
+    <Router>
+      <PageProvider>
         <Routes>
-          {/* <Route path="/" element={<Navigate to="/login" />} /> */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot" element={<Forgot />} />
           <Route path="/*" element={<MainApp />} />
         </Routes>
-      </Router>
-    </PageProvider>
-
-    //   </UserProvider>
+      </PageProvider>
+    </Router>
   );
 };
 
@@ -63,7 +70,11 @@ const MainApp = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/invoice" element={<Invoice />} />
-
+          
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </div>
       <Footer />

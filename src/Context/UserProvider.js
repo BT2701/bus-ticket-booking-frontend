@@ -1,0 +1,53 @@
+import React, { useReducer, createContext, useContext } from 'react';
+
+const initialState = {
+    id: "",
+    name: "",
+    phone: "",
+    birth: "",
+    address: "",
+    email: ""
+};
+
+// Reducer function để quản lý các thay đổi của user
+const userReducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_USER':
+            return {
+                ...state,
+                ...action.payload 
+            };
+        case 'UPDATE_FIELD':
+            return {
+                ...state,
+                [action.field]: action.value 
+            };
+        case 'LOGOUT_USER':
+            return {
+                ...state,
+                user: null
+            };
+        default:
+            return state;
+    }
+};
+
+export const UserContext = createContext();
+export const useUserContext = () => useContext(UserContext);
+// export const updateField = (field, value, dispatch) => {
+//     dispatch({
+//         type: 'UPDATE_FIELD',
+//         field: field,
+//         value: value
+//     });
+// };
+
+export const UserProvider = ({ children }) => {
+    const [state, dispatch] = useReducer(userReducer, initialState);
+
+    return (
+        <UserContext.Provider value={{ state, dispatch }}>
+            {children}
+        </UserContext.Provider>
+    );
+};

@@ -4,8 +4,10 @@ import { faUser } from "@fortawesome/free-solid-svg-icons"; // Import the solid 
 import { usePageContext } from "../../Context/PageProvider";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { useUserContext } from "../../Context/UserProvider";
 const Header = () => {
   const { page, setPage } = usePageContext();
+  const { state: user } = useUserContext();
 
   useEffect(() => {
     console.log(page);
@@ -17,9 +19,9 @@ const Header = () => {
         <div className="container-fluid">
           <nav className="navbar navbar-expand-lg navbar-light">
             <div className="container-fluid">
-              <a className="navbar-brand text-light" to="/">
-                <h2> SGU Bus Lines</h2>
-              </a>
+              <Link className="navbar-brand text-light" to="/">
+                <h2 style={{ marginBottom: 0}}> SGU Bus Lines</h2>
+              </Link>
               <button
                 className="navbar-toggler homepage-navbar-toggler"
                 type="button"
@@ -38,7 +40,7 @@ const Header = () => {
                       aria-current="page"
                       to="/"
                       className={`nav-link homepage-nav-link ${
-                        page == "homepage" && "active"
+                        page === "homepage" && "active"
                       }`}
                       onClick={() => {
                         setPage("homepage");
@@ -50,7 +52,7 @@ const Header = () => {
                   <li className="nav-item">
                     <Link
                       className={`nav-link homepage-nav-link ${
-                        page == "search" && "active"
+                        page === "search" && "active"
                       }`}
                       onClick={() => {
                         setPage("search");
@@ -63,7 +65,7 @@ const Header = () => {
                   <li className="nav-item">
                     <Link
                       className={`nav-link homepage-nav-link ${
-                        page == "news" && "active"
+                        page === "news" && "active"
                       }`}
                       onClick={() => {
                         setPage("news");
@@ -76,7 +78,7 @@ const Header = () => {
                   <li className="nav-item">
                     <Link
                       className={`nav-link homepage-nav-link ${
-                        page == "invoice" && "active"
+                        page === "invoice" && "active"
                       }`}
                       onClick={() => {
                         setPage("invoice");
@@ -89,7 +91,7 @@ const Header = () => {
                   <li className="nav-item">
                     <Link
                       className={`nav-link homepage-nav-link ${
-                        page == "contact" && "active"
+                        page === "contact" && "active"
                       }`}
                       onClick={() => {
                         setPage("contact");
@@ -102,7 +104,7 @@ const Header = () => {
                   <li className="nav-item">
                     <Link
                       className={`nav-link homepage-nav-link ${
-                        page == "about" && "active"
+                        page === "about" && "active"
                       }`}
                       onClick={() => {
                         setPage("about");
@@ -114,27 +116,32 @@ const Header = () => {
                   </li>
                 </ul>
                 <div className="d-flex align-items-center">
-                  {/* //TRƯỜNG HỢP NGƯỜI DÙNG CHƯA ĐĂNG NHẬP */}
-
-                  <Link
-                    to="/login"
-                    class="btn btn-light btn-secondary text-decoration-none"
-                  >
-                    <FontAwesomeIcon icon={faUser} className="me-1" />
-                    Đăng nhập
-                  </Link>
-
-                  {/* TRƯỜNG HỢP NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP */}
-
-                  {/* <a to="/profile" class="text-decoration-none text-white">
-                    <img
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiT0TLBPK2bzBTKolVX9yY_x9OUnBOaZTSyvYvHszi4VFM5hJRZujkit66lVorSj2lSPs&usqp=CAU"
-                      alt="avatar"
-                      class="img-fluid rounded-circle me-3"
-                      width="35"
-                    />
-                    PHAM VAN DU
-                  </a> */}
+                  {
+                    user?.id ? (
+                      <Link to="/profile" 
+                          onClick={() => {
+                              setPage("profile");
+                            }}
+                          className={`nav-link homepage-nav-link text-decoration-none text-white ${
+                            page === "profile" && "active"
+                          } `}
+                        >
+                        {user?.name}
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/login"
+                        onClick={() => {
+                          setPage("login");
+                        }}
+                        className="btn btn-light btn-secondary text-decoration-none"
+                      >
+                        <FontAwesomeIcon icon={faUser} className="me-1" />
+                        Đăng nhập
+                      </Link>
+                    )
+                  }
+                  
                 </div>
               </div>
             </div>
