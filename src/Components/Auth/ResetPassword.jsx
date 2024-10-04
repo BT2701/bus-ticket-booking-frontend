@@ -2,13 +2,12 @@ import "./Auth.css";
 
 import { LockOutlined } from '@ant-design/icons';
 import {
-  Button, Checkbox, Form, Input
+  Button, Form, Input
 } from 'antd';
 import { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import ApiService from "../Utils/apiService";
 import { useUserContext } from "../../Context/UserProvider";
-import { setSessionAccessAndRefreshToken, setSessionUser } from "../Utils/authentication";
 import notificationWithIcon from "../Utils/notification";
 
 const ResetPassword =()=>{
@@ -17,7 +16,12 @@ const ResetPassword =()=>{
     const navigate = useNavigate();
     const { state: user, dispatch } = useUserContext();
     const location = useLocation();
-    // eslint-disable-next-line no-use-before-define
+    
+    
+    const getQueryParameter = (param) => {
+        const searchParams = new URLSearchParams(location.search);
+        return searchParams.get(param);
+    };
     const resetToken = getQueryParameter('resetToken');
 
     const onFinish = (values) => {
@@ -32,21 +36,16 @@ const ResetPassword =()=>{
         
         ApiService.put('/api/customers/forgotPassword', payload)
             .then((response) => {
-                console.log(response);
+                notificationWithIcon('success', 'Reset password', 'Tạo mới mật khẩu thành công!');
                 form.resetFields();
                 navigate("/login");
             })
             .catch((err) => {
-                notificationWithIcon('error', 'Lỗi', 'Không thể khôi phục mật khẩu của bạn với lỗi : ' +  (err?.response?.data?.result?.error?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể khôi phục mật khẩu của bạn với lỗi : ' +  (err?.response?.data?.message || err?.message));
             })
             .finally(() => { 
                 setLoading(false);
             });
-    };
-
-    const getQueryParameter = (param) => {
-        const searchParams = new URLSearchParams(location.search);
-        return searchParams.get(param);
     };
 
     if(!resetToken || resetToken === "") {

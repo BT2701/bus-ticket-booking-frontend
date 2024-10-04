@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './schedule.css'; // Import CSS
 import Booked from '../../Static/IMG/booked.png'
 import Selected from '../../Static/IMG/selected.png'
@@ -9,8 +9,76 @@ import { Button } from 'react-bootstrap'; // For Bootstrap Button
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { useSchedule } from '../../Context/ScheduleContext';
+import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
 
 const ScheduleDetail = () => {
+  const { schedule, updateSchedule } = useSchedule();
+  const [seatIndexsUp, setSeatIndexsUp] = useState([]);
+  const [seatIndexsDown, setSeatIndexsDown] = useState([]);
+  const [seatCount, setSeatCount] = useState(0);
+
+  const designSeatIndex = (seatCount) => {
+
+    if (seatCount === 24) {
+      setSeatIndexsDown([
+        ['A02', '', '', 'A01'],
+        ['A03', '', '', 'A04'],
+        ['A06', '', '', 'A05'],
+        ['A07', '', '', 'A08'],
+        ['A10', '', '', 'A09'],
+        ['A11', '', '', 'A12'],
+      ]);
+      setSeatIndexsUp([
+        ['B02', '', '', 'B01'],
+        ['B03', '', '', 'B04'],
+        ['B06', '', '', 'B05'],
+        ['B07', '', '', 'B08'],
+        ['B10', '', '', 'B09'],
+        ['B11', '', '', 'B12'],
+      ]);
+    }
+    else if (seatCount === 32) {
+      setSeatIndexsDown([
+        ['A02', '', '', 'A01'],
+        ['A03', '', '', 'A04'],
+        ['A06', '', '', 'A05'],
+        ['A07', '', '', 'A08'],
+        ['A10', '', '', 'A09'],
+        ['A11', '', '', 'A12'],
+        ['A16', 'A15', 'A14', 'A13']
+      ]);
+      setSeatIndexsUp([
+        ['B02', '', '', 'B01'],
+        ['B03', '', '', 'B04'],
+        ['B06', '', '', 'B05'],
+        ['B07', '', '', 'B08'],
+        ['B10', '', '', 'B09'],
+        ['B11', '', '', 'B12'],
+        ['B16', 'B15', 'B14', 'B13']
+      ]);
+    }
+    else {
+      setSeatIndexsDown([
+        ['A04', 'A03', '', 'A02', 'A01'],
+        ['A05', 'A06', '', 'A07', 'A08'],
+        ['A12', 'A11', '', 'A10', 'A09'],
+        ['A13', 'A14', '', 'A15', 'A16'],
+        ['A20', 'A19', '', 'A18', 'A17'],
+        ['A21', 'A22', '', 'A23', 'A24'],
+        ['A28', 'A27', '', 'A26', 'A25'],
+        ['A29', 'A30', '', 'A31', 'A32'],
+        ['A36', 'A35', '', 'A34', 'A33']
+      ]);
+
+    }
+  }
+
+  useEffect(() => {
+
+    setSeatCount(schedule?.bus.category.seat_count);
+    designSeatIndex(seatCount);
+  }, [seatCount])
   return (
     <div className="schedule-container">
       <div className="schedule-left">
@@ -20,21 +88,21 @@ const ScheduleDetail = () => {
         <div className="schedule-left-bot">
           <div className="schedule-left-bot-box">
             <label>Biển Số:</label>
-            <span>78E1.08743</span>
+            <span>{schedule?.bus.busnumber}</span>
           </div>
           <div className="schedule-left-bot-box">
             <label>Loại Xe:</label>
-            <span>Vip</span>
+            <span>{schedule?.bus.category.name}</span>
           </div>
           <div className="schedule-left-bot-box">
             <label>Số Ghế:</label>
-            <span>24</span>
+            <span>{schedule?.bus.category.seat_count}</span>
           </div>
           <div className="schedule-left-bot-box">
             <label>Tài Xế:</label>
             <div className="schedule-left-bot-box-driver">
               <img src={Guy} alt="driver" />
-              <span>Trưởng BT</span>
+              <span>{schedule?.bus.driver.name}</span>
             </div>
           </div>
         </div>
@@ -48,17 +116,17 @@ const ScheduleDetail = () => {
           <div className="schedule-right-top-route">
             <div className="location">
               <label>Từ:</label>
-              <span>Location1</span>
+              <span>{schedule?.route.from.name}</span>
             </div>
             <div className="schedule-right-top-route-line"></div>
             <div className="location">
               <label>Đến:</label>
-              <span>Location2</span>
+              <span>{schedule?.route.to.name}<div className="route to"></div></span>
             </div>
           </div>
           <div className="schedule-right-top-timeline">
             <label>Xe Rời Bến Lúc:</label>
-            <span>4:00 AM</span>
+            <span>{formatTimeFromDatabase(schedule?.departure)}</span>
           </div>
         </div>
         <div className="schedule-right-center">
@@ -73,39 +141,32 @@ const ScheduleDetail = () => {
                 </div>
                 <div className="divide mb-4 2lg:hidden"></div>
                 <table>
-            <tbody>
-                {[
-                    ['A03', '', 'A02', '', 'A01'],
-                    ['A06', '', 'A05', '', 'A04'],
-                    ['A09', '', 'A08', '', 'A07'],
-                    ['A12', '', 'A11', '', 'A10'],
-                    ['A15', '', 'A14'],
-                    ['A17', '', '', '', 'A16'],
-                    ['A22', 'A21', 'A20', 'A19', 'A18']
-                ].map((row, rowIndex) => (
-                    <tr key={rowIndex} className="flex items-center gap-1 justify-between">
+                  <tbody>
+                    {seatIndexsDown?.map((row, rowIndex) => (
+                      <tr key={rowIndex} className="flex items-center gap-1 justify-between">
                         {row.map((seat, seatIndex) => (
-                            <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
-                                {seat ? (
-                                    <>
-                                        <img width="32" src={Available} alt="seat icon" className='schedule-seat-img' />
-                                        <span
-                                            className={`absolute text-sm font-semibold lg:text-[10px]  'text-[#A2ABB3]' top-1 schedule-seat-name`}
-                                        >
-                                            {seat}
-                                        </span>
-                                    </>
-                                ) : (
-                                    // Empty <td> for spacing, maintain height for alignment
-                                    <div style={{ width: '32px', height: '32px' }}></div>
-                                )}
-                            </td>
+                          <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
+                            {seat ? (
+                              <>
+                                <img width="32" src={Available} alt="seat icon" className='schedule-seat-img' />
+                                <span
+                                  className={`absolute text-sm font-semibold lg:text-[10px]  'text-[#A2ABB3]' top-1 schedule-seat-name`}
+                                >
+                                  {seat}
+                                </span>
+                              </>
+                            ) : (
+                              // Empty <td> for spacing, maintain height for alignment
+                              <div style={{ width: '32px', height: '32px' }}></div>
+                            )}
+                          </td>
                         ))}
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+              {seatCount===36?(<></>):(<>
               <div className="schedule-seat-line"></div>
               <div className="flex min-w-[50%] flex-col md:min-w-[153px] schedule-seat">
                 <div className="icon-gray flex w-full justify-center p-2 text-sm">
@@ -114,38 +175,31 @@ const ScheduleDetail = () => {
                 <div className="divide mb-4 2lg:hidden"></div>
                 <table>
                   <tbody>
-                    {[
-                      ['B03','', 'B02','', 'B01'],
-                      ['B06','', 'B05','', 'B04'],
-                      ['B09','', 'B08','', 'B07'],
-                      ['B12','', 'B11','', 'B10'],
-                      ['B15','', 'B14','', 'B13'],
-                      ['B17','','','', 'B16'],
-                      ['B22', 'B21', 'B20', 'B19', 'B18']
-                    ].map((row, rowIndex) => (
+                    {seatIndexsUp?.map((row, rowIndex) => (
                       <tr key={rowIndex} className="flex items-center gap-1 justify-between">
-                          {row.map((seat, seatIndex) => (
-                              <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
-                                  {seat ? (
-                                      <>
-                                          <img width="32" src={Available} alt="seat icon" className='schedule-seat-img'/>
-                                          <span
-                                              className={`absolute text-sm font-semibold lg:text-[10px] 'text-[#A2ABB3]' top-1 schedule-seat-name`}
-                                          >
-                                              {seat}
-                                          </span>
-                                      </>
-                                  ) : (
-                                      // Empty <td> for spacing, maintain height for alignment
-                                      <div style={{ width: '32px', height: '32px' }}></div>
-                                  )}
-                              </td>
-                          ))}
+                        {row.map((seat, seatIndex) => (
+                          <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
+                            {seat ? (
+                              <>
+                                <img width="32" src={Available} alt="seat icon" className='schedule-seat-img' />
+                                <span
+                                  className={`absolute text-sm font-semibold lg:text-[10px] 'text-[#A2ABB3]' top-1 schedule-seat-name`}
+                                >
+                                  {seat}
+                                </span>
+                              </>
+                            ) : (
+                              // Empty <td> for spacing, maintain height for alignment
+                              <div style={{ width: '32px', height: '32px' }}></div>
+                            )}
+                          </td>
+                        ))}
                       </tr>
-                  ))}
+                    ))}
                   </tbody>
                 </table>
-              </div>
+              </div></>
+              )}
 
             </div>
             <div className="schedule-right-center-seat-note">
@@ -179,10 +233,10 @@ const ScheduleDetail = () => {
         </div>
       </div>
       <div className="schedule-back">
-        <Link to={'/schedule'} className='btn btn-secondary'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }}/>Quay lại</Link>
+        <Link to={'/schedule'} className='btn btn-secondary schedule-back-btn'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }} /></Link>
       </div>
     </div>
-    
+
   );
 };
 

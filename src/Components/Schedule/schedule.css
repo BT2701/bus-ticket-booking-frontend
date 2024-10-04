@@ -199,6 +199,12 @@ h1, h2, h3 {
 }
 .schedule-back{
     position: absolute;
-    top: 136%;
+    /* top: 136%; */
     left: 1em;
+}
+.schedule-back-btn{
+    background-color: white;
+    border: 0px solid white;
+    color: gray;
+    font-size: 20px;
 }

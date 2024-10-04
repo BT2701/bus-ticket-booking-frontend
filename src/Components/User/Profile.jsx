@@ -34,12 +34,12 @@ const Profile =()=>{
                 type: 'LOGOUT_USER'
             });
 
-            alert(response);
+            notificationWithIcon('success', 'Logout', 'Đăng xuất tài khoản thành công!');
             navigate("/profile");
         })
         .catch((err) => {
-            setError(err?.response?.data?.result?.error?.message || err?.message);
-            notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản với lỗi : ' +  (err?.response?.data?.result?.error?.message || err?.message));
+            setError(err?.response?.data?.message || err?.message);
+            notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản với lỗi : ' +  (err?.response?.data?.message || err?.message));
         })
         .finally(() => { 
             setLoading(false);

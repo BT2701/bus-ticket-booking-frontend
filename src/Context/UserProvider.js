@@ -34,13 +34,6 @@ const userReducer = (state, action) => {
 
 export const UserContext = createContext();
 export const useUserContext = () => useContext(UserContext);
-// export const updateField = (field, value, dispatch) => {
-//     dispatch({
-//         type: 'UPDATE_FIELD',
-//         field: field,
-//         value: value
-//     });
-// };
 
 export const UserProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);

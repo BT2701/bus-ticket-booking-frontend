@@ -24,10 +24,11 @@ import Detail from "./Components/Bus/Detail";
 import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 import Payment from "./Components/Payment/Payment";
 import Invoice from "./Components/Invoice/TicketLookup";
-import { useUserContext } from "./Context/UserProvider";
+import { UserProvider, useUserContext } from "./Context/UserProvider";
 import { useEffect } from "react";
 import { getSessionUser } from "./Components/Utils/authentication";
 import ResetPassword from "./Components/Auth/ResetPassword";
+import { ScheduleProvider } from "./Context/ScheduleContext";
 
 
 const App = () => {
@@ -43,11 +44,15 @@ const App = () => {
 
   return (
     <Router>
-      <PageProvider>
-        <Routes>
-          <Route path="/*" element={<MainApp />} />
-        </Routes>
-      </PageProvider>
+              <PageProvider>
+      <UserProvider>
+          <ScheduleProvider>
+                  <Routes>
+                    <Route path="/*" element={<MainApp />} />
+                  </Routes>
+          </ScheduleProvider>
+      </UserProvider>
+              </PageProvider>
     </Router>
   );
 };

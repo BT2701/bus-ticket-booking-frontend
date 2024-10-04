@@ -9,7 +9,6 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import ApiService from "../Utils/apiService";
 import { useUserContext } from "../../Context/UserProvider";
 import { setSessionAccessAndRefreshToken, setSessionUser } from "../Utils/authentication";
-import { convertTimestampToDate } from "../Utils/TransferDate";
 import notificationWithIcon from "../Utils/notification";
 
 const Login =()=>{
@@ -31,24 +30,24 @@ const Login =()=>{
         
         ApiService.post('/api/customers/login', payload)
             .then(async (response) => {
-                // console.log(response);
+                console.log(response);
                 setSessionAccessAndRefreshToken(response?.data?.access_token, response?.data?.refresh_token);
 
                 const userDetail = await ApiService.get('/api/customers/details');
                 dispatch({
                     type: 'SET_USER',
-                    payload: userDetail
+                    payload: userDetail?.data
                 });
-                setSessionUser(userDetail);
+                setSessionUser(userDetail?.data);
                 
-                // console.log(userDetail);
+                console.log(userDetail);
 
                 form.resetFields();
                 navigate("/profile");
             })
             .catch((err) => {
-                // console.log(err?.response?.data?.result?.error?.message || err?.message);
-                notificationWithIcon('error', 'Lỗi', 'Tài khoản hoặc mật khẩu không chính xác với lỗi : ' +  (err?.response?.data?.result?.error?.message || err?.message));
+                console.log(err);
+                notificationWithIcon('error', 'Lỗi', 'Tài khoản hoặc mật khẩu không chính xác với lỗi : ' +  (err?.response?.data?.message || err?.message));
             })
             .finally(() => { 
                 setLoading(false);

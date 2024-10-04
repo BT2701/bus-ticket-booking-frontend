@@ -1,7 +1,7 @@
 import { MailOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import "./Auth.css";
 import ApiService from '../Utils/apiService';
 import notificationWithIcon from '../Utils/notification';
@@ -9,7 +9,6 @@ import notificationWithIcon from '../Utils/notification';
 const Forgot =()=>{
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
-    const navigate = useNavigate();
 
     const onFinish = (values) => {
         setLoading(true);
@@ -17,7 +16,7 @@ const Forgot =()=>{
         ApiService.get('/api/mail/sendEmailToForgotPassword?email=' + values.email)
             .then((response) => {
                 form.resetFields();
-                alert("Thông tin xác nhập đã được gửi qua email của bạn!")
+                notificationWithIcon('success', 'Forgot password', 'Thông tin xác nhập đã được gửi qua email của bạn!');
                 setLoading(false);
             })
             .catch((err) => {

@@ -6,7 +6,7 @@ import {
   } from 'antd';
   import React, { useEffect, useState } from 'react';
   import "./Profile.css";
-import { convertTimestampToDate, TransferDatePicker } from '../Utils/TransferDate';
+import { TransferDatePicker } from '../Utils/TransferDate';
 import dayjs from 'dayjs';
 import { useUserContext } from '../../Context/UserProvider';
 import { setSessionUserKeyAgainstValue } from '../Utils/authentication';
@@ -57,7 +57,7 @@ const EditProfile =({ editProfileModal, setEditProfileModal })=>{
             })
             .catch((err) => {
                 setLoading(false);
-                notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản với lỗi : ' +  (err?.response?.data?.result?.error?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản với lỗi : ' +  (err?.response?.data?.message || err?.message));
             })
             .finally(() => { 
                 setLoading(false);

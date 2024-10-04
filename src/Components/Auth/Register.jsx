@@ -31,15 +31,14 @@ const Register =()=>{
       
         ApiService.post('/api/customers/register', payload)
             .then((response) => {
-                alert(response);
-
                 setLoading(false);
                 form.resetFields();
+                notificationWithIcon('success', 'Register', 'Đăng ký tài khoản thành công!');
                 navigate("/login");
             })
             .catch((err) => {
                 setLoading(false);
-                notificationWithIcon('error', 'Lỗi', 'Không thể đăng ký tài khoản với lỗi : ' +  (err?.response?.data?.result?.error?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể đăng ký tài khoản với lỗi : ' +  (err?.response?.data?.message || err?.message));
             }).finally(() => {
                 setLoading(false);
             })
