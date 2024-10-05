@@ -1,0 +1,142 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  :root {
+    --primaryColor: #af9a7d;
+    --mainWhite: #fff;
+    --offWhite: #f7f7f7;
+    --mainBlack: #222;
+    --mainGrey: #ececec;
+    --darkGrey: #cfcfcf;
+    --mainTransition: all 0.3s linear;
+    --mainSpacing: 3px;
+    --lightShadow: 2px 5px 3px 0px rgba(0, 0, 0, 0.5);
+    --darkShadow: 4px 10px 5px 0px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* start of globals */
+  body {
+    color: var(--mainBlack);
+    background: var(--mainWhite);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    line-height: 1.4;
+  }
+  h1 {
+    font-size: 3em;
+    line-height: 1;
+    margin-bottom: 0.5em;
+  }
+  h2 {
+    font-size: 2em;
+    margin-bottom: 0.75em;
+  }
+  h3 {
+    font-size: 1.5em;
+    line-height: 1;
+    margin-bottom: 1em;
+  }
+  h4 {
+    font-size: 1.2em;
+    line-height: 1.25;
+    margin-bottom: 1.25em;
+  }
+  h5 {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 1.5em;
+  }
+  h6 {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 1.5em;
+  }
+  
+  .btn-primary {
+    display: inline-block;
+    text-decoration: none;
+    letter-spacing: var(--mainSpacing);
+    color: var(--mainBlack);
+    background: var(--primaryColor);
+    padding: 0.4rem 0.9rem;
+    border: 3px solid var(--primaryColor);
+    transition: var(--mainTransition);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--primaryColor);
+  }
+  .loading {
+    text-transform: capitalize;
+    text-align: center;
+    margin-top: 3rem;
+  }
+  .error {
+    height: calc(100vh - 270px);
+    text-align: center;
+    text-transform: uppercase;
+    margin: 2rem 0;
+    padding-top: 12rem;
+  }
+  .empty-search {
+    text-align: center;
+    text-transform: capitalize;
+    margin: 2rem 0;
+    padding: 1rem;
+    letter-spacing: var(--mainSpacing);
+  }
+  /* end of globals */
+  
+  /* start of and customize */
+  
+  .ant-picker-today-btn {
+    color: var(--primaryColor) !important;
+  }
+  
+  /* end of and customize */
+
+
+  /* start of auth style */
+  
+  .btn-forgot-password {
+    color: var(--mainBlack);
+    transition: var(--mainTransition);
+    margin-left: 170px;
+    font-weight: 600;
+  }
+  .btn-forgot-password:hover {
+    color: var(--primaryColor);
+  }
+  
+  .btn-login-registration {
+    color: var(--mainBlack);
+    transition: var(--mainTransition);
+    font-size: 16px;
+    font-weight: 600;
+    display: block;
+    text-align: center;
+  }
+  .btn-login-registration:hover {
+    color: var(--primaryColor);
+  }
+  
+  .forgot--container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  /* end of auth style */
+  
+  /* start of profile style */
+  
+  .profile-container {
+    width: 100%;
+    height: calc(100vh - 205px);
+    padding-top: 20px;
+  }
+  
+  /* end of profile style */
+  
