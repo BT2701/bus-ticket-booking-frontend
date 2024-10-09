@@ -2,7 +2,7 @@ import "./PopularLine.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-const PopularLine = () => {
+const PopularLine = ({ route }) => {
   return (
     <Link className="col-md-4 mt-1-9" to="/search">
       <div className="popularlineCard text-center">
@@ -14,12 +14,12 @@ const PopularLine = () => {
         <div className="popularlineCard-infor">
           <h5 className="m-0">
             <span className="">
-              Phan Rang-Tháp Chàm
+              {route[4]}
               <FontAwesomeIcon
                 icon={faArrowRight}
                 style={{ padding: "0px 6px" }}
               />
-              Bà Rịa-Vũng Tàu
+              {route[5]}
             </span>
           </h5>
         </div>
@@ -28,18 +28,18 @@ const PopularLine = () => {
             <div className="d-table-cell align-middle">
               <h5 className="m-0">
                 <span className="text-white">
-                  Phan Rang-Tháp Chàm
+                 {route[4]}
                   <FontAwesomeIcon
                     icon={faArrowRight}
                     style={{ padding: "0px 6px" }}
                   />
-                  Bà Rịa-Vũng Tàu
+                 {route[5]}
                 </span>
               </h5>
-              <p className="text-white mb-0">305km - 8 giờ - 01/10/2024</p>
+              <p className="text-white mb-0">{route[1]}km - {route[2]}giờ</p>
 
               <p className="text-white">
-                290.000đ
+               {route[3]}đ
                 <span>/Vé</span>
               </p>
             </div>
