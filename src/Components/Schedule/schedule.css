@@ -1,18 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
 
 body {
-  font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
-h1, h2, h3 {
-  font-family: 'Open Sans', sans-serif;
+h1,
+h2,
+h3 {
+    font-family: 'Open Sans', sans-serif;
 }
-.schedule-container{
+
+.schedule-container {
     display: flex;
     overflow-x: hidden;
     margin-top: 2em;
 }
-.schedule-left{
+
+.schedule-left {
     display: flex;
     flex-direction: column;
     max-width: 50%;
@@ -21,52 +25,62 @@ h1, h2, h3 {
     margin-right: 5em;
     margin-left: -4em;
 }
-.schedule-left-top{
+
+.schedule-left-top {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 2em;
 }
-.schedule-left-top>img{
+
+.schedule-left-top>img {
     max-width: 500px;
     border-radius: 10px;
     /* border-bottom:1px solid rgb(170, 166, 166) ; */
 }
-.schedule-left-bot{
+
+.schedule-left-bot {
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin-left: 8em;
     margin-top: 1em;
 }
-.schedule-left-bot-box{
+
+.schedule-left-bot-box {
     display: flex;
     justify-content: left;
 }
-.schedule-left-bot-box>label{
+
+.schedule-left-bot-box>label {
     font-size: 18px;
     font-weight: bold;
     width: 8em;
 }
-.schedule-left-bot-box>span{
+
+.schedule-left-bot-box>span {
     font-size: 18px;
     color: rgb(3, 108, 108);
 }
-.schedule-left-bot-box-driver{
+
+.schedule-left-bot-box-driver {
     display: flex;
     justify-content: left;
     align-items: center;
 }
-.schedule-left-bot-box:last-child{
+
+.schedule-left-bot-box:last-child {
     display: flex;
     /* flex-direction: column; */
 }
-.schedule-left-bot-box-driver>img{
+
+.schedule-left-bot-box-driver>img {
     max-width: 40px;
     border-radius: 50%;
     border: 1px solid rgb(2, 45, 69);
 }
-.schedule-left-bot-box-driver>span{
+
+.schedule-left-bot-box-driver>span {
     font-size: 18px;
     font-weight: 600;
     padding-left: 0.5em;
@@ -77,85 +91,99 @@ h1, h2, h3 {
 /*  */
 
 
-.schedule-right{
+.schedule-right {
     display: flex;
     flex-direction: column;
 }
-.schedule-right-top{
+
+.schedule-right-top {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.schedule-right-top-title{
+
+.schedule-right-top-title {
     display: flex;
     justify-content: left;
 }
-.schedule-right-top-route{
+
+.schedule-right-top-route {
     display: flex;
     align-items: center;
 }
-.schedule-right-top-route-line{
+
+.schedule-right-top-route-line {
     width: 10em;
     height: 0.5px;
     background-color: rgb(4, 80, 91);
     margin: 1em;
 }
-.schedule-right-top-route>.location{
+
+.schedule-right-top-route>.location {
     display: flex;
     justify-content: center;
 }
-.schedule-right-top-route>.location>label,.schedule-right-top-timeline>label{
+
+.schedule-right-top-route>.location>label,
+.schedule-right-top-timeline>label {
     font-size: 15px;
     font-weight: bold;
     margin-right: 0.5em;
 }
-.schedule-right-top-route>.location>span,.schedule-right-top-timeline>span{
+
+.schedule-right-top-route>.location>span,
+.schedule-right-top-timeline>span {
     font-size: 15px;
 }
-.schedule-right-top-timeline{
+
+.schedule-right-top-timeline {
     display: flex;
     justify-content: left;
 }
 
-.schedule-seat-container{
+.schedule-seat-container {
     display: flex;
     justify-content: space-between;
     margin-bottom: -2em !important;
     padding-bottom: 0;
 }
-.schedule-seat{
-    max-width: 250px ;
+
+.schedule-seat {
+    max-width: 250px;
     margin-right: 2em;
     margin-left: 2em;
 }
-.schedule-seat-line{
+
+.schedule-seat-line {
     width: 1px;
     background-color: black;
 }
 
 
 
-.schedule-right-center-seat-note{
+.schedule-right-center-seat-note {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.schedule-seat-note{
+
+.schedule-seat-note {
     display: flex;
     justify-content: center;
 }
 
-.schedule-choose-title{
+.schedule-choose-title {
     font-size: 18px;
     font-weight: 600;
 }
 
-.seat-noted{
+.seat-noted {
     margin-left: 2em;
     font-size: 12px;
     margin-top: 0;
 }
-.schedule-seat-name{
+
+.schedule-seat-name {
     position: relative;
     top: -1em;
     font-size: 10px;
@@ -163,19 +191,26 @@ h1, h2, h3 {
     color: black;
     /* color: rgb(3, 125, 173); */
 }
-.schedule-seat-img{
+
+.schedule-seat-img {
     cursor: pointer;
 }
 
 
-.schedule-right-bot{
+.schedule-right-bot {
     margin-top: 2em;
 }
-.schedule-selected-seat-container{
+
+.schedule-selected-seat-container {
     display: flex;
+    flex-wrap: wrap;
+    /* Cho phép các phần tử xuống dòng nếu vượt quá width */
+    max-width: 90%;
+    /* Đảm bảo không vượt quá chiều rộng của container */
 }
-.schedule-selected-seat-box{
-    width: 25px;
+
+.schedule-selected-seat-box {
+    width: 30px;
     height: 25px;
     border: 1px solid gray;
     font-size: 15px;
@@ -184,27 +219,58 @@ h1, h2, h3 {
     margin: 0 1em 0.5em 0.5em;
     background-color: rgb(5, 167, 232);
 }
-.schedule-total-prices{
+
+.schedule-total-prices {
     margin-top: 1em;
     display: flex;
     text-align: center;
     /* align-items: center; */
 }
-.schedule-total-prices>span{
+
+.schedule-total-prices>span {
     font-size: 15px;
     text-align: center;
     margin-left: 1em;
     margin-bottom: 1em;
     color: rgb(195, 3, 3);
 }
-.schedule-back{
+
+.schedule-back {
     position: absolute;
     /* top: 136%; */
     left: 1em;
 }
-.schedule-back-btn{
+
+.schedule-back-btn {
     background-color: white;
     border: 0px solid white;
     color: gray;
     font-size: 20px;
+}
+
+
+.schedule-is--booked {
+    color: rgb(238, 43, 4);
+}
+
+.schedule-is--selected {
+    color: rgb(0, 170, 255) !important;
+    font-size: 1000px;
+}
+
+.schedule-is--available {
+    color: gray;
+}
+
+.schedule-right-bot-h6-btn {
+    border: 0px solid black;
+    background-color: white;
+    margin-left: 1em;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+}
+
+.schedule-right-bot-h6-btn:hover {
+    background-color: rgb(90, 115, 115);
 }

@@ -8,16 +8,70 @@ import Guy from '../../Static/IMG/guy.jpg'
 import { Button } from 'react-bootstrap'; // For Bootstrap Button
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
 import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
+import formatCurrency from '../sharedComponents/formatMoney';
 
 const ScheduleDetail = () => {
   const { schedule, updateSchedule } = useSchedule();
   const [seatIndexsUp, setSeatIndexsUp] = useState([]);
   const [seatIndexsDown, setSeatIndexsDown] = useState([]);
   const [seatCount, setSeatCount] = useState(0);
+  const [bookingList, setBookingList] = useState([]);
+  const [seatStatus, setSeatStatus] = useState({}); // Trạng thái ghế lưu bằng seat index
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [price, setPrice] = useState(0);
 
+  const handleSelected = (seatIndex) => {
+    // Kiểm tra nếu ghế đã được đặt trong bookingList
+    const isBooked = bookingList.some((booking) => seatIndex === booking.seatnum);
+
+    if (isBooked) {
+      alert("Chỗ đã được đặt");
+    } else if (seatStatus[seatIndex] === Selected) {
+      // Nếu ghế đang là Selected, chuyển lại về Available
+      setSeatStatus((prevStatus) => ({
+        ...prevStatus,
+        [seatIndex]: Available
+      }));
+      setSelectedSeats((prevSelected) =>
+        prevSelected.filter((seat) => seat !== seatIndex)
+      );
+    } else {
+      // Nếu ghế đang là Available, chuyển sang Selected
+      setSeatStatus((prevStatus) => ({
+        ...prevStatus,
+        [seatIndex]: Selected
+      }));
+      setSelectedSeats((prevSelected) => [...prevSelected, seatIndex]);
+    }
+  };
+
+  const is_booked = (seatIndex) => {
+    // Kiểm tra nếu ghế có trong danh sách bookingList
+    const isBooked = bookingList.some((booking) => seatIndex === booking.seatnum);
+
+    // Nếu ghế đã được đặt, trả về hình ảnh Booked
+    if (isBooked) {
+      return Booked;
+    }
+
+    // Nếu không, kiểm tra trạng thái hiện tại từ seatStatus
+    return seatStatus[seatIndex] || Available;
+  };
+  const handleReplace = () => {
+    // Hủy chọn tất cả các ghế đã chọn
+    setSeatStatus((prevStatus) => {
+      const newStatus = { ...prevStatus };
+      selectedSeats.forEach((seat) => {
+        newStatus[seat] = Available;
+      });
+      return newStatus;
+    });
+    // Làm trống danh sách ghế đã chọn
+    setSelectedSeats([]);
+  };
   const designSeatIndex = (seatCount) => {
 
     if (seatCount === 24) {
@@ -74,10 +128,15 @@ const ScheduleDetail = () => {
     }
   }
 
+  const Total = () => {
+    return price * selectedSeats.length;
+  }
   useEffect(() => {
 
     setSeatCount(schedule?.bus.category.seat_count);
     designSeatIndex(seatCount);
+    setBookingList(schedule?.bookings);
+    setPrice(schedule?.bus.category.price);
   }, [seatCount])
   return (
     <div className="schedule-container">
@@ -133,6 +192,7 @@ const ScheduleDetail = () => {
           <div className="min-w-sm mx-auto flex w-[100%] max-w-2xl flex-col px-3 py-1 sm:px-6 2lg:mx-0 2lg:w-auto">
             <div className="flex max-w-xs items-start justify-between pt-5 text-xl font-medium text-black">
               <p className="flex flex-col schedule-choose-title">Chọn Chỗ</p>
+              <p className="text-sm text-gray-500 mt-2" style={{ fontStyle: "italic", fontSize: "12px", color: "gray" }}>*Chọn lại để hủy</p>
             </div>
             <div className="my-4 flex flex-row text-center font-medium gap-4 sm:gap-6 schedule-seat-container ">
               <div className="flex min-w-[50%] flex-col md:min-w-[153px] schedule-seat">
@@ -148,9 +208,15 @@ const ScheduleDetail = () => {
                           <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
                             {seat ? (
                               <>
-                                <img width="32" src={Available} alt="seat icon" className='schedule-seat-img' />
+                                <img
+                                  width="32"
+                                  src={is_booked(seat)}
+                                  alt="seat icon"
+                                  className="schedule-seat-img"
+                                  onClick={() => handleSelected(seat)}
+                                />
                                 <span
-                                  className={`absolute text-sm font-semibold lg:text-[10px]  'text-[#A2ABB3]' top-1 schedule-seat-name`}
+                                  className={`absolute text-sm font-semibold lg:text-[10px] text-[#A2ABB3] top-1 schedule-seat-name`}
                                 >
                                   {seat}
                                 </span>
@@ -166,68 +232,86 @@ const ScheduleDetail = () => {
                   </tbody>
                 </table>
               </div>
-              {seatCount===36?(<></>):(<>
-              <div className="schedule-seat-line"></div>
-              <div className="flex min-w-[50%] flex-col md:min-w-[153px] schedule-seat">
-                <div className="icon-gray flex w-full justify-center p-2 text-sm">
-                  <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Tầng Trên</span>
-                </div>
-                <div className="divide mb-4 2lg:hidden"></div>
-                <table>
-                  <tbody>
-                    {seatIndexsUp?.map((row, rowIndex) => (
-                      <tr key={rowIndex} className="flex items-center gap-1 justify-between">
-                        {row.map((seat, seatIndex) => (
-                          <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
-                            {seat ? (
-                              <>
-                                <img width="32" src={Available} alt="seat icon" className='schedule-seat-img' />
-                                <span
-                                  className={`absolute text-sm font-semibold lg:text-[10px] 'text-[#A2ABB3]' top-1 schedule-seat-name`}
-                                >
-                                  {seat}
-                                </span>
-                              </>
-                            ) : (
-                              // Empty <td> for spacing, maintain height for alignment
-                              <div style={{ width: '32px', height: '32px' }}></div>
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div></>
+              {seatCount === 36 ? (<></>) : (<>
+                <div className="schedule-seat-line"></div>
+                <div className="flex min-w-[50%] flex-col md:min-w-[153px] schedule-seat">
+                  <div className="icon-gray flex w-full justify-center p-2 text-sm">
+                    <span style={{ fontSize: '16px', fontWeight: 'bold' }}>Tầng Trên</span>
+                  </div>
+                  <div className="divide mb-4 2lg:hidden"></div>
+                  <table>
+                    <tbody>
+                      {seatIndexsUp?.map((row, rowIndex) => (
+                        <tr key={rowIndex} className="flex items-center gap-1 justify-between">
+                          {row.map((seat, seatIndex) => (
+                            <td key={seatIndex} className="relative mt-1 flex justify-center text-center">
+                              {seat ? (
+                                <>
+                                  <img width="32"
+                                    src={is_booked(seat)}
+                                    alt="seat icon" className='schedule-seat-img'
+                                    onClick={() => handleSelected(seat)}
+                                  />
+                                  <span
+                                    className={`absolute text-sm font-semibold lg:text-[10px] 'text-[#A2ABB3]' top-1 schedule-seat-name`}
+                                  >
+                                    {seat}
+                                  </span>
+                                </>
+                              ) : (
+                                // Empty <td> for spacing, maintain height for alignment
+                                <div style={{ width: '32px', height: '32px' }}></div>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div></>
               )}
 
             </div>
             <div className="schedule-right-center-seat-note">
               <div className="ml-4 mt-5 flex flex-col gap-4 text-[13px] font-normal schedule-seat-note">
-                <span className="mr-8 flex items-center seat-noted">
-                  <img src={Booked} alt="" />
-                  Đã Được Đặt
-                </span>
-                <span className="mr-8 flex items-center seat-noted">
+              <span className="mr-8 flex items-center seat-noted">
                   <img src={Available} alt="" />Trống
                 </span><span className=" flex items-center seat-noted">
                   <img src={Selected} alt="" />
                   Đã Chọn
                 </span>
+                <span className="mr-8 flex items-center seat-noted">
+                  <img src={Booked} alt="" />
+                  Đã Được Đặt
+                </span>
+                
 
               </div>
             </div>
           </div>
         </div>
         <div className="schedule-right-bot">
+          <div className="schedule-right-bot-h6" style={{display:"flex"}}>
           <h6>Chỗ Đã Chọn:</h6>
+          {selectedSeats.length > 0 && (
+            <button className='schedule-right-bot-h6-btn'
+              onClick={handleReplace}
+            >
+              <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />        
+              </button>
+          )}
+          </div>
           <div className="schedule-selected-seat-container">
-            <div className="schedule-selected-seat-box">1</div>
-            <div className="schedule-selected-seat-box">2</div>
-            <div className="schedule-selected-seat-box">3</div>
+            {selectedSeats.length > 0 ? (
+              selectedSeats.map((seat) => (
+                <div key={seat} className="schedule-selected-seat-box">{seat}</div>
+              ))
+            ) : (
+              <p style={{ fontSize: "12px" }}>Chưa chọn ghế nào.</p>
+            )}
           </div>
           <div className="schedule-total-prices">
-            <h6>Tổng Tiền:</h6> <span>500000VND</span>
+            <h6>Tổng Tiền:</h6> <span>{formatCurrency(Total())}</span>
           </div>
           <Link className='btn btn-primary' to={'/schedule/detail/payment'}>Xác Nhận</Link>
         </div>
