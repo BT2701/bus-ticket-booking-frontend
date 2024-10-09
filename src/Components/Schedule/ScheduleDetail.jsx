@@ -12,6 +12,7 @@ import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
 import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
 import formatCurrency from '../sharedComponents/formatMoney';
+import NotificationDialog from '../sharedComponents/notificationDialog';
 
 const ScheduleDetail = () => {
   const { schedule, updateSchedule } = useSchedule();
@@ -22,13 +23,22 @@ const ScheduleDetail = () => {
   const [seatStatus, setSeatStatus] = useState({}); // Trạng thái ghế lưu bằng seat index
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [price, setPrice] = useState(0);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+  };
 
   const handleSelected = (seatIndex) => {
     // Kiểm tra nếu ghế đã được đặt trong bookingList
     const isBooked = bookingList.some((booking) => seatIndex === booking.seatnum);
 
     if (isBooked) {
-      alert("Chỗ đã được đặt");
+      handleOpenDialog(true);
     } else if (seatStatus[seatIndex] === Selected) {
       // Nếu ghế đang là Selected, chuyển lại về Available
       setSeatStatus((prevStatus) => ({
@@ -50,7 +60,7 @@ const ScheduleDetail = () => {
 
   const is_booked = (seatIndex) => {
     // Kiểm tra nếu ghế có trong danh sách bookingList
-    const isBooked = bookingList.some((booking) => seatIndex === booking.seatnum);
+    const isBooked = bookingList?.some((booking) => seatIndex === booking.seatnum);
 
     // Nếu ghế đã được đặt, trả về hình ảnh Booked
     if (isBooked) {
@@ -132,12 +142,22 @@ const ScheduleDetail = () => {
     return price * selectedSeats.length;
   }
   useEffect(() => {
-
+    if(!schedule){
+      const savedSchedule = localStorage.getItem('schedule');
+      if (savedSchedule) {
+        updateSchedule(JSON.parse(savedSchedule));
+      } else {
+        console.error('No schedule data found');
+      }
+    }
     setSeatCount(schedule?.bus.category.seat_count);
     designSeatIndex(seatCount);
     setBookingList(schedule?.bookings);
     setPrice(schedule?.bus.category.price);
-  }, [seatCount])
+  }, [seatCount, schedule]);
+  if (!schedule) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="schedule-container">
       <div className="schedule-left">
@@ -319,7 +339,13 @@ const ScheduleDetail = () => {
       <div className="schedule-back">
         <Link to={'/schedule'} className='btn btn-secondary schedule-back-btn'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }} /></Link>
       </div>
+      <NotificationDialog
+        message="Chỗ đã được đặt!"
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+      />
     </div>
+    
 
   );
 };
