@@ -1,4 +1,5 @@
-import React, { useReducer, createContext, useContext } from 'react';
+import React, { useReducer, createContext, useContext, useEffect } from 'react';
+import { getSessionUser } from '../Components/Utils/authentication';
 
 const initialState = {
     id: "",
@@ -37,6 +38,16 @@ export const useUserContext = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
     const [state, dispatch] = useReducer(userReducer, initialState);
+
+    useEffect(() => {
+        const user = getSessionUser();
+        if(user !== null) {
+            dispatch({
+              type: 'SET_USER',
+              payload: user
+            });
+        }
+    }, [])
 
     return (
         <UserContext.Provider value={{ state, dispatch }}>

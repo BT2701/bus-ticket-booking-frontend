@@ -3,15 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons"; // Import the solid icons\
 import { usePageContext } from "../../Context/PageProvider";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 import { useUserContext } from "../../Context/UserProvider";
+
 const Header = () => {
   const { page, setPage } = usePageContext();
   const { state: user } = useUserContext();
-
-  useEffect(() => {
-    console.log(page);
-  }, [page]);
 
   return (
     <div className="header-container">

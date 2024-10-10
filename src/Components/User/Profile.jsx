@@ -10,9 +10,11 @@ import { convertTimestampToDate } from '../Utils/TransferDate';
 import { removeSessionAndLogoutUser } from '../Utils/authentication';
 import ApiService from '../Utils/apiService';
 import notificationWithIcon from '../Utils/notification';
+import ChangePassword from '../Auth/ChangePassword';
 
 const Profile =()=>{
     const [editProfileModal, setEditProfileModal] = useState(false);
+    const [changePasswordModal, setChangePasswordModal] = useState(false);
     const { state: user, dispatch } = useUserContext();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ const Profile =()=>{
         })
         .catch((err) => {
             setError(err?.response?.data?.message || err?.message);
-            notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản với lỗi : ' +  (err?.response?.data?.message || err?.message));
+            notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản vì : ' + (err?.response?.data?.message || err?.message));
         })
         .finally(() => { 
             setLoading(false);
@@ -97,7 +99,16 @@ const Profile =()=>{
                     type='primary'
                     size='large'
                     >
-                        Edit Profile
+                        Cập nhật thông tin
+                </Button>
+                <Button
+                    style={{ marginTop: '10px', marginRight: '20px' }}
+                    onClick={() => setChangePasswordModal(true)}
+                    shape='default'
+                    type='primary'
+                    size='large'
+                    >
+                        Đổi mật khẩu
                 </Button>
                 <Button style={{ marginTop: '10px', marginRight: '20px' }}
                     onClick={handleLogout}
@@ -105,7 +116,7 @@ const Profile =()=>{
                     variant="solid"
                     size="large"
                 >
-                    Logout
+                    Đăng xuất
                 </Button>
             </div>
 
@@ -114,6 +125,12 @@ const Profile =()=>{
                 <EditProfile
                     editProfileModal={editProfileModal}
                     setEditProfileModal={setEditProfileModal}
+                />
+            )}
+            {changePasswordModal && (
+                <ChangePassword
+                    changePasswordModal={changePasswordModal}
+                    setChangePasswordModal={setChangePasswordModal}
                 />
             )}
         </div>

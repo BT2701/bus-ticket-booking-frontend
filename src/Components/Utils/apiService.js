@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { getSessionToken, removeSessionAndLogoutUser } from './authentication';
+import { getRefreshToken, getSessionToken, removeSessionAndLogoutUser, setSessionAccessAndRefreshToken } from './authentication';
+import notificationWithIcon from './notification';
 
 // Lấy URL của API từ biến môi trường trong React
 const ApiService = axios.create({
@@ -32,13 +33,41 @@ ApiService.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error?.response?.data?.result_code === 11) {
-      removeSessionAndLogoutUser();
+    // Kiểm tra lỗi 403 Forbidden
+    if (error.response.status === 403) {
+      notificationWithIcon('error', 'Lỗi', 'Bạn không có quyền truy cập vào địa chỉ này!');
+      // return Promise.reject(error); 
+      return; 
+    }
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // Đảm bảo không lặp lại request
+      try {
+          const refreshToken = getRefreshToken();
+          if(refreshToken === null) {
+            // Nếu không có refresh token vì không nhớ mật khẩu
+            removeSessionAndLogoutUser();
+            notificationWithIcon('error', 'Lỗi', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            window.location.href = '/login'; 
+
+            return Promise.reject(error); 
+          }
+
+          const response = await axios.post('http://localhost:8080/api/customers/refreshToken', { refreshToken });
+          const { access_token: accessToken, refresh_token: newRefreshToken } = response.data.data;
+          setSessionAccessAndRefreshToken(accessToken, newRefreshToken);
+          ApiService.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          return ApiService(originalRequest); // Gửi lại request với access token mới
+
+      } catch (refreshError) {
+          // Nếu refresh token hết hạn hoặc không hợp lệ
+          removeSessionAndLogoutUser();
+          notificationWithIcon('error', 'Lỗi', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          window.location.href = '/login'; 
+
+          return Promise.reject(refreshError); 
+      }
     }
 
-    if (error?.response?.status === 401 && !originalRequest?._retry) {
-      removeSessionAndLogoutUser();
-    }
 
     return Promise.reject(error);
   }
