@@ -40,6 +40,10 @@ export const setSessionAccessAndRefreshToken = (accessToken, refreshToken) => {
   localStorage.setItem(APP_REFRESH_TOKEN, refreshToken);
 };
 
+export const setSessionAccess = (accessToken) => {
+  localStorage.setItem(APP_ACCESS_TOKEN, accessToken);
+};
+
 export const setSessionUser = (user) => {
   localStorage.setItem(APP_USER_STORAGE, JSON.stringify(user));
 };

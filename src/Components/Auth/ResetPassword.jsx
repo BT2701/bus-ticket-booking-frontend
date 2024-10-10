@@ -40,7 +40,7 @@ const ResetPassword =()=>{
                 navigate("/login");
             })
             .catch((err) => {
-                notificationWithIcon('error', 'Lỗi', 'Không thể khôi phục mật khẩu của bạn với lỗi : ' +  (err?.response?.data?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể khôi phục mật khẩu của bạn vì : ' + (err?.response?.data?.message || err?.message));
             })
             .finally(() => { 
                 setLoading(false);

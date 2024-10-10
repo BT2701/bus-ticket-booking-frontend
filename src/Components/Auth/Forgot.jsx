@@ -20,7 +20,7 @@ const Forgot =()=>{
                 setLoading(false);
             })
             .catch((err) => {
-              notificationWithIcon('error', 'Lỗi', 'Không thể gửi thông tin xác nhận qua email của bạn với lỗi : ');
+              notificationWithIcon('error', 'Lỗi', 'Không thể gửi thông tin xác nhận qua email của bạn vì : ' + (err?.response?.data?.message || err?.message));
             })
             .finally(() => { 
                 setLoading(false);
