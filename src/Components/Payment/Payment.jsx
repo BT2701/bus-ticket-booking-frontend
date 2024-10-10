@@ -9,8 +9,12 @@ import { colors } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { useSchedule } from '../../Context/ScheduleContext';
+import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
+import formatCurrency from '../sharedComponents/formatMoney';
 
 const Payment = () => {
+  const { schedule, updateSchedule, seatList,finalTotal, updateSeatList,updateTotal,getSeatCount } = useSchedule();
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState({
     value: 'normal',
@@ -30,7 +34,20 @@ const Payment = () => {
     setSelected(option);
     setIsOpen(false);
   };
-
+  useEffect(()=>{
+    if(!seatList || !finalTotal){
+      const savedSeats = localStorage.getItem('selectedSeats');
+      const savedTotal = localStorage.getItem('total');
+      const savedSchedule= localStorage.getItem('schedule');
+      if (savedSeats && savedTotal) {
+        updateSeatList(JSON.parse(savedSeats));
+        updateTotal(JSON.parse(savedTotal));
+        updateSchedule(JSON.parse(savedSchedule));
+      } else {
+        console.error('No schedule data found');
+      }
+    }
+  },[seatList, finalTotal])
   return (
     <div className="payment-container">
       <div className="payment-left">
@@ -80,24 +97,30 @@ const Payment = () => {
           </div>
           <div className="payment-booking-status-infor">
             <div className="payment-booking-status-content">
-              <label>Từ:</label> <span>Location1</span>
+              <label>Từ:</label> <span>{schedule?.route.from.name}</span>
               <div className="payment-booking-status-line1"></div>
-              <label>Đến:</label> <span>Location2</span>
+              <label>Đến:</label> <span>{schedule?.route.to.name}</span>
             </div>
             <div className="payment-booking-status-content">
-            <label>Xuất phát lúc:</label> <span>4:00AM</span>
+            <label>Xuất phát lúc:</label> <span>{formatTimeFromDatabase(schedule?.departure)}</span>
               <div className="payment-booking-status-line2"></div>
-              <label>Dự kiến đến:</label> <span>3:00PM</span>
+              <label>Dự kiến đến:</label> <span>{formatTimeFromDatabase(schedule?.arrival)}</span>
             </div>
             <div className="payment-booking-status-content">
-              <label>Số ghế đã đặt:</label><span>10</span>
+              <label>Số xe:</label><span>{schedule?.bus.busnumber}</span>
             </div>
             <div className="payment-booking-status-content">
-              <label>Tổng tiền:</label><span className='payment-total'>500000VND</span>
+              <label>Loại xe:</label><span>{schedule?.bus.category.name}</span>
+            </div>
+            <div className="payment-booking-status-content">
+              <label>Số ghế đã đặt:</label><span>{getSeatCount()}</span>
+            </div>
+            <div className="payment-booking-status-content">
+              <label>Tổng tiền:</label><span className='payment-total'>{formatCurrency(finalTotal)}</span>
             </div>
           </div>
         </div>
-        <Button className='btn btn-primary payment-btn'>Thanh Toán</Button>
+        <Button className='btn btn-primary payment-btn'>Đặt Chỗ</Button>
       </div>
       <div className="payment-back">
         <Link to={'/schedule/detail'} className='btn btn-secondary'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }}/></Link>

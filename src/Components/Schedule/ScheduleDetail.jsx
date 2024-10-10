@@ -6,16 +6,17 @@ import Available from '../../Static/IMG/available.png'
 import BusDefault from '../../Static/IMG/bus.png'
 import Guy from '../../Static/IMG/guy.jpg'
 import { Button } from 'react-bootstrap'; // For Bootstrap Button
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
 import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
 import formatCurrency from '../sharedComponents/formatMoney';
 import NotificationDialog from '../sharedComponents/notificationDialog';
+import notificationWithIcon from '../Utils/notification';
 
 const ScheduleDetail = () => {
-  const { schedule, updateSchedule } = useSchedule();
+  const { schedule, updateSchedule, updateSeatList, updateTotal } = useSchedule();
   const [seatIndexsUp, setSeatIndexsUp] = useState([]);
   const [seatIndexsDown, setSeatIndexsDown] = useState([]);
   const [seatCount, setSeatCount] = useState(0);
@@ -24,6 +25,8 @@ const ScheduleDetail = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [price, setPrice] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   const handleOpenDialog = () => {
     setIsDialogOpen(true);
@@ -141,8 +144,20 @@ const ScheduleDetail = () => {
   const Total = () => {
     return price * selectedSeats.length;
   }
+  const handleSubmit = () => {
+    if (selectedSeats.length === 0) {
+      notificationWithIcon('info', 'Information', 'Mời chọn ít nhất một chỗ!');
+    }
+    else {
+      updateSeatList(selectedSeats);
+      updateTotal(Total());
+      localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+      localStorage.setItem('total', JSON.stringify(Total()));
+      navigate('/schedule/detail/payment');
+    }
+  }
   useEffect(() => {
-    if(!schedule){
+    if (!schedule) {
       const savedSchedule = localStorage.getItem('schedule');
       if (savedSchedule) {
         updateSchedule(JSON.parse(savedSchedule));
@@ -294,7 +309,7 @@ const ScheduleDetail = () => {
             </div>
             <div className="schedule-right-center-seat-note">
               <div className="ml-4 mt-5 flex flex-col gap-4 text-[13px] font-normal schedule-seat-note">
-              <span className="mr-8 flex items-center seat-noted">
+                <span className="mr-8 flex items-center seat-noted">
                   <img src={Available} alt="" />Trống
                 </span><span className=" flex items-center seat-noted">
                   <img src={Selected} alt="" />
@@ -304,22 +319,22 @@ const ScheduleDetail = () => {
                   <img src={Booked} alt="" />
                   Đã Được Đặt
                 </span>
-                
+
 
               </div>
             </div>
           </div>
         </div>
         <div className="schedule-right-bot">
-          <div className="schedule-right-bot-h6" style={{display:"flex"}}>
-          <h6>Chỗ Đã Chọn:</h6>
-          {selectedSeats.length > 0 && (
-            <button className='schedule-right-bot-h6-btn'
-              onClick={handleReplace}
-            >
-              <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />        
+          <div className="schedule-right-bot-h6" style={{ display: "flex" }}>
+            <h6>Chỗ Đã Chọn:</h6>
+            {selectedSeats.length > 0 && (
+              <button className='schedule-right-bot-h6-btn'
+                onClick={handleReplace}
+              >
+                <FontAwesomeIcon icon={faSyncAlt} className="mr-2" />
               </button>
-          )}
+            )}
           </div>
           <div className="schedule-selected-seat-container">
             {selectedSeats.length > 0 ? (
@@ -333,7 +348,7 @@ const ScheduleDetail = () => {
           <div className="schedule-total-prices">
             <h6>Tổng Tiền:</h6> <span>{formatCurrency(Total())}</span>
           </div>
-          <Link className='btn btn-primary' to={'/schedule/detail/payment'}>Xác Nhận</Link>
+          <Button className='btn btn-primary' onClick={handleSubmit}>Xác Nhận</Button>
         </div>
       </div>
       <div className="schedule-back">
@@ -345,7 +360,7 @@ const ScheduleDetail = () => {
         onClose={handleCloseDialog}
       />
     </div>
-    
+
 
   );
 };

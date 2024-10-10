@@ -36,7 +36,7 @@
 
 /*  */
 .payment-right{
-    max-width: 30%;
+    max-width: 50%;
     width: 100%;
 }
 .payment-booking-status{
@@ -48,7 +48,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     background-color: rgba(5, 125, 136, 0.1);
-    margin-top: 3em;
+    margin-top: 1em;
     margin-bottom: 1em;
 }
 .payment-booking-status-title{
@@ -79,7 +79,7 @@
     font-weight: 550;
 }
 .payment-booking-status-line1{
-    width: 40%;
+    width: 55%;
     height: 1px;
     background-color: gray;
     margin-bottom: -0.6em;
