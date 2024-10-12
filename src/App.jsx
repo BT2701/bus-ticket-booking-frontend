@@ -29,7 +29,7 @@ import { useEffect } from "react";
 import { getSessionUser } from "./Components/Utils/authentication";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
-
+import Test from "./Components/News/NewsPage";
 
 const App = () => {
   const { dispatch } = useUserContext();
@@ -39,20 +39,20 @@ const App = () => {
       type: 'SET_USER',
       payload: user
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <Router>
-              <PageProvider>
-      <UserProvider>
+      <PageProvider>
+        <UserProvider>
           <ScheduleProvider>
-                  <Routes>
-                    <Route path="/*" element={<MainApp />} />
-                  </Routes>
+            <Routes>
+              <Route path="/*" element={<MainApp />} />
+            </Routes>
           </ScheduleProvider>
-      </UserProvider>
-              </PageProvider>
+        </UserProvider>
+      </PageProvider>
     </Router>
   );
 };
@@ -71,15 +71,16 @@ const MainApp = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/schedule/detail" element={<ScheduleDetail />} />
-          <Route path="/schedule/detail/payment" element={<Payment/>}/>
+          <Route path="/schedule/detail/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/invoice" element={<Invoice />} />
-          
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/news" element={<Test />} />
         </Routes>
       </div>
       <Footer />
