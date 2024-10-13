@@ -28,18 +28,18 @@ const PopularLine = ({ route }) => {
             <div className="d-table-cell align-middle">
               <h5 className="m-0">
                 <span className="text-white">
-                 {route[4]}
+                  {route[4]}
                   <FontAwesomeIcon
                     icon={faArrowRight}
                     style={{ padding: "0px 6px" }}
                   />
-                 {route[5]}
+                  {route[5]}
                 </span>
               </h5>
               <p className="text-white mb-0">{route[1]}km - {route[2]}giờ</p>
 
               <p className="text-white">
-               {route[3]}đ
+                {route[3]}đ
                 <span>/Vé</span>
               </p>
             </div>

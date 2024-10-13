@@ -28,23 +28,26 @@ import { UserProvider, useUserContext } from "./Context/UserProvider";
 import { useEffect } from "react";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
-
+import Test from "./Components/News/NewsPage";
 
 const App = () => {
   const { state } = useUserContext();
 
   useEffect(() => {
+
+    
     console.log('State updated:', state);
   }, [state]);
+
 
   return (
     <Router>
       <PageProvider>
         <UserProvider>
           <ScheduleProvider>
-                  <Routes>
-                    <Route path="/*" element={<MainApp />} />
-                  </Routes>
+            <Routes>
+              <Route path="/*" element={<MainApp />} />
+            </Routes>
           </ScheduleProvider>
         </UserProvider>
       </PageProvider>
@@ -66,15 +69,16 @@ const MainApp = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/schedule/detail" element={<ScheduleDetail />} />
-          <Route path="/schedule/detail/payment" element={<Payment/>}/>
+          <Route path="/schedule/detail/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/invoice" element={<Invoice />} />
-          
+
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/news" element={<Test />} />
         </Routes>
       </div>
       <Footer />

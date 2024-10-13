@@ -66,7 +66,7 @@ const Header = () => {
                       onClick={() => {
                         setPage("news");
                       }}
-                      to="#"
+                      to="/news"
                     >
                       Tin tức
                     </Link>
