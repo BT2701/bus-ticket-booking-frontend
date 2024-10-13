@@ -38,7 +38,7 @@ const Register =()=>{
             })
             .catch((err) => {
                 setLoading(false);
-                notificationWithIcon('error', 'Lỗi', 'Không thể đăng ký tài khoản với lỗi : ' +  (err?.response?.data?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể đăng ký tài khoản vì : ' + (err?.response?.data?.message || err?.message));
             }).finally(() => {
                 setLoading(false);
             })

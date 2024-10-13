@@ -26,21 +26,19 @@ import Payment from "./Components/Payment/Payment";
 import Invoice from "./Components/Invoice/TicketLookup";
 import { UserProvider, useUserContext } from "./Context/UserProvider";
 import { useEffect } from "react";
-import { getSessionUser } from "./Components/Utils/authentication";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
 import Test from "./Components/News/NewsPage";
 
 const App = () => {
-  const { dispatch } = useUserContext();
+  const { state } = useUserContext();
+
   useEffect(() => {
-    const user = getSessionUser();
-    dispatch({
-      type: 'SET_USER',
-      payload: user
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+
+    
+    console.log('State updated:', state);
+  }, [state]);
+
 
   return (
     <Router>

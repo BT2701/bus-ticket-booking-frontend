@@ -18,7 +18,6 @@ const EditProfile =({ editProfileModal, setEditProfileModal })=>{
     const [form] = Form.useForm();
     const { state: user, dispatch } = useUserContext();
 
-    // set form data from API data
     useEffect(() => {
         form.setFieldsValue({
             name: user?.name || "",
@@ -43,7 +42,7 @@ const EditProfile =({ editProfileModal, setEditProfileModal })=>{
                 setLoading(false);
                 dispatch({
                     type: 'SET_USER',
-                    payload: response
+                    payload: response?.data
                 });
                 setSessionUserKeyAgainstValue('id', response?.data?.id);
                 setSessionUserKeyAgainstValue('name', response?.data?.name);
@@ -53,11 +52,12 @@ const EditProfile =({ editProfileModal, setEditProfileModal })=>{
                 setSessionUserKeyAgainstValue('address', response?.data?.address);
 
                 form.resetFields();
+                notificationWithIcon('success', 'Update', 'Cập nhật thông tin thành công !');
                 setEditProfileModal(false);
             })
             .catch((err) => {
                 setLoading(false);
-                notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản với lỗi : ' +  (err?.response?.data?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản vì : ' + (err?.response?.data?.message || err?.message));
             })
             .finally(() => { 
                 setLoading(false);
