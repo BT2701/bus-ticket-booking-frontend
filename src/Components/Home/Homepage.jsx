@@ -6,7 +6,6 @@ import axios from 'axios';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "./Homepage.css"
 import { faAnglesRight, faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -65,15 +64,16 @@ const Homepage = () => {
       </div>
       <div className="container p-0">
         <h2 className="section-title text-center my-5">Tuyến Phổ Biến</h2>
-        <div class="mb-3">
-          <label for="" class="form-label">Số lượng </label>
+        <div class="mb-3 homepage-limit">
           <input
+          className="homepage-btn--limit"
             type="number"
             onChange={(e) => setLimit(e.target.value)} // Update limit state on input change
-            placeholder="Enter number limit"
+            placeholder="Số lượng tuyến"
             min="1"
             max="10"
           />
+          <p>*Xem thêm các tuyến phổ biến khác</p>
         </div>
 
         <div >

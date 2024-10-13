@@ -28,6 +28,12 @@ const Payment = () => {
     label: 'Thanh toán tại quầy',
     icon: money,
   });
+  const [errors, setErrors] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    paymentMethod: ''
+  });
 
   const options = [
     { value: 'normal', label: 'Thanh toán tại quầy', icon: money },
@@ -43,6 +49,38 @@ const Payment = () => {
     setIsOpen(false);
   };
   const handleBooking = () => {
+    // Reset các lỗi trước khi kiểm tra
+    setErrors({ fullName: '', email: '', phone: '', paymentMethod: '' });
+
+    let newErrors = {};
+    // Kiểm tra các trường input
+    if (!fullName) newErrors.fullName = 'Vui lòng nhập họ và tên';
+    
+    // Kiểm tra định dạng email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      newErrors.email = 'Vui lòng nhập email';
+    } else if (!emailPattern.test(email)) {
+      newErrors.email = 'Email không hợp lệ. Ví dụ đúng: example@gmail.com';
+    }
+
+    // Kiểm tra số điện thoại
+    if (!phone) {
+      newErrors.phone = 'Vui lòng nhập số điện thoại';
+    } else if (phone.length !== 10) {
+      newErrors.phone = 'Số điện thoại phải có 10 số';
+    }
+
+    if (selected.label === 'Chọn phương thức') {
+      newErrors.paymentMethod = 'Vui lòng chọn phương thức thanh toán';
+    }
+
+    // Kiểm tra xem có lỗi hay không
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     if(paymentMethod==='normal'){
       ApiService.post('/api/booking/', {
         email: email,
@@ -91,8 +129,10 @@ const Payment = () => {
           className='form-control' 
           placeholder='Nguyen Van A' 
           value={fullName}
-          onChange={(e) => setFullName(e.target.value)} // Cập nhật state
+          onChange={(e) => setFullName(e.target.value)}
+          required 
         />
+        {errors.fullName && <div className="error-message" style={{ color: 'red' }}>{errors.fullName}</div>}
       </div>
       <div className="payment-left-information">
         <label htmlFor="payment-email">Email:</label>
@@ -102,8 +142,10 @@ const Payment = () => {
           className='form-control' 
           placeholder='nva123@gmail.com' 
           value={email}
-          onChange={(e) => setEmail(e.target.value)} // Cập nhật state
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
+        {errors.email && <div className="error-message" style={{ color: 'red' }}>{errors.email}</div>}
       </div>
       <div className="payment-left-information">
         <label htmlFor="payment-phone">Số Điện Thoại:</label>
@@ -113,8 +155,12 @@ const Payment = () => {
           className='form-control' 
           placeholder='03xxxxxxxx' 
           value={phone}
-          onChange={(e) => setPhone(e.target.value)} // Cập nhật state
+          onChange={(e) => setPhone(e.target.value)} 
+          required
+          maxLength={10}
+          minLength={10}
         />
+        {errors.phone && <div className="error-message" style={{ color: 'red' }}>{errors.phone}</div>}
       </div>
       <div className="payment-left-information">
         <label htmlFor="payment-wallet">Phương Thức Thanh Toán:</label>
