@@ -1,0 +1,9 @@
+.apply-button {
+    color: blue; /* Màu mặc định */
+    cursor: pointer; /* Đổi con trỏ chuột khi hover */
+  }
+  
+  .apply-button:hover {
+    color: red; /* Màu khi hover */
+  }
+  
