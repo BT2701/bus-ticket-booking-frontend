@@ -59,6 +59,7 @@ const Search = () => {
           result[5], // duration
           result[6], // từ
           result[7], // đến
+          result[8], // id
         ];
       });
 

@@ -1,6 +1,27 @@
 import { Link } from "react-router-dom";
+import { useSchedule } from "../../Context/ScheduleContext";
+import { useEffect } from "react";
+import axios from "axios";
+
 
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
+  const { schedule, updateSchedule } = useSchedule();
+  const handleSelectSchedule= (scheduleId)=>{
+    console.log(scheduleId);
+    const fetchData = async () => {
+      try {
+        const schedulesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/schedule?id=${scheduleId}`);     //dat tam id
+        updateSchedule(schedulesResponse.data);
+        localStorage.setItem('schedule', JSON.stringify(schedulesResponse.data));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  };
+
+  console.log("busData:", busData);
   return (
     <div className="container m-0 p-0">
       <div className="card mb-3 shadow-sm">
@@ -39,7 +60,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
           <div className="col-md-3 text-center d-flex flex-column justify-content-center align-items-center">
           <h4 className="text-primary fw-bold">{busData[3]}</h4> {/* Hiển thị giá vé */}
             <p className="text-muted mb-1">Còn {busData[4]} chỗ trống</p> {/* Hiển thị số chỗ còn lại */}
-            <Link className="btn btn-warning text-white mb-2" to={'/schedule/detail'}>
+            <Link className="btn btn-warning text-white mb-2" to={'/schedule/detail'} onClick={() => handleSelectSchedule(busData[8])}>
               Chọn chuyến
             </Link>
             <p className="text-danger fw-bold">KHÔNG CẦN THANH TOÁN TRƯỚC</p>

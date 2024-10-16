@@ -59,11 +59,13 @@ const Homepage = () => {
         <div className="col"></div>
       </div>
       <div>
-        <h2 className="text-center mt-5">Tìm Kiếm Tuyến Xe</h2>
-        <SearchInput />
+\        <SearchInput />
       </div>
       <div className="container p-0">
-        <h2 className="section-title text-center my-5">Tuyến Phổ Biến</h2>
+        <h2 className="section-title text-center my-5"></h2>
+        <div className='d-flex justify-content-center'>
+          <strong className='fs-2' style={{ color: '#1E90FF ' }}>Tuyến Phổ Biến</strong>
+        </div>
         <div class="mb-3 homepage-limit">
           <input
           className="homepage-btn--limit"

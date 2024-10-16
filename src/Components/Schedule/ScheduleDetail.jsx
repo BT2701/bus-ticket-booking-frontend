@@ -352,7 +352,9 @@ const ScheduleDetail = () => {
         </div>
       </div>
       <div className="schedule-back">
-        <Link to={'/schedule'} className='btn btn-secondary schedule-back-btn'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }} /></Link>
+        <button onClick={() => navigate(-1)} className='btn btn-secondary schedule-back-btn'>
+          <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }} />
+        </button>
       </div>
       <NotificationDialog
         message="Chỗ đã được đặt!"
@@ -360,8 +362,6 @@ const ScheduleDetail = () => {
         onClose={handleCloseDialog}
       />
     </div>
-
-
   );
 };
 
