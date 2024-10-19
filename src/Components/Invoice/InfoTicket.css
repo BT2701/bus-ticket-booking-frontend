@@ -32,5 +32,15 @@
   color: deepskyblue; /* Màu sắc cho liên kết đang hoạt động */
   font-weight: bold; /* Đậm chữ cho dễ nhận biết */
 }
+.btn-link-red {
+  color: red;
+  text-decoration: none; /* Bỏ gạch chân */
+}
+
+.btn-link-red:hover {
+  color: darkred; /* Màu khi hover */
+  text-decoration: none; /* Vẫn bỏ gạch chân khi hover */
+}
+
 
 

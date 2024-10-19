@@ -2,12 +2,10 @@ import SearchInput from "../Search/SearchInput";
 import PopularLine from "./PopularLine";
 import React, { useEffect, useState } from 'react'; // Make sure to import useState
 import { Link } from "react-router-dom";
-import axios from 'axios';
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { faAnglesRight, faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ApiService from '../Utils/apiService';
+
 
 const Homepage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,8 +32,8 @@ const Homepage = () => {
     const fetchRoutes = async () => {
       if (limit > 0) { // Ensure that limit is positive before making the request
         try {
-          const response = await axios.get(`http://localhost:8080/api/most-popular-route/${limit}`);
-          setRoutes(response.data);
+          const response = await ApiService.get(`http://localhost:8080/api/most-popular-route/${limit}`);
+          setRoutes(response);
         } catch (error) {
           setError('Error fetching routes');
           console.error(error);

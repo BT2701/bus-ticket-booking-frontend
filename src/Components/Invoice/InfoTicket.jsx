@@ -2,11 +2,26 @@ import React, { useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import Modal from 'react-modal';
 import './InfoTicket.css'; // Nhập file CSS
-
+import { cancelTicket } from './ticketUtils'; // Import hàm fetch dữ liệu
+import notificationWithIcon from '../Utils/notification'; // Nhập hàm thông báo
 
 // Thiết lập modal cho React
 Modal.setAppElement('#root');
 
+const InfoTicket = ({ TicketData }) => { 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [TicketStatus, setTicketStatus] = useState(TicketData[8]); // Khởi tạo state với trạng thái ban đầu
+  
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 1: return 'text-success'; // Chưa sử dụng
+      case 2: return 'text-warning'; // Đã sử dụng
+      case 3: return 'text-danger'; // Đã hủy
+      default: return 'text-muted'; // Trạng thái không xác định
+    }
+  };
+
+  
 const formatTimestamp = (timestamp) => {
   const date = new Date(timestamp);
   const formattedTime = date.toLocaleTimeString('vi-VN', {
@@ -28,8 +43,25 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-const InfoTicket = ({ TicketData }) => { 
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const handleCancelClick = async (ticketId) => {
+    // Xác nhận trước khi hủy vé
+    const confirmed = window.confirm('Bạn có chắc chắn muốn hủy vé này?');
+  
+    if (confirmed) {
+      const response = await cancelTicket(ticketId); // ID của yêu cầu đang được chọn
+  
+      if (response === true) {
+        setTicketStatus(3);
+        notificationWithIcon('success', 'Hủy vé thành công', '');
+        // Xử lý giao diện sau khi hủy thành công
+      } else {
+        notificationWithIcon('error', 'Có lỗi xảy ra trong quá trình hủy vé', '');
+      }
+    } else {
+      // Nếu người dùng không xác nhận, không làm gì cả
+      notificationWithIcon('info', 'Đã hủy quá trình hủy vé', ''); // Thông báo tùy chọn nếu cần
+    }
+  };
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -43,18 +75,13 @@ const InfoTicket = ({ TicketData }) => {
     return <div className="text-danger">Không có thông tin vé để hiển thị.</div>;
   }
 
-  // Kiểm tra tình trạng vé dựa vào TicketData[8]
-  let ticketStatus, ticketStatusColor;
-  if (TicketData[8] === 1) {
-    ticketStatus = 'Chưa sử dụng';
-    ticketStatusColor = 'text-success';
-  } else if (TicketData[8] === 2) {
-    ticketStatus = 'Đã sử dụng';
-    ticketStatusColor = 'text-danger';
-  } else {
-    ticketStatus = 'Trạng thái không xác định';
-    ticketStatusColor = 'text-muted';
-  }
+  // Tính toán thời gian hiện tại và thời gian vé khởi hành
+  const currentTime = new Date().getTime();
+  const ticketTime = TicketData[1]; // Giả sử TicketData[1] là timestamp
+
+  // Kiểm tra điều kiện hiển thị nút Hủy
+  const showCancelButton = (TicketStatus == 1 && ticketTime - currentTime < 12 * 60 * 60 * 1000); // Vé chưa sử dụng và cách giờ hiện tại dưới 12 tiếng
+
 
   return (
     <div className="container m-0 p-0 w-50">
@@ -97,7 +124,26 @@ const InfoTicket = ({ TicketData }) => {
             <div onClick={openModal} style={{ cursor: 'pointer' }}>
               <QRCodeCanvas value={"TicketID:"+TicketData[9]} size={76} /> {/* Tạo mã QR cho mã vé */}
             </div>
-            <strong className={`${ticketStatusColor} mb-1 fs-5`}>{ticketStatus}</strong> 
+
+            <>
+              {TicketStatus === 1 ? (
+                <strong className={`text-success fs-5`}>Chưa sử dụng</strong>
+              ) : TicketStatus === 2 ? (
+                <strong className={`text-warning fs-5`}>Đã sử dụng</strong>
+              ) : TicketStatus === 3 ? (
+                <strong className={`text-danger fs-5`}>Đã hủy</strong>
+              ) : (
+                <strong className={`text-muted fs-5`}>Trạng thái không xác định</strong>
+              )}
+            </>
+            {/* Hiển thị nút Hủy nếu điều kiện đúng */}
+            {showCancelButton && (
+              <button className="btn btn-link btn-link-red"
+              onClick={() => handleCancelClick(TicketData[9])}
+              >
+                Cancel Ticket
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"; // Import the solid icons
 import { handlePhoneNumberChange, handleCaptchaChange, lookupTicket } from './ticketUtils';
 import './InfoTicket.css'; // Nhập file CSS
+import notificationWithIcon from '../Utils/notification'; // Nhập hàm thông báo
+
 
 
 const TicketLookup = () => {
@@ -12,6 +14,28 @@ const TicketLookup = () => {
   const [captchaValue, setCaptchaValue] = useState(null);
   const [ticketData, setTicketData] = useState(null); // State để lưu trữ dữ liệu vé
   const [status, setStatus] = useState('unused'); // Trạng thái mặc định
+  const [isSearching, setIsSearching] = useState(null); // Trạng thái tìm kiếm
+
+  const updateQueryParams = (e) => {
+    e.preventDefault(); // Ngăn không cho form gửi theo cách thông thường
+    if (!captchaValue) {
+      notificationWithIcon('error', 'Vui lòng xác thực ReCAPTCHA.', '');
+    }else{
+      // Tạo đối tượng tham số URL
+      const params = new URLSearchParams(window.location.search);
+      if (phoneNumber && phoneNumber.length === 10) {
+        params.set('phoneNumber', phoneNumber);
+        params.set('status', status); // Sử dụng trạng thái hiện tại
+    }
+  
+    // Thay đổi URL mà không làm mới trang
+    window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+  
+    // Gọi hàm handleSubmit với status đã cập nhật
+    handleSubmit(status, e);
+    }
+  
+  };  
 
   // useEffect để đẩy số điện thoại lên URL query params khi phoneNumber thay đổi
   useEffect(() => {
@@ -21,20 +45,21 @@ const TicketLookup = () => {
       params.set('status', status);
     }
     window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
-  }, [phoneNumber, status]);
+  }, [status]);
 
   const handleSubmit = async (newStatus, e) => {
     e.preventDefault();
 
      // Kiểm tra số điện thoại trước khi gửi
     if (!/^0\d{9}$/.test(phoneNumber)) { // Kiểm tra số điện thoại
-      alert('Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.');
-      return; // Ngưng thực hiện nếu số điện thoại không hợp lệ
+      notificationWithIcon('error', 'Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.', '');
+
+            return; // Ngưng thực hiện nếu số điện thoại không hợp lệ
     }
 
     // Kiểm tra ReCAPTCHA trước khi gửi
     if (!captchaValue) {
-      alert('Vui lòng xác thực ReCAPTCHA.');
+      notificationWithIcon('error', 'Vui lòng xác thực ReCAPTCHA.', '');
       return; // Ngưng thực hiện nếu chưa xác thực
     }
 
@@ -45,9 +70,12 @@ const TicketLookup = () => {
 
     if (ticketData && ticketData.length > 0) {
       setTicketData(ticketData); // Cập nhật dữ liệu vé
+      setIsSearching(1); // Đặt trạng thái đã tìm kiếm
     } else {
+      if(isSearching==null){
+        notificationWithIcon('error', 'Không có thông tin', '');
+      }
       setTicketData(null); // Reset dữ liệu vé nếu không tìm thấy
-      alert('Không tìm thấy thông tin vé.');
     }
   };
   // Theo dõi sự thay đổi của status
@@ -70,7 +98,7 @@ const TicketLookup = () => {
   return (
     <div>
       {/* Hiển thị thanh điều hướng chỉ khi có dữ liệu vé */}
-      {ticketData && (
+      {isSearching ?(
         <div className='d-flex justify-content-center'>
           <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
@@ -89,27 +117,15 @@ const TicketLookup = () => {
                   <li className="nav-item">
                     <a className={`nav-link ${status === 'unused' ? 'selected' : ''}`} href="#" onClick={(e) => handleSubmit('unused', e)}>Chưa sử dụng</a>
                   </li>
-                  <li className="nav-item">
-                    <a className={`nav-link ${status === 'used' ? 'selected' : ''}`} href="#" onClick={(e) => handleSubmit('used', e)}>Đã sử dụng</a>
-                  </li>
                 </ul>
               </div>
             </div>
           </nav>
         </div>
-      )}
-
-      {/* Hiển thị InfoTicket nếu có dữ liệu, ngược lại hiển thị thông báo */}
-      {ticketData ? (
-        ticketData.map((ticket, index) => (
-          <div className='d-flex justify-content-center' key={index}>
-            <InfoTicket TicketData={ticket} />
-          </div>
-        ))
-      ) : (
+      ):(
         <div className="container mt-5">
           <h3 className="text-center mb-4">TRA CỨU THÔNG TIN ĐẶT VÉ</h3>
-          <form onSubmit={(e) => handleSubmit(status, e)}>
+          <form onSubmit={updateQueryParams}>
             <div className='d-flex justify-content-center'>
               <div className="form-group mb-3 w-25">
                 <h5>Số điện thoại</h5>
@@ -140,6 +156,25 @@ const TicketLookup = () => {
           </form>
         </div>
       )}
+
+      {/* Hiển thị InfoTicket nếu có dữ liệu, ngược lại hiển thị thông báo */}
+      
+      {isSearching ? (
+        ticketData ? (
+          ticketData.map((ticket, index) => (
+            <div className='d-flex justify-content-center' key={index}>
+              <InfoTicket TicketData={ticket} />
+            </div>
+          ))
+        ) : (
+          <div className='d-flex justify-content-center'>
+            <h5>Không có thông tin vé</h5>
+          </div>
+        )
+      ) : (
+        <div></div>
+      )}
+
     </div>
   );
 };

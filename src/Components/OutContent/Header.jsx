@@ -87,6 +87,19 @@ const Header = () => {
                   <li className="nav-item">
                     <Link
                       className={`nav-link homepage-nav-link ${
+                        page === "history" && "active"
+                      }`}
+                      onClick={() => {
+                        setPage("history");
+                      }}
+                      to="history"
+                    >
+                      Lịch sử chuyến đi
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      className={`nav-link homepage-nav-link ${
                         page === "contact" && "active"
                       }`}
                       onClick={() => {
@@ -108,6 +121,32 @@ const Header = () => {
                       to="about"
                     >
                       Về chúng tôi
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      className={`nav-link homepage-nav-link ${
+                        page === "staff/handleContact" && "active"
+                      }`}
+                      onClick={() => {
+                        setPage("staff/handleContact");
+                      }}
+                      to="staff/handleContact"
+                    >
+                      Xử lý liên hệ NV
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link
+                      className={`nav-link homepage-nav-link ${
+                        page === "staff/PrintTicket" && "active"
+                      }`}
+                      onClick={() => {
+                        setPage("staff/PrintTicket");
+                      }}
+                      to="staff/PrintTicket"
+                    >
+                      In vé
                     </Link>
                   </li>
                 </ul>

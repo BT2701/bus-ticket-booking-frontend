@@ -26,9 +26,26 @@ import ApiService from '../Utils/apiService';
         return []; // Trả về mảng rỗng trong trường hợp có lỗi
         }
     };
+
+    // Hàm lấy tất cả các tuyến đường
+    export const getAllRoutes = async () => {
+        try {
+            const response = await ApiService.get('http://localhost:8080/api/get-all-routes'); // Thay thế bằng URL API tương ứng
+            console.log(response)
+            return response; // Trả về dữ liệu từ API
+        } catch (error) {
+            console.error('Error fetching all routes:', error);
+            return []; // Trả về mảng rỗng trong trường hợp có lỗi
+        }
+    };
   
   export const search = async (pickup, dropoff, departureDate, filters = {}) => {
     const {  lowestPrice, highestPrice, busTypes, sort } = filters;
+     // Kiểm tra nếu các tham số bắt buộc không tồn tại
+     if (!pickup || !dropoff || !departureDate) {
+        console.error("Pickup, dropoff, and departureDate must be provided.");
+        return []; // Hoặc có thể trả về một giá trị phù hợp khác
+     }
 
     try {
         // Khởi tạo params với các tham số bắt buộc
@@ -55,7 +72,7 @@ import ApiService from '../Utils/apiService';
         console.log("Data sent:", params);
 
         const response = await ApiService.get('http://localhost:8080/api/search', { params });
-        console.log(response.status);
+        console.log(response);
 
         // if (response.status !== 200) {
         //     throw new Error('Failed to fetch search results');

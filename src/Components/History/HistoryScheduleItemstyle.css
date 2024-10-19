@@ -1,0 +1,18 @@
+.star-rating {
+  display: flex;
+}
+
+.star {
+  width: 40px; /* Đặt kích thước ngôi sao */
+  height: 40px; /* Đặt kích thước ngôi sao */
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  background-color: black; /* Nền trắng */
+  margin-right: 5px; /* Khoảng cách giữa các sao */
+  cursor: pointer; /* Hiển thị con trỏ tay khi hover */
+  transition: background-color 0.3s, border-color 0.3s; /* Hiệu ứng chuyển màu */
+  box-sizing: border-box; /* Đảm bảo kích thước bao gồm cả viền */
+}
+
+.star.filled {
+  background-color: gold; /* Màu vàng cho ngôi sao được chọn */
+}
