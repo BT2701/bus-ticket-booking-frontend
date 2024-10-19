@@ -4,8 +4,11 @@ import CarriageWay from "./CarriageWay";
 import SearchInput from "./SearchInput";
 import BusRouteTable from "./BusRouteTable";
 import { search,getAllRoutes } from './HandleSearch'; // Import hàm fetch dữ liệu
+import { useFeedback } from "../../Context/FeedbackProvider";
+
 
 const Search = () => {
+  const { openFeedback, closeFeedback} = useFeedback();
   const [filtersExist, setFiltersExist] = useState(false);
   const [searchResults, setSearchResults] = useState({
     formattedResults: [],
@@ -17,6 +20,7 @@ const Search = () => {
   const [isSearching, setIsSearching] = useState(null); // Trạng thái tìm kiếm
 
   const handleSearch = async (event) => {
+    closeFeedback();
     setIsSearching(1);
     // Lấy giá trị từ URL params cho các filters
     const params = new URLSearchParams(window.location.search);

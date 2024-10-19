@@ -33,28 +33,30 @@ import HandleContact from "./Components/Staff/Contact/HandleContact";
 import PrintTicket from "./Components/Staff/PrintTicket/PrintTicket";
 
 import Test from "./Components/News/NewsPage";
+import { FeedbackProvider } from "./Context/FeedbackProvider";
 
 const App = () => {
   const { state } = useUserContext();
 
   useEffect(() => {
 
-    
     console.log('State updated:', state);
   }, [state]);
 
 
   return (
     <Router>
-      <PageProvider>
-        <UserProvider>
-          <ScheduleProvider>
-            <Routes>
-              <Route path="/*" element={<MainApp />} />
-            </Routes>
-          </ScheduleProvider>
-        </UserProvider>
-      </PageProvider>
+      <FeedbackProvider>
+        <PageProvider>
+          <UserProvider>
+            <ScheduleProvider>
+              <Routes>
+                <Route path="/*" element={<MainApp />} />
+              </Routes>
+            </ScheduleProvider>
+          </UserProvider>
+        </PageProvider>
+      </FeedbackProvider>
     </Router>
   );
 };

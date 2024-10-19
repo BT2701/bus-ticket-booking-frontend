@@ -5,14 +5,16 @@ import { faAnglesRight, faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { getAllFeedback,getAvgAndTotalFeedback ,getTotalFeedbackCount} from '../Feedback/HandleFeedback'; // Import hàm fetch dữ liệu
+import { useFeedback } from "../../Context/FeedbackProvider";
 import { useSchedule } from "../../Context/ScheduleContext";
 import { useEffect } from "react";
 import axios from "axios";
 
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
+  const { openFeedback, closeFeedback,isOpenFeedback,setIsOpenFeedback} = useFeedback();
   const [firstClick, setfirstClick] = useState(false); // Số sao trung bình
   const [feedbackData, setFeedbackData] = useState([]); // State cho dữ liệu đánh giá
-  const [isOpenFeedback, setIsOpenFeedback] = useState(false);
+  // const [isOpenFeedback, setIsOpenFeedback] = useState(IsOpenFeedback);
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const [pageSize, setPageSize] = useState(2); // Kích thước mỗi trang
   const [totalFeedback, setTotalFeedback] = useState(0); // Tổng số đánh giá
@@ -31,7 +33,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
         console.error('Error fetching data:', error);
       }
     };
-
     fetchData();
   };
 
@@ -45,6 +46,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
 
     setFeedbackData(data); // Cập nhật state feedbackData với dữ liệu từ con
     setIsOpenFeedback(!isOpenFeedback);
+    // openFeedback();
   };
  // Hàm để gọi dữ liệu phản hồi
   const getFeedback = async (scheduleId, page, size,ratingFilter) => {
@@ -216,5 +218,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     </div>
   );
 };
+}
 
 export default CarriageWay;

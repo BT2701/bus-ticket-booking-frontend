@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons"; // Import the solid icons
 import { useState, useEffect } from "react";
 import './NavSearch.css'; // Nhập file CSS
+import { useFeedback } from "../../Context/FeedbackProvider";
 
 
 function NavSearch({ lowestPrice, highestPrice, busTypes ,   handleSearch}) {

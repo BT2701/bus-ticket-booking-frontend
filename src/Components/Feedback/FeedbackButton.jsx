@@ -2,9 +2,12 @@ import React, { useState,useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons"; // Import the solid icons
 import { getAllFeedback } from './HandleFeedback'; // Import hàm fetch dữ liệu
+import { useFeedback } from "../../Context/FeedbackProvider";
+
 
 const FeedbackButton = ({ scheduleId, onFeedbackUpdate , page, size}) => {
-    const [isOpenFeedback, setIsOpenFeedback] = useState(false);
+    const { openFeedback, closeFeedback,isOpenFeedback,setIsOpenFeedback} = useFeedback();
+    // const [isOpenFeedback, setIsOpenFeedback] = useState(false);
 
     const getFeedback = async () => {
         setIsOpenFeedback(!isOpenFeedback);
