@@ -2,7 +2,8 @@ import React, { useEffect,useState } from 'react';
 import NavSearch from "./NavSearch";
 import CarriageWay from "./CarriageWay";
 import SearchInput from "./SearchInput";
-import { search } from './HandleSearch'; // Import hàm fetch dữ liệu
+import BusRouteTable from "./BusRouteTable";
+import { search,getAllRoutes } from './HandleSearch'; // Import hàm fetch dữ liệu
 
 const Search = () => {
   const [filtersExist, setFiltersExist] = useState(false);
@@ -12,9 +13,11 @@ const Search = () => {
     highestPrice: null,
     busTypes: []
   }); 
+  const [allRoutes, setAllRoutes] = useState([]); // Thêm state cho tất cả các tuyến đường
+  const [isSearching, setIsSearching] = useState(null); // Trạng thái tìm kiếm
 
   const handleSearch = async (event) => {
-
+    setIsSearching(1);
     // Lấy giá trị từ URL params cho các filters
     const params = new URLSearchParams(window.location.search);
     const lowestPrice = params.get('lowestPrice') || undefined;
@@ -34,7 +37,6 @@ const Search = () => {
     };
     // Gọi API để lấy dữ liệu tìm kiếm, truyền filters nếu có
     const results = await search(pickup, dropoff, departureDate, filters);
-
 
     if (results && results.length > 0) {
       let lowestPrice = Number.MAX_VALUE;
@@ -59,7 +61,8 @@ const Search = () => {
           result[5], // duration
           result[6], // từ
           result[7], // đến
-          result[8], // id
+          result[8],//id schedule
+
         ];
       });
 
@@ -119,6 +122,54 @@ const Search = () => {
   }, [window.location.search]);
 
 
+  const fetchAllRoutes = async () => {
+    try {
+        const response = await getAllRoutes(); // Giả định bạn có hàm này để lấy dữ liệu
+        const routes = response.map(route => ({
+            busType: route[0],           // Tên loại xe
+            price: route[3],             // Giá vé
+            distance: route[1],          // Thời gian khởi hành (có thể chuyển đổi sang định dạng khác nếu cần)
+            duration: route[2],          // Số ghế còn lại
+            from: route[4],              // Điểm xuất phát
+            to: route[5],                // Điểm đến
+            adressFrom:route[6],
+            adressTo:route[7]
+        }));
+        setAllRoutes(routes); // Cập nhật state với dữ liệu mới
+    } catch (error) {
+        console.error('Error fetching all routes:', error);
+    }
+};
+
+
+  // Trong useEffect, gọi fetchAllRoutes
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+
+    // Kiểm tra các filters có tồn tại hay không
+    const lowestPrice = searchParams.get('lowestPrice');
+    const highestPrice = searchParams.get('highestPrice');
+    const sort = searchParams.get('sort');
+    const busTypes = searchParams.get('busTypes');
+    const pickup = searchParams.get('pickup');
+    const dropoff = searchParams.get('dropoff');
+    const departureDate = searchParams.get('departureDate');
+    if (pickup && dropoff && departureDate) {
+      handleSearch(); // Gọi hàm handleSearch nếu có đủ tham số
+    }
+
+    // Kiểm tra nếu có tham số tồn tại
+    if (lowestPrice || highestPrice || busTypes || sort) {
+        setFiltersExist(true);
+    } else {
+        setFiltersExist(false);
+        // Kiểm tra nếu isFetchRoutes là giá trị mặc định (null) mới gọi fetchAllRoutes
+        fetchAllRoutes(); // Gọi hàm fetchAllRoutes
+    }
+  }, []); // Chỉ chạy khi component mount lần đầu tiên
+
+    
+
   return (
     <div>
       {/* Main form for bus ticket search */}
@@ -142,19 +193,41 @@ const Search = () => {
               ))}
             </>
           ) : (
-            <div className='d-flex justify-content-center'>
-              <img
-                src="https://th.bing.com/th/id/OIG3.iP1aUpDvDQ8iy7k4zlXx?w=1024&h=1024&rs=1&pid=ImgDetMain"
-                className="img-fluid"
-                alt="Bus"
-                style={{
-                  width: "70%",
-                  height: "70%",
-                  objectFit: "contain",
-                }} 
-              />
-            </div>
-          )}
+           (allRoutes.length > 0 && isSearching==null) ? (
+              <div className="container mt-5">
+              <h3 className="text-center mb-4">Thông tin các tuyến xe</h3>
+              <table className="table table-bordered">
+                <thead className="thead-light">
+                  <tr>
+                    <th>Tuyến xe</th>
+                    <th>Loại xe</th>
+                    <th>Quảng đường</th>
+                    <th>Thời gian hành trình</th>
+                    <th>Giá vé</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <BusRouteTable routes={allRoutes} />
+                </tbody>
+              </table>
+              </div>
+            ) : (
+              <div className='d-flex justify-content-center'>
+                <img
+                  src="https://th.bing.com/th/id/OIG3.iP1aUpDvDQ8iy7k4zlXx?w=1024&h=1024&rs=1&pid=ImgDetMain"
+                  className="img-fluid"
+                  alt="Bus"
+                  style={{
+                    width: "70%",
+                    height: "70%",
+                    objectFit: "contain",
+                  }} 
+                />
+              </div>
+            )          
+          )
+        }
         </div>
       </div>
     </div>

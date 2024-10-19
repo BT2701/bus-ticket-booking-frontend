@@ -13,6 +13,24 @@ const SearchInput = ({  handleSearch }) => { // Nhận handleSearch từ compone
   const [dropoff, setDropoff] = useState('0');
   const [departureDate, setDepartureDate] = useState('2024-09-25');
 
+  // Hàm xử lý form submit
+  const handleFormSubmit = (event) => {
+    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
+    // Xây dựng query string từ các tham số
+    const searchParams = new URLSearchParams({
+      pickup,
+      dropoff,
+      departureDate,
+    }).toString();
+
+    // Cập nhật URL với query string mới
+    window.history.pushState(null, '', `?${searchParams}`);
+    
+    // Gọi hàm handleSearch để thực hiện tìm kiếm
+    handleSearch(); 
+  };
+
   useEffect(() => {
     const getRoutes = async () => {
       const data = await fetchUniqueRoutes(); // Gọi hàm để fetch dữ liệu
@@ -50,27 +68,6 @@ const SearchInput = ({  handleSearch }) => { // Nhận handleSearch từ compone
 
   }, []); // [] nghĩa là chỉ gọi 1 lần khi component mount
 
-
-
-  useEffect(() => {
-
-    const currentDate = new Date(); // Lấy ngày hiện tại
-    const selectedDate = new Date(departureDate);
-    const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    // Gọi handleSearch khi các giá trị được cập nhật từ params
-    if ((pickup !== '0' && dropoff !== '0') && departureDate && selectedDate>=today) {
-      // Xây dựng query string
-      const searchParams = new URLSearchParams({
-          pickup,
-          dropoff,
-          departureDate,
-      }).toString();
-      // Cập nhật URL với query string mới
-      window.history.pushState(null, '', `?${searchParams}`);
-      handleSearch(); // Gọi handleSearch mà không cần event
-    }
-  }, [pickup, dropoff, departureDate]); // Theo dõi thay đổi của pickup, dropoff và departureDate
-
   // Lấy ngày hiện tại và định dạng
   const today = new Date();
   const formattedToday = today.toISOString().split('T')[0]; // Định dạng yyyy-mm-dd
@@ -82,7 +79,7 @@ const SearchInput = ({  handleSearch }) => { // Nhận handleSearch từ compone
           <strong className='fs-2' style={{ color: '#1E90FF ' }}>Tìm Kiếm Tuyến Xe</strong>
         </div>
         
-        <form>
+        <form onSubmit={handleFormSubmit}> {/* Thêm onSubmit cho form */}
           <div className="align-items-center d-flex justify-content-center">
             {/* Pickup Location */}
             <div className="col-md-2 d-flex align-items-center border m-4">
@@ -150,7 +147,8 @@ const SearchInput = ({  handleSearch }) => { // Nhận handleSearch từ compone
                 onChange={(e) => setDepartureDate(e.target.value)}
                 min={formattedToday} // Thiết lập min là ngày hiện tại
               />
-            </div>        
+            </div>  
+            <button type="submit" className="btn btn-primary ">Tìm </button> {/* Đặt type là submit */}
           </div>
         </form>
       </div>

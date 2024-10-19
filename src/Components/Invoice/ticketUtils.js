@@ -35,5 +35,25 @@ export const handlePhoneNumberChange = (setPhoneNumber) => (e) => {
         return null; // Trả về null nếu có lỗi xảy ra
     }
 };
+export const cancelTicket = async (ticketId) => {
+  try {
+      alert(`Hủy vé với mã vé: ${ticketId}`);
+      // Gửi yêu cầu hủy vé đến API
+      const response = await ApiService.post(`http://localhost:8080/api/cancel-ticket/${ticketId}`);
+
+      // Kiểm tra mã trạng thái của phản hồi
+      if (response === true) {
+          return response; // Trả về dữ liệu từ backend nếu thành công
+      } else {
+          return false; // Trả về null nếu không thành công
+      }
+  } catch (error) {
+      console.error('Error cancelling ticket:', error);
+      alert('Có lỗi xảy ra: ' + error.message);
+      return null; // Trả về null nếu có lỗi xảy ra
+  }
+};
+
+
   
   

@@ -1,23 +1,72 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios'; 
+import ApiService from '../Utils/apiService';
+import notificationWithIcon from '../Utils/notification'; // Nhập hàm thông báo
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    sender: '',
     email: '',
     phone: '',
-    subject: '',
-    message: ''
+    title: '',
+    content: '',
+    status: 0  
   });
+
+  const [errors, setErrors] = useState({}); // State để lưu trữ thông báo lỗi
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^0\d{9}$/; // Định dạng cho số điện thoại: bắt đầu bằng 0 và có 10 chữ số
+
+    if (!formData.sender.trim()) {
+      newErrors.sender = 'Họ và tên không được để trống.';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email không được để trống.';
+    } else if (!emailPattern.test(formData.email)) {
+      newErrors.email = 'Email không hợp lệ.';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Số điện thoại không được để trống.';
+    } else if (!phonePattern.test(formData.phone)) {
+      newErrors.phone = 'Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.';
+    }
+
+    if (!formData.content.trim()) {
+      newErrors.content = 'Ghi chú không được để trống.';
+    }
+
+    return newErrors;
+  };
+
   const handleSubmit = (e) => {
-    e.preventDefault();
     console.log(formData);
-    // Xử lý gửi dữ liệu tại đây
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors); // Cập nhật state lỗi nếu có
+    } else {
+      // Gửi dữ liệu bằng Axios
+      axios.post('http://localhost:8080/api/contact', formData)
+        .then((response) => {
+          notificationWithIcon('success', 'Gửi thành công', '');
+          setErrors({}); // Reset thông báo lỗi nếu không có lỗi
+          setFormData({ sender: '', email: '', phone: '', title: '', content: '' }); // Reset form
+        })
+        .catch((error) => {
+          notificationWithIcon('error', 'Có lỗi khi thêm đánh giá', 'Vui lòng thử lại sau.');
+          // Xử lý lỗi nếu cần
+        });
+    }
   };
 
   return (
@@ -41,12 +90,13 @@ const ContactForm = () => {
               <input
                 type="text"
                 className="form-control"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="sender"
+                name="sender"
+                value={formData.sender}
                 onChange={handleChange}
                 required
               />
+              {errors.sender && <small className="text-danger">{errors.sender}</small>}
             </div>
             <div className="form-group mb-3">
               <label htmlFor="email">Email</label>
@@ -59,6 +109,7 @@ const ContactForm = () => {
                 onChange={handleChange}
                 required
               />
+              {errors.email && <small className="text-danger">{errors.email}</small>}
             </div>
             <div className="form-group mb-3">
               <label htmlFor="phone">Điện thoại</label>
@@ -70,28 +121,31 @@ const ContactForm = () => {
                 value={formData.phone}
                 onChange={handleChange}
               />
+              {errors.phone && <small className="text-danger">{errors.phone}</small>}
             </div>
             <div className="form-group mb-3">
-              <label htmlFor="subject">Nhập Tiêu đề</label>
+              <label htmlFor="title">Nhập Tiêu đề</label>
               <input
                 type="text"
                 className="form-control"
-                id="subject"
-                name="subject"
-                value={formData.subject}
+                id="title"
+                name="title"
+                value={formData.title}
                 onChange={handleChange}
               />
+              {errors.title && <small className="text-danger">{errors.title}</small>}
             </div>
             <div className="form-group mb-3">
-              <label htmlFor="message">Nhập ghi chú</label>
+              <label htmlFor="content">Nhập ghi chú</label>
               <textarea
                 className="form-control"
-                id="message"
-                name="message"
+                id="content"
+                name="content"
                 rows="3"
-                value={formData.message}
+                value={formData.content}
                 onChange={handleChange}
               ></textarea>
+              {errors.content && <small className="text-danger">{errors.content}</small>}
             </div>
             <button type="submit" className="btn btn-primary">Gửi</button>
           </form>

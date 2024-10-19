@@ -28,6 +28,10 @@ import { UserProvider, useUserContext } from "./Context/UserProvider";
 import { useEffect } from "react";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
+import HistorySchedules from "./Components/History/HistorySchedules";
+import HandleContact from "./Components/Staff/Contact/HandleContact";
+import PrintTicket from "./Components/Staff/PrintTicket/PrintTicket";
+
 import Test from "./Components/News/NewsPage";
 
 const App = () => {
@@ -79,6 +83,12 @@ const MainApp = () => {
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/news" element={<Test />} />
+          <Route path="/history" element={<HistorySchedules />} />
+          <Route path="/staff/handleContact" element={<HandleContact />} />
+          <Route path="/staff/PrintTicket" element={<PrintTicket />} />
+
+
+
         </Routes>
       </div>
       <Footer />
