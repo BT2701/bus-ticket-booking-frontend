@@ -6,6 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { getAllFeedback,getAvgAndTotalFeedback ,getTotalFeedbackCount} from '../Feedback/HandleFeedback'; // Import hàm fetch dữ liệu
 import { useFeedback } from "../../Context/FeedbackProvider";
+import { useSchedule } from "../../Context/ScheduleContext";
+import { useEffect } from "react";
+import axios from "axios";
 
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const { openFeedback, closeFeedback,isOpenFeedback,setIsOpenFeedback} = useFeedback();
@@ -17,6 +20,21 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [totalFeedback, setTotalFeedback] = useState(0); // Tổng số đánh giá
   const [averageRating, setAverageRating] = useState(0); // Số sao trung bình
   const [ratingFilter, setRatingFilter] = useState(0); // State để lưu số sao cần lọc
+  const CarriageWay = ({ busData }) => { // Nhận busData từ props
+  const { schedule, updateSchedule } = useSchedule();
+  const handleSelectSchedule= (scheduleId)=>{
+    console.log(scheduleId);
+    const fetchData = async () => {
+      try {
+        const schedulesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/schedule?id=${scheduleId}`);     //dat tam id
+        updateSchedule(schedulesResponse.data);
+        localStorage.setItem('schedule', JSON.stringify(schedulesResponse.data));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  };
 
 
   // Hàm này sẽ được truyền vào component con để nhận dữ liệu đánh giá
@@ -108,7 +126,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     }
 };
 
-  
 
   return (
     <div className="container m-0 p-0">
@@ -150,7 +167,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
           <div className="col-md-3 text-center d-flex flex-column justify-content-center align-items-center">
           <h4 className="text-primary fw-bold">{busData[3]}</h4> {/* Hiển thị giá vé */}
             <p className="text-muted mb-1">Còn {busData[4]} chỗ trống</p> {/* Hiển thị số chỗ còn lại */}
-            <Link className="btn btn-warning text-white mb-2" to={'/schedule/detail'}>
+            <Link className="btn btn-warning text-white mb-2" to={'/schedule/detail'} onClick={() => handleSelectSchedule(busData[8])}>
               Chọn chuyến
             </Link>
             <p className="text-danger fw-bold m-0">KHÔNG CẦN THANH TOÁN TRƯỚC</p>
@@ -201,5 +218,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     </div>
   );
 };
+}
 
 export default CarriageWay;

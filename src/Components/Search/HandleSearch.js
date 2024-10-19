@@ -18,7 +18,7 @@ import ApiService from '../Utils/apiService';
 //   };
     export const fetchUniqueRoutes = async () => {
         try {
-        const response = await ApiService.get('http://localhost:8080/api/get-from-to'); // Sử dụng `await` để chờ kết quả từ API
+        const response = await ApiService.get('/api/get-from-to'); // Sử dụng `await` để chờ kết quả từ API
         console.log(response);
         return response; // Dữ liệu từ API được trả về từ `response.data`
         } catch (error) {
@@ -71,8 +71,10 @@ import ApiService from '../Utils/apiService';
 
         console.log("Data sent:", params);
 
-        const response = await ApiService.get('http://localhost:8080/api/search', { params });
+
+        const response = await ApiService.get('/api/search', { params });
         console.log(response);
+
 
         // if (response.status !== 200) {
         //     throw new Error('Failed to fetch search results');

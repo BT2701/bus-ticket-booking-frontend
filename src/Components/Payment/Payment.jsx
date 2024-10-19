@@ -20,7 +20,7 @@ const Payment = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('normal');
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState({
@@ -50,7 +50,7 @@ const Payment = () => {
   };
   const handleBooking = () => {
     // Reset các lỗi trước khi kiểm tra
-    setErrors({ fullName: '', email: '', phone: '', paymentMethod: '' });
+    setErrors({ fullName: '', email: '', phone: ''});
 
     let newErrors = {};
     // Kiểm tra các trường input
@@ -221,7 +221,9 @@ const Payment = () => {
         <Button className='btn btn-primary payment-btn' onClick={handleBooking}>Đặt Chỗ</Button>
       </div>
       <div className="payment-back">
-        <Link to={'/schedule/detail'} className='btn btn-secondary'><FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }} /></Link>
+        <Button className='btn btn-secondary' onClick={() => navigate(-1)}>
+          <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '0.5em' }} />
+        </Button>
       </div>
     </div>
   );
