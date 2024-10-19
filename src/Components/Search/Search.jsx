@@ -62,6 +62,7 @@ const Search = () => {
           result[6], // từ
           result[7], // đến
           result[8],//id schedule
+
         ];
       });
 
