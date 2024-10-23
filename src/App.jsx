@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+  Outlet,
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -31,10 +32,11 @@ import { ScheduleProvider } from "./Context/ScheduleContext";
 import HistorySchedules from "./Components/History/HistorySchedules";
 import HandleContact from "./Components/Staff/Contact/HandleContact";
 import PrintTicket from "./Components/Staff/PrintTicket/PrintTicket";
+import { ColorModeContext, useMode } from "./StaffComponents/utils/theme";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import Test from "./Components/News/NewsPage";
 import { FeedbackProvider } from "./Context/FeedbackProvider";
-import BookingManagement from "./Components/Booking_Management/Booking_management";
 
 const App = () => {
   const { state } = useUserContext();
@@ -53,6 +55,10 @@ const App = () => {
             <ScheduleProvider>
               <Routes>
                 <Route path="/*" element={<MainApp />} />
+                <Route path="/staff/*" element={<StaffLayout />}>
+                  <Route path="" element={<Dashboard />} />
+                  <Route path="team" element={<Team />} />
+                </Route>
               </Routes>
             </ScheduleProvider>
           </UserProvider>
@@ -89,12 +95,33 @@ const MainApp = () => {
           <Route path="/history" element={<HistorySchedules />} />
           <Route path="/staff/handleContact" element={<HandleContact />} />
           <Route path="/staff/PrintTicket" element={<PrintTicket />} />
-          <Route path="/booking-management" element={<BookingManagement />} />
+
+
+
         </Routes>
       </div>
       <Footer />
     </div>
   );
 };
+
+function StaffLayout() {
+  const [theme, colorMode] = useMode();
+
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <div className="app">
+          <Sidebar />
+          <main className="content">
+            <Topbar />
+            <Outlet />
+          </main>
+        </div>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
+  );
+}
 
 export default App;

@@ -1,0 +1,106 @@
+.data_table {
+    height: 660px;
+    width: 100%;
+}
+
+.data_table .userr {
+display: flex;
+align-items: center;
+}
+
+.data_table .userr .userr_image {
+height: 36px;
+width: 36px;
+border-radius: 50%;
+object-fit: cover;
+margin-right: 10px;
+}
+
+.data_table .status.active {
+color: green;
+}
+
+.data_table .status.passive {
+color: #ff74b1;
+}
+
+.data_table .actionn {
+display: flex;
+align-items: center;
+}
+
+.data_table .actionn .view_btn {
+padding: 5px 12px;
+cursor: pointer;
+border-radius: 4px;
+border: none;
+margin-right: 10px;
+color: #7551f8d2;
+border: 1px solid #7551f8bd;
+background: none;
+}
+
+.data_table .actionn .delete_btn {
+padding: 5px 12px;
+cursor: pointer;
+border-radius: 4px;
+border: none;
+color: #ff74b0f5;
+border: 1px solid #ff74b0cb;
+background: none;
+}
+.data_grid {
+color: gray;
+border: none;
+}
+.MuiDataGrid-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.data_table {
+    padding: 10px 10px;
+  }
+  
+  .data_table .btnn {
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
+  .data_table p,
+  .data_table div {
+    font-size: 15px;
+  }
+  
+  .data_table .btnn button {
+    margin-top: 15px;
+    display: block;
+    background: none;
+    border: 1px solid #7451f8;
+    padding: 8px 15px;
+    background-color: #7451f8;
+    color: white;
+    font-size: 17px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+  }
+  
+  .data_table .btnn button:hover {
+    background-color: white;
+    color: #7451f8;
+    border: 1px solid #7451f8;
+  }
+  
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .MuiTablePagination-selectLabel,
+  .MuiTablePagination-displayedRows  {
+    margin: 0;
+  }
+  
