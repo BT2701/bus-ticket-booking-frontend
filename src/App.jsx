@@ -34,6 +34,7 @@ import PrintTicket from "./Components/Staff/PrintTicket/PrintTicket";
 
 import Test from "./Components/News/NewsPage";
 import { FeedbackProvider } from "./Context/FeedbackProvider";
+import BookingManagement from "./Components/Booking_Management/Booking_management";
 
 const App = () => {
   const { state } = useUserContext();
@@ -88,9 +89,7 @@ const MainApp = () => {
           <Route path="/history" element={<HistorySchedules />} />
           <Route path="/staff/handleContact" element={<HandleContact />} />
           <Route path="/staff/PrintTicket" element={<PrintTicket />} />
-
-
-
+          <Route path="/booking-management" element={<BookingManagement />} />
         </Routes>
       </div>
       <Footer />

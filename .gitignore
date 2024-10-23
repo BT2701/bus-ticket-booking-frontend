@@ -58,3 +58,6 @@ Thumbs.db
 # Miscellaneous
 *.log
 *.lock
+
+
+src/Static/IMG/
