@@ -45,7 +45,7 @@ const Homepage = () => {
   }, [limit]); // The effect runs every time `limit` changes
   return (
     <div>
-      <div className="row" style={{ position: "relative" }}>
+      <div className="row" style={{ position: "relative", margin: "0" }}>
         <img style={{ height: "450px", width: "100%", objectFit: "cover" }} src="https://yaatrisewa.com/yaatrisewa/slider/images/site/online-bus-ticket-booking-yaatri-sewa-travels-01.jpg" alt="" />
         <div className="col-md-6" style={{ position: "absolute", top: "0", bottom: "0", display: "flex", justifyContent: "center", alignItems: "center" }}>
           <div style={{ width: "500px", height: "300px", color: "#fff" }}>

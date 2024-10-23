@@ -1,0 +1,35 @@
+.btnn {
+  display: flex;
+  align-items: center;
+}
+.btnn button {
+  margin: 0 20px;
+}
+.success-btn {
+  background-color: #1976D2 !important;
+  color: white !important;
+}
+.success-btn:hover {
+  background-color: white !important;
+  color: #1976D2 !important;
+}
+.error-btn {
+  background-color: #d22519 !important;
+  color: white !important;
+}
+.error-btn:hover {
+  background-color: white !important;
+  color: #d22519 !important;
+}
+.btn-link {
+  border: none;
+  padding: none;
+  background-color: unset;
+}
+.error-btn-link {
+  color: red;
+
+}
+.success-btn-link {
+  color: blue;
+}
