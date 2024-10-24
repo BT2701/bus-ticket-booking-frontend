@@ -35,10 +35,6 @@ function Team() {
     fetchData();
   }, [openDialog]);
 
-  // const handleClickOpen = () => {
-  //   setOpenDialog(true);
-  // };
-
   const handleClose = () => {
     setOpenDialog(false);
   };
@@ -109,13 +105,13 @@ function Team() {
     { field: "id", headerName: "ID" },
     {
       field: "name",
-      headerName: "Name",
+      headerName: "Tên",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
       field: "age",
-      headerName: "Age",
+      headerName: "Tuổi",
       type: "number",
       align: "left",
       headerAlign: "left",
@@ -131,11 +127,11 @@ function Team() {
         return <span>Không xác định</span>;  
       },
     },
-    { field: "phone", headerName: "Phone Number", flex: 1 },
+    { field: "phone", headerName: "Số điện thoại", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
     {
       field: "access",
-      headerName: "Access Level",
+      headerName: "Quyền truy cập",
       flex: 1,
       renderCell: ({ row: { role } }) => (
         <Box
@@ -203,17 +199,11 @@ function Team() {
     <Box m="0.5rem 1rem">
       <div className="data_table">
         <div className="table-header">
-          <Header title="TÀI KHOẢN" subtitle="Quản lý tài khoản người dùng" />
+          <Header title="NGƯỜI DÙNG" subtitle="Quản lý người dùng" />
           <div className="btnn">
-            {/* <button className="success-btn" type="button" onClick={handleClickOpen}>
-              Thêm
-            </button> */}
-            <button type="button" onClick={handleUpdateClick} disabled={!selectedUser}>
+            <button type="button" onClick={handleUpdateClick}>
               Cập nhật
             </button>
-            {/* <button className="error-btn" type="button" onClick={handleDeleteClick} disabled={!selectedUser}>
-              Xóa
-            </button> */}
           </div>
         </div>
 

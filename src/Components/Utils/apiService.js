@@ -12,7 +12,12 @@ const ApiService = axios.create({
  */
 ApiService.interceptors.request.use(
   (config) => {
-    config.headers['Content-Type'] = 'application/json';
+    if (!(config.data instanceof FormData)) {
+      config.headers['Content-Type'] = 'application/json';
+    } else {
+      // Nếu là FormData, để trống để trình duyệt tự động thiết lập
+      config.headers['Content-Type'] = "multipart/form-data";
+    }
 
     const token = getSessionToken();
     if (token) {
