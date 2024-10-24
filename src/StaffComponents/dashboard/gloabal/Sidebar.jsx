@@ -3,8 +3,10 @@ import { Sidebar as MySidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../utils/theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined"; 
+import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../../Context/UserProvider";
@@ -35,7 +37,7 @@ function Sidebar() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setCollapsed] = useState(false);
-  const [selected, setSelected] = useState("dashboard");
+  const [selected, setSelected] = useState("Bảng điều khiển");
   const { state: user } = useUserContext();
   const [role, setRole] = useState("");
 
@@ -65,12 +67,6 @@ function Sidebar() {
           },
           "& .pro-icon-wrapper": {
             backgroundColor: "transparent !important",
-          },
-          "& .pro-inner-item": {
-            // padding: "5px 35px 5px 20px !important",
-          },
-          "& .pro-inner-item:hover": {
-            // color: `${colors.grey[700]} !important`,
           },
           "& .pro-menu-item.active": {
             color: "#6870fa !important",
@@ -161,9 +157,23 @@ function Sidebar() {
                 Dữ liệu
               </Typography>
               <Item
-                title="Quản lý tài khoản"
-                to="/staff/team"
+                title="Quản lý người dùng"
+                to="/staff/users"
                 icon={<PeopleOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Quản lý tài xế"
+                to="/staff/drivers"
+                icon={<AirlineSeatReclineNormalIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Quản lý xe"
+                to="/staff/buses"
+                icon={<DirectionsBusIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
