@@ -19,7 +19,6 @@ const Login =()=>{
 
     const onFinish = (values) => {
         setLoading(true);
-        console.log(values);
 
         const payload = {
             username: values.email,

@@ -33,8 +33,8 @@ function AddBusDialog({ open, onClose }) {
       try {
         const driversResponse = await ApiService.get("/api/drivers");
         const categoriesResponse = await ApiService.get("/api/categories");
-        setDrivers(driversResponse);
-        setCategories(categoriesResponse);
+        setDrivers(driversResponse?.content || []); 
+        setCategories(categoriesResponse || []); 
       } catch (error) {
         console.error("Có lỗi xảy ra khi lấy dữ liệu:", error);
       }
@@ -49,7 +49,7 @@ function AddBusDialog({ open, onClose }) {
 
   const handleFileChange = (event) => {
     if (event.target.files.length > 0) {
-      setNewBus({ ...newBus, img: event.target.files[0] });
+      setNewBus({ ...newBus, img: event?.target?.files[0] });
     }
   };
 
@@ -81,14 +81,14 @@ function AddBusDialog({ open, onClose }) {
     }
 
     const formData = new FormData();
-    formData.append("busnumber", newBus.busnumber);
-    formData.append("driverId", newBus.driver);
-    formData.append("categoryId", newBus.category);
-    formData.append("img", newBus.img);
+    formData.append("busnumber", newBus?.busnumber);
+    formData.append("driverId", newBus?.driver);
+    formData.append("categoryId", newBus?.category);
+    formData.append("img", newBus?.img);
 
     try {
       const response = await ApiService.post("/api/buses", formData);
-      console.log(response.data);
+      console.log(response);
       notificationWithIcon("success", "Thêm xe", "Thêm xe thành công!");
       handleClickClose();
     } catch (err) {
@@ -108,7 +108,7 @@ function AddBusDialog({ open, onClose }) {
           type="text"
           fullWidth
           variant="outlined"
-          value={newBus.busnumber}
+          value={newBus?.busnumber}
           onChange={handleChange}
         />
 
@@ -119,12 +119,12 @@ function AddBusDialog({ open, onClose }) {
             labelId="driver-select-label"
             id="driver-select"
             name="driver"
-            value={newBus.driver}
+            value={newBus?.driver}
             onChange={handleChange}
           >
-            {drivers.map((driver) => (
-              <MenuItem key={driver.id} value={driver.id}>
-                {driver.name} - {driver.phone}
+            {drivers?.map((driver) => (
+              <MenuItem key={driver.id} value={driver?.id}>
+                {driver?.name || "Chưa có tên"} - {driver?.phone || "Chưa có số điện thoại"}
               </MenuItem>
             ))}
           </Select>
@@ -137,12 +137,12 @@ function AddBusDialog({ open, onClose }) {
             labelId="category-select-label"
             id="category-select"
             name="category"
-            value={newBus.category}
+            value={newBus?.category}
             onChange={handleChange}
           >
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name} - {category.seat_count} chỗ - {category.price} VND
+            {categories?.map((category) => (
+              <MenuItem key={category?.id} value={category?.id}>
+                {category?.name || "Chưa có tên"} - {category?.seat_count || 0} chỗ - {category?.price || 0} VND
               </MenuItem>
             ))}
           </Select>
@@ -158,10 +158,10 @@ function AddBusDialog({ open, onClose }) {
             />
           </div>
         </div>
-        {newBus.img && (
+        {newBus?.img && (
           <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <img
-              src={URL.createObjectURL(newBus.img)}
+              src={URL.createObjectURL(newBus?.img)}
               alt="Bus avatar"
               style={{ width: "200px", height: "200px", marginTop: "10px", objectFit: "cover" }}
             />

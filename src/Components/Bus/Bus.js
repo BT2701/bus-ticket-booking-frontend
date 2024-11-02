@@ -7,7 +7,7 @@ const Buses =()=> {
         const fetchData = async ()=>{
             try {
                 const results= await axios.get('http://localhost:8080/api/buslist');
-                setBuslist(results.data);
+                setBuslist(results.content);
             } catch (error) {
                 console.error(error);
             }

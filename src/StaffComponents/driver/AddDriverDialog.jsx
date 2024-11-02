@@ -64,11 +64,6 @@ function AddDriverDialog({ open, onClose }) {
       return;
     }
 
-    console.log(newDriver.name)
-    console.log(newDriver.phone)
-    console.log(newDriver.license)
-    console.log(newDriver.img)
-
     const formData = new FormData();
     formData.append("name", newDriver.name);
     formData.append("phone", newDriver.phone);

@@ -17,19 +17,23 @@ function Bus() {
   const [cars, setCars] = useState([]);
   const [isOpenAddDialog, setIsOpenAddDialog] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [rowCount, setRowCount] = useState(0); 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await ApiService.get("http://localhost:8080/api/buslist");
-        setCars(response);
+        const response = await ApiService.get(`http://localhost:8080/api/buslist?pageNo=${page}&pageSize=${pageSize}&sortBy=id&sortDir=asc`);
+        setCars(response?.content || []);
+        setRowCount(response?.totalElements || 0); 
       } catch (error) {
         console.error("Có lỗi xảy ra khi lấy dữ liệu:", error);
       }
     };
 
     fetchData();
-  }, [openDialog, isOpenAddDialog, openConfirmDialog]);
+  }, [openDialog, isOpenAddDialog, openConfirmDialog, page, pageSize]);
 
   const handleClickOpenAddDialog = () => {
     setIsOpenAddDialog(true);
@@ -80,7 +84,7 @@ function Bus() {
       renderCell: (params) => (
         <div style={{ width: "100%", height: "100px", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <img
-            src={params.value !== null ? `http://localhost:8080/api/buses/img/${params.value}` : ""}
+            src={params.value !== null ? `http://localhost:8080/api/buses/img/${params.value}` : "https://media.istockphoto.com/id/1396814518/vector/image-coming-soon-no-photo-no-thumbnail-image-available-vector-illustration.jpg?s=612x612&w=0&k=20&c=hnh2OZgQGhf0b46-J2z7aHbIWwq8HNlSDaNp2wn_iko="}
             alt={params.row.name}
             style={{ width: "60px", height: "60px", borderRadius: "50%" }} // Bạn có thể chỉnh sửa CSS tùy ý
           />
@@ -109,7 +113,7 @@ function Bus() {
         }
       }
     },
-    { field: "category-price", headerName: "Giá vé", flex: 1, renderCell: (params) => {
+    { field: "category-price", headerName: "Giá vé/KM", flex: 1, renderCell: (params) => {
       if(params.row.category.price) {
         return <span>{params.row.category.price}</span>
       } else {
@@ -155,6 +159,13 @@ function Bus() {
           components={{ Toolbar: GridToolbar }} 
           onRowClick={handleRowClick}
           rowHeight={80}
+          paginationMode="server" // Đặt chế độ phân trang là server
+          rowCount={rowCount} // Cung cấp tổng số hàng
+          paginationModel={{ pageSize: pageSize, page: page }}
+          onPaginationModelChange={({ page, pageSize }) => {
+            setPage(page);
+            setPageSize(pageSize);
+          }}
         />
 
         <UpdateBusDialog open={openDialog} onClose={handleClose} busData={selectedCar} />
