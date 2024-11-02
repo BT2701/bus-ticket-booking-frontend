@@ -36,8 +36,8 @@ function UpdateBusDialog({ open, onClose, busData }) {
       try {
         const driversResponse = await ApiService.get("/api/drivers");
         const categoriesResponse = await ApiService.get("/api/categories");
-        setDrivers(driversResponse);
-        setCategories(categoriesResponse);
+        setDrivers(driversResponse?.content || []); 
+        setCategories(categoriesResponse || []);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu tài xế và loại xe:", error);
       }
@@ -49,11 +49,11 @@ function UpdateBusDialog({ open, onClose, busData }) {
   useEffect(() => {
     if (busData) {
       setEditedBus({
-        id: busData.id || "",
-        busnumber: busData.busnumber || "",
-        driverId: busData.driver?.id || "",
-        categoryId: busData.category?.id || "",
-        imgUrl: busData.img ? `http://localhost:8080/api/buses/img/${busData.img}` : ""
+        id: busData?.id || "",
+        busnumber: busData?.busnumber || "",
+        driverId: busData?.driver?.id || "",
+        categoryId: busData?.category?.id || "",
+        imgUrl: busData?.img ? `http://localhost:8080/api/buses/img/${busData?.img}` : ""
       });
     }
   }, [busData]);
@@ -87,15 +87,15 @@ function UpdateBusDialog({ open, onClose, busData }) {
     }
 
     const formData = new FormData();
-    formData.append("busnumber", editedBus.busnumber);
-    formData.append("driverId", editedBus.driverId);
-    formData.append("categoryId", editedBus.categoryId);
-    if(editedBus.img) {
-      formData.append("img", editedBus.img);
+    formData.append("busnumber", editedBus?.busnumber);
+    formData.append("driverId", editedBus?.driverId);
+    formData.append("categoryId", editedBus?.categoryId);
+    if(editedBus?.img) {
+      formData.append("img", editedBus?.img);
     }
 
     try {
-      const response = await ApiService.put(`/api/buses/${editedBus.id}`, formData);
+      const response = await ApiService.put(`/api/buses/${editedBus?.id}`, formData);
       console.log(response);
       notificationWithIcon("success", "Chỉnh sửa xe", "Chỉnh sửa thông tin xe thành công!");
       onClose();
@@ -114,7 +114,7 @@ function UpdateBusDialog({ open, onClose, busData }) {
           label="Biển số xe"
           fullWidth
           variant="outlined"
-          value={editedBus.busnumber}
+          value={editedBus?.busnumber}
           onChange={handleChange}
         />
 
@@ -124,12 +124,12 @@ function UpdateBusDialog({ open, onClose, busData }) {
             labelId="driver-select-label"
             id="driver-select"
             name="driverId"
-            value={editedBus.driverId}
+            value={editedBus?.driverId}
             onChange={handleChange}
           >
-            {drivers.map((driver, index) => (
-              <MenuItem key={index} value={driver.id}>
-                {driver.name} - {driver.phone}
+            {drivers?.map((driver) => (
+              <MenuItem key={driver?.id} value={driver?.id}>
+                {driver?.name || "Chưa có tên"} - {driver?.phone || "Chưa có số điện thoại"}
               </MenuItem>
             ))}
           </Select>
@@ -142,12 +142,12 @@ function UpdateBusDialog({ open, onClose, busData }) {
             labelId="category-select-label"
             id="category-select"
             name="categoryId"
-            value={editedBus.categoryId}
+            value={editedBus?.categoryId}
             onChange={handleChange}
           >
-            {categories.map((category, index) => (
-              <MenuItem key={index} value={category.id}>
-                {category.name} - {category.seat_count} chỗ - {category.price} VND
+            {categories?.map((category) => (
+              <MenuItem key={category?.id} value={category?.id}>
+                {category?.name || "Chưa có tên"} - {category?.seat_count || 0} chỗ - {category?.price || 0} VND
               </MenuItem>
             ))}
           </Select>
@@ -163,10 +163,10 @@ function UpdateBusDialog({ open, onClose, busData }) {
             />
           </div>
         </div>
-        {editedBus.imgUrl && (
+        {editedBus?.imgUrl && (
           <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <img
-              src={editedBus.imgUrl}
+              src={editedBus?.imgUrl}
               alt="Bus avatar"
               style={{ width: "200px", height: "200px", marginTop: "10px", objectFit: "cover" }}
             />

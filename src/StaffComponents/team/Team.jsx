@@ -20,20 +20,27 @@ function Team() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [rowCount, setRowCount] = useState(0); 
 
   useEffect(() => {
     // Gọi API khi component được mount
     const fetchData = async () => {
       try {
-        const response = await ApiService.get("http://localhost:8080/api/customers");
-        setUsers(response.data);
+        const response = await ApiService.get(
+          `http://localhost:8080/api/customers?pageNo=${page}&pageSize=${pageSize}&sortBy=id&sortDir=asc`
+        );
+
+        setUsers(response?.content || []);
+        setRowCount(response?.totalElements || 0); 
       } catch (error) {
         console.error("Có lỗi xảy ra khi lấy dữ liệu:", error);
       }
     };
 
     fetchData();
-  }, [openDialog]);
+  }, [openDialog, page, pageSize]);
 
   const handleClose = () => {
     setOpenDialog(false);
@@ -140,29 +147,25 @@ function Team() {
           p="0.2rem"
           display="flex"
           justifyContent="center"
-          backgroundColor={colors.greenAccent[600]} // Chỉ định màu cho từng role
+          backgroundColor={role ? colors.greenAccent[600] : colors.grey[700]} // Màu nền tùy thuộc vào role
           borderRadius="5px"
         >
-          {role.name === "ADMIN" && <AdminPanelSettingsOutlined />}
-          {role.name === "STAFF" && <SecurityOutlined />}
-          {role.name === "CUSTOMER" && <LockOpenOutlined />}
-          <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
-            {role.name}
-          </Typography>
+          {role ? (
+            <>
+              {role.name === "ADMIN" && <AdminPanelSettingsOutlined />}
+              {role.name === "STAFF" && <SecurityOutlined />}
+              {role.name === "CUSTOMER" && <LockOpenOutlined />}
+              <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
+                {role.name}
+              </Typography>
+            </>
+          ) : (
+            <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
+              Không xác định
+            </Typography>
+          )}
         </Box>
       ),
-    },
-    { field: "active", headerName: "Trạng thái", flex: 1,
-      renderCell: (params) => {
-        if (params && params.row && typeof params.row.active === "boolean") {
-          if (params.row.active === true) {
-            return <span>Hoạt động</span>;
-          } else {
-            return <span>Bị khóa</span>;
-          }
-        }
-        return <span>Không xác định</span>;
-      },
     },
     {
         field: 'lock',
@@ -207,15 +210,20 @@ function Team() {
           </div>
         </div>
 
-        <DataGrid 
+        <DataGrid
           className="data_grid"
-          rows={users || []}  // Đảm bảo rằng mockDataTeam không bị null hoặc undefined
-          columns={columns} 
-          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-          pageSizeOptions={[10, 20, 30]}
-          rowsPerPageOptions={[10]}
+          rows={users}
+          columns={columns}
+          paginationMode="server" // Đặt chế độ phân trang là server
+          rowCount={rowCount} // Cung cấp tổng số hàng
+          paginationModel={{ pageSize: pageSize, page: page }}
+          onPaginationModelChange={({ page, pageSize }) => {
+            setPage(page);
+            setPageSize(pageSize);
+          }}
+          pageSizeOptions={[10, 20, 30]} // Tùy chọn kích thước trang
           localeText={viLocaleText}
-          components={{ Toolbar: GridToolbar }} // Hiển thị toolbar với các tùy chọn
+          components={{ Toolbar: GridToolbar }}
           onRowClick={handleRowClick}
         />
 
