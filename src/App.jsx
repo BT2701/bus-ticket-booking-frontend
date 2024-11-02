@@ -37,6 +37,10 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import Test from "./Components/News/NewsPage";
 import { FeedbackProvider } from "./Context/FeedbackProvider";
+import Dashboard from "./StaffComponents/dashboard/Dashboard";
+import Team from "./StaffComponents/team/Team";
+import Sidebar from "./StaffComponents/dashboard/gloabal/Sidebar";
+import Topbar from "./StaffComponents/dashboard/gloabal/Topbar";
 
 const App = () => {
   const { state } = useUserContext();
