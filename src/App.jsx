@@ -41,6 +41,8 @@ import Dashboard from "./StaffComponents/dashboard/Dashboard";
 import Team from "./StaffComponents/team/Team";
 import Sidebar from "./StaffComponents/dashboard/gloabal/Sidebar";
 import Topbar from "./StaffComponents/dashboard/gloabal/Topbar";
+import Driver from "./StaffComponents/driver/Driver";
+import Bus from "./StaffComponents/bus/Bus";
 
 const App = () => {
   const { state } = useUserContext();
@@ -61,7 +63,9 @@ const App = () => {
                 <Route path="/*" element={<MainApp />} />
                 <Route path="/staff/*" element={<StaffLayout />}>
                   <Route path="" element={<Dashboard />} />
-                  <Route path="team" element={<Team />} />
+                  <Route path="users" element={<Team />} />
+                  <Route path="drivers" element={<Driver />} />
+                  <Route path="buses" element={<Bus />} />
                 </Route>
               </Routes>
             </ScheduleProvider>

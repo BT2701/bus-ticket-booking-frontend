@@ -16,7 +16,6 @@ export default function Topbar() {
   const { dispatch } = useUserContext();
 
   const handleLogout = () => {
-    alert(123);
     ApiService.post('/api/customers/logout')
       .then((response) => {
           removeSessionAndLogoutUser();
@@ -25,7 +24,7 @@ export default function Topbar() {
           });
 
           notificationWithIcon('success', 'Logout', 'Đăng xuất tài khoản thành công!');
-          navigate("/profile");
+          navigate("/login");
       })
       .catch((err) => {
           notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản vì : ' + (err?.response?.data?.message || err?.message));
