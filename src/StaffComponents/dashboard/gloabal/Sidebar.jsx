@@ -49,7 +49,7 @@ function Sidebar() {
         .then(res => {
           setRole(res.data.role.name);
         }).catch((err) => {
-            notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản vì : ' + (err?.response?.data?.message || err?.message));
+            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + (err?.response?.data?.message || err?.message));
         });
     }
   }, [user])
