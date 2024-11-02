@@ -20,7 +20,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [totalFeedback, setTotalFeedback] = useState(0); // Tổng số đánh giá
   const [averageRating, setAverageRating] = useState(0); // Số sao trung bình
   const [ratingFilter, setRatingFilter] = useState(0); // State để lưu số sao cần lọc
-  const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const { schedule, updateSchedule } = useSchedule();
   const handleSelectSchedule= (scheduleId)=>{
     console.log(scheduleId);
@@ -218,6 +217,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     </div>
   );
 };
-}
+
 
 export default CarriageWay;

@@ -2,6 +2,7 @@ import "./PopularLine.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import formatCurrency from "../sharedComponents/formatMoney";
 const PopularLine = ({ route }) => {
   return (
     <Link className="col-md-4 mt-1-9" to="/search">
@@ -39,7 +40,7 @@ const PopularLine = ({ route }) => {
               <p className="text-white mb-0">{route[1]}km - {route[2]}giờ</p>
 
               <p className="text-white">
-                {route[3]}đ
+                {formatCurrency(route[3]?.price)}
                 <span>/Vé</span>
               </p>
             </div>
