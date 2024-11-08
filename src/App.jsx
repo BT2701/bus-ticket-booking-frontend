@@ -43,6 +43,8 @@ import Sidebar from "./StaffComponents/dashboard/gloabal/Sidebar";
 import Topbar from "./StaffComponents/dashboard/gloabal/Topbar";
 import Driver from "./StaffComponents/driver/Driver";
 import Bus from "./StaffComponents/bus/Bus";
+import BookingManagement from "./StaffComponents/Booking_Management/Booking_management";
+import ScheduleManagement from "./StaffComponents/Schedule_Management/Schedule_Management";
 
 const App = () => {
   const { state } = useUserContext();
@@ -66,6 +68,8 @@ const App = () => {
                   <Route path="users" element={<Team />} />
                   <Route path="drivers" element={<Driver />} />
                   <Route path="buses" element={<Bus />} />
+                  <Route path="booking-management" element={<BookingManagement />} />
+                  <Route path="schedule-management" element={<ScheduleManagement/>} /> 
                 </Route>
               </Routes>
             </ScheduleProvider>
@@ -103,9 +107,6 @@ const MainApp = () => {
           <Route path="/history" element={<HistorySchedules />} />
           <Route path="/staff/handleContact" element={<HandleContact />} />
           <Route path="/staff/PrintTicket" element={<PrintTicket />} />
-
-
-
         </Routes>
       </div>
       <Footer />

@@ -1,67 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import './Booking.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch bookings from an API or database
         fetchBookings();
     }, []);
 
     const fetchBookings = async () => {
-        // Simulate fetching data
         const fetchedBookings = [
             { id: 1, user: 'User1', status: 'Pending' },
             { id: 2, user: 'User2', status: 'Confirmed' },
-            // Add more bookings as needed
         ];
         setBookings(fetchedBookings);
         setLoading(false);
     };
 
     const confirmBooking = (id) => {
-        // Logic to confirm booking
         setBookings(bookings.map(booking => booking.id === id ? { ...booking, status: 'Confirmed' } : booking));
     };
 
     const cancelBooking = (id) => {
-        // Logic to cancel booking
         setBookings(bookings.map(booking => booking.id === id ? { ...booking, status: 'Cancelled' } : booking));
     };
 
     const handleRefund = (id) => {
-        // Logic to handle refund
         alert(`Refund processed for booking ID: ${id}`);
     };
 
     const handleComplaint = (id) => {
-        // Logic to handle complaint
         alert(`Complaint handled for booking ID: ${id}`);
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="booking-management container">
-            <h1 className="my-4">Booking Management</h1>
-            <table className="table table-striped">
-                <thead>
+        <div className="booking-management container my-5">
+            <h1 className="text-center mb-4">Booking Management</h1>
+            <table className="table table-hover table-bordered">
+                <thead className="table-primary">
                     <tr>
-                        <th>ID</th>
-                        <th>User</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {bookings.map(booking => (
-                        <tr key={booking.id}>
+                        <tr key={booking.id} className="align-middle">
                             <td>{booking.id}</td>
                             <td>{booking.user}</td>
-                            <td>{booking.status}</td>
+                            <td>
+                                <span className={`badge bg-${booking.status === 'Confirmed' ? 'success' : booking.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
+                                    {booking.status}
+                                </span>
+                            </td>
                             <td>
                                 {booking.status === 'Pending' && (
                                     <button className="btn btn-success btn-sm me-2" onClick={() => confirmBooking(booking.id)}>
