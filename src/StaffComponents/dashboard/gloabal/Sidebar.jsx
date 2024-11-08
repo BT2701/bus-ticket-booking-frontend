@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { useUserContext } from "../../../Context/UserProvider";
 import ApiService from "../../../Components/Utils/apiService";
 import notificationWithIcon from "../../../Components/Utils/notification";
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import BookingIcon from '@mui/icons-material/Event';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -174,6 +176,20 @@ function Sidebar() {
                 title="Quản lý xe"
                 to="/staff/buses"
                 icon={<DirectionsBusIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Quản lý lịch trình"
+                to="/staff/schedule-management"
+                icon={<ScheduleIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Quản lý đặt vé"
+                to="/staff/booking-management"
+                icon={<BookingIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />

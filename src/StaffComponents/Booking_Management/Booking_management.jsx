@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './Booking.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './Booking.css';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -47,7 +47,10 @@ const BookingManagement = () => {
 
     return (
         <div className="booking-management container my-5">
-            <h1 className="text-center mb-4">Booking Management</h1>
+            <h1 className="text-center mb-4" style={{ fontSize: '2rem', color: '#000' }}>Booking Management</h1>
+            <p className="text-success mb-4" style={{ fontSize: '1.2rem', fontWeight: 'normal', marginTop: '-10px' }}>
+                Manage your bookings efficiently
+            </p>
             <table className="table table-hover table-bordered">
                 <thead className="table-primary">
                     <tr>
