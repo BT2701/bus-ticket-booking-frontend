@@ -192,7 +192,7 @@ const Search = () => {
         <div className="flex-grow-1 ps-3">
           {searchResults.formattedResults.length > 0 ? (
             <>
-              {searchResults.formattedResults.map((result, index) => (
+              {searchResults.formattedResults?.map((result, index) => (
                 <CarriageWay key={index} busData={result} />
               ))}
             </>
