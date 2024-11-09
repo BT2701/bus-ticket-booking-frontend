@@ -1,16 +1,26 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
+import { CSSTransition } from 'react-transition-group';
+import './notificationDialog.css';
 
 const NotificationDialog = ({ message, isOpen, onClose }) => {
-  if (!isOpen) return null;
-
   return (
-    <div style={styles.overlay}>
-      <div style={styles.dialog}>
-        <p>{message}</p>
-        <Button onClick={onClose}>Close</Button>
+    <CSSTransition
+      in={isOpen}
+      timeout={300}
+      classNames="dialog"
+      unmountOnExit
+    >
+      <div className="notification-overlay" style={styles.overlay}>
+        <div className="notification-dialog" style={styles.dialog}>
+          <p>{message}</p>
+          <Button onClick={onClose} variant="primary">
+            <i className="fas fa-times" style={{ marginRight: '8px' }}></i>
+            Close
+          </Button>
+        </div>
       </div>
-    </div>
+    </CSSTransition>
   );
 };
 
@@ -25,6 +35,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1000,
   },
   dialog: {
     backgroundColor: '#fff',
@@ -33,6 +44,8 @@ const styles = {
     maxWidth: '400px',
     width: '100%',
     textAlign: 'center',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    transition: 'transform 0.3s ease-out',
   },
 };
 

@@ -1,0 +1,52 @@
+.notification-dialog {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    padding: 15px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-dialog .icon {
+    margin-right: 10px;
+}
+
+.notification-dialog .message {
+    flex-grow: 1;
+}
+
+.notification-dialog .close-btn {
+    background: none;
+    border: none;
+    color: #721c24;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.notification-dialog.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.notification-dialog.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+}
+
+.notification-dialog.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+}

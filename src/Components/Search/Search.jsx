@@ -49,7 +49,7 @@ const Search = () => {
 
       const formattedResults = results.map(result => {
         const departure = result[1];
-        const price = result[3];
+        const price = result[3]?.price;
         busTypes.add(result[0]);
 
         if (price < lowestPrice) lowestPrice = price;
@@ -131,7 +131,7 @@ const Search = () => {
         const response = await getAllRoutes(); // Giả định bạn có hàm này để lấy dữ liệu
         const routes = response.map(route => ({
             busType: route[0],           // Tên loại xe
-            price: route[3],             // Giá vé
+            price: route[3]?.price,             // Giá vé
             distance: route[1],          // Thời gian khởi hành (có thể chuyển đổi sang định dạng khác nếu cần)
             duration: route[2],          // Số ghế còn lại
             from: route[4],              // Điểm xuất phát
