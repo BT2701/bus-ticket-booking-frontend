@@ -10,9 +10,9 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
-import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
-import formatCurrency from '../sharedComponents/formatMoney';
-import NotificationDialog from '../sharedComponents/notificationDialog';
+import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
+import formatCurrency from '../../sharedComponents/formatMoney';
+import NotificationDialog from '../../sharedComponents/notificationDialog';
 import notificationWithIcon from '../Utils/notification';
 
 const ScheduleDetail = () => {

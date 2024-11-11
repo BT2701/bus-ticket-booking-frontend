@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AddTripDialog from './AddSchedule';  // Import dialog component
 import SearchFilter from './SearchSchedule'; // Import SearchFilter component
 import TripTable from './ScheduleTable'; // Import TripTable component
+import NotificationDialog from '../../sharedComponents/notificationDialog';
 
 const ScheduleManagement = () => {
     const [trips, setTrips] = useState([]);
@@ -11,6 +12,9 @@ const ScheduleManagement = () => {
     const [showDialog, setShowDialog] = useState(false);  // State for controlling dialog visibility
     const [isEditing, setIsEditing] = useState(false);
     const [editingTripId, setEditingTripId] = useState(null);
+    const [showNotification, setShowNotification] = useState(false);
+    const [tripToDelete, setTripToDelete] = useState(null); // Lưu trữ id của chuyến đi cần xóa
+
 
     useEffect(() => {
         fetchTrips();
@@ -47,7 +51,17 @@ const ScheduleManagement = () => {
     };
 
     const handleDeleteTrip = (id) => {
-        setTrips(trips.filter(trip => trip.id !== id));
+        setShowNotification(true); // Mở dialog cảnh báo
+        setTripToDelete(id);
+    };
+
+    const handleConfirmDelete = () => {
+        setTrips(trips.filter(trip => trip.id !== tripToDelete)); // Xóa chuyến đi
+        setShowNotification(false); // Đóng dialog
+    };
+
+    const handleCancelDelete = () => {
+        setShowNotification(false); // Đóng dialog nếu người dùng hủy bỏ
     };
 
     const handleFilter = (filterCriteria) => {
@@ -94,6 +108,14 @@ const ScheduleManagement = () => {
                 trips={filteredTrips}
                 onEdit={handleEditTrip}
                 onDelete={handleDeleteTrip}
+            />
+            <NotificationDialog
+                message="Bạn có chắc muốn xóa?"
+                isOpen={showNotification}
+                onClose={handleCancelDelete}
+                type="warning"
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
             />
         </div>
     );

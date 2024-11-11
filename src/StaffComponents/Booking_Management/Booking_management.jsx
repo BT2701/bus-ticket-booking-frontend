@@ -3,6 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchFilterBooking from './SearchFilter';
 import AddBookingDialog from './AddBookingDialog';
 import BookingTable from './BookingTable';
+import NotificationDialog from '../../sharedComponents/notificationDialog';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -22,7 +25,8 @@ const BookingManagement = () => {
         seats: [],
     });
     const [seats, setSeats] = useState(["A1", "A2", "A3", "B1", "B2", "B3"]);  // Example seats list
-
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [bookingToDelete, setBookingToDelete] = useState(null);
 
     useEffect(() => {
         fetchBookings();
@@ -71,7 +75,21 @@ const BookingManagement = () => {
     };
 
     const handleDeleteBooking = (id) => {
-        setBookings(bookings.filter(booking => booking.id !== id));
+        setBookingToDelete(id);
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = () => {
+        setBookings(bookings.filter(booking => booking.id !== bookingToDelete));
+        setShowDeleteConfirm(false);
+        setBookingToDelete(null);
+        toast.success('Xóa thành công!');
+        // alert('Xóa thành công!');
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteConfirm(false);
+        setBookingToDelete(null);
     };
     const handleFilter = (filterCriteria) => {
         const filtered = bookings.filter(booking => {
@@ -116,7 +134,14 @@ const BookingManagement = () => {
                 isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
             />
             <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
-
+            <NotificationDialog
+                message="Bạn có chắc muốn xóa?"
+                isOpen={showDeleteConfirm}
+                onClose={cancelDelete}
+                type="warning"
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
         </div>
     );
 };

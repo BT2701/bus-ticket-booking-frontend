@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSchedule } from '../../Context/ScheduleContext';
-import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
-import formatCurrency from '../sharedComponents/formatMoney';
+import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
+import formatCurrency from '../../sharedComponents/formatMoney';
 import ApiService from '../Utils/apiService';
 import notificationWithIcon from '../Utils/notification';
 

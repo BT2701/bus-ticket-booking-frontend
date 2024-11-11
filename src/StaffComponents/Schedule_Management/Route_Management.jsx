@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AddRouteDialog from "./AddRoute";
 import RouteTable from "./RouteTable";
 import SearchFilterRoute from "./SearchRoute";
+import NotificationDialog from "../../sharedComponents/notificationDialog";
 
 const RouteManagement = () => {
     const [routes, setRoutes] = useState([]);
@@ -11,6 +12,8 @@ const RouteManagement = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editingRoute, setEditingRoute] = useState(null);  // Store the route being edited
     const [showDialogAdd, setShowDialogAdd] = useState(false);
+    const [showDialogDelete, setShowDialogDelete] = useState(false); // Trạng thái để hiển thị cảnh báo xóa
+    const [routeToDelete, setRouteToDelete] = useState(null); // Lưu trữ id của tuyến đường cần xóa
     const [newRoute, setNewRoute] = useState({
         startPoint: '',
         endPoint: '',
@@ -60,7 +63,17 @@ const RouteManagement = () => {
     };
 
     const handleDeleteRoute = (id) => {
-        setRoutes(routes.filter(route => route.id !== id));
+        setRouteToDelete(id);
+        setShowDialogDelete(true); // Mở cảnh báo xóa
+    };
+
+    const confirmDeleteRoute = () => {
+        setRoutes(routes.filter(route => route.id !== routeToDelete)); // Xóa tuyến đường
+        setShowDialogDelete(false); // Đóng cảnh báo
+    };
+
+    const cancelDeleteRoute = () => {
+        setShowDialogDelete(false); // Đóng cảnh báo mà không xóa
     };
 
     if (loading) {
@@ -104,6 +117,14 @@ const RouteManagement = () => {
                 routes={filteredRoutes}
                 handleEditRoute={handleEditRoute}
                 handleDeleteRoute={handleDeleteRoute}
+            />
+            <NotificationDialog
+                message="Bạn có chắc muốn xóa?"
+                isOpen={showDialogDelete}
+                onClose={cancelDeleteRoute}
+                type="warning"
+                onConfirm={confirmDeleteRoute}
+                onCancel={cancelDeleteRoute}
             />
         </div>
     );

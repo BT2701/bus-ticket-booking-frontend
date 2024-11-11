@@ -70,8 +70,12 @@ const TripTable = ({ trips, onEdit, onDelete }) => {
                             </span>
                         </td>
                         <td>
-                            <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(trip.id)}>Sửa</button>
-                            <button className="btn btn-danger btn-sm" onClick={() => onDelete(trip.id)}>Xóa</button>
+                            <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(trip.id)}>
+                                <i className="fa fa-eye"></i>
+                            </button>
+                            <button className="btn btn-danger btn-sm" onClick={() => onDelete(trip.id)}>
+                                <i className="fa fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 ))}

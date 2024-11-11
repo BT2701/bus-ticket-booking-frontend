@@ -64,8 +64,12 @@ const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
                         <td>{route.distance} km</td>
                         <td>{route.estimatedTime}</td>
                         <td>
-                            <button className="btn btn-info btn-sm me-2" onClick={() => handleEditRoute(route.id)}>Sửa</button>
-                            <button className="btn btn-danger btn-sm" onClick={() => handleDeleteRoute(route.id)}>Xóa</button>
+                            <button className="btn btn-info btn-sm me-2" onClick={() => handleEditRoute(route.id)}>
+                            <i className="fa fa-eye"></i>
+                            </button>
+                            <button className="btn btn-danger btn-sm" onClick={() => handleDeleteRoute(route.id)}>
+                            <i className="fa fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 ))}

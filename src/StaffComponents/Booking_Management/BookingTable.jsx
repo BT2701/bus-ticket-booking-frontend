@@ -62,8 +62,12 @@ const BookingTable = ({ bookings, onEdit, onDelete }) => {
                         <td>{booking.departureTime}</td>
                         <td>{booking.price ? booking.price.toLocaleString() : "0"}</td>
                         <td>
-                            <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>Edit</button>
-                            <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>Delete</button>
+                            <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>
+                                <i className="fa fa-eye"></i>
+                            </button>
+                            <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
+                                <i className="fa fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                 ))}
