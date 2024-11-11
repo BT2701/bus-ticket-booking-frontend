@@ -86,11 +86,12 @@ const RouteManagement = () => {
 
     return (
         <div className="route-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '2rem', color: '#000' }}>Tuyến Đường</h1>
-            <p className="text-success mb-4" style={{ fontSize: '1.2rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý tuyến đường</p>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Tuyến Đường</h1>
+            <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý tuyến đường</p>
             {/* <SearchFilterRoute onFilter={handleFilter} /> */}
 
-            <button className="btn btn-primary mb-4" onClick={() => setShowDialogAdd(true)}>Thêm Tuyến Đường Mới</button>
+            <button className="btn mb-4" style={{ backgroundColor: '#90EE90' }} onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} onClick={() => setShowDialogAdd(true)}>Thêm Tuyến Đường</button>
             <AddRouteDialog
                 showDialog={showDialogAdd}
                 setShowDialog={setShowDialogAdd}

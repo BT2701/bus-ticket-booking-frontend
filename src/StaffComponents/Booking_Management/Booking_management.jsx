@@ -97,11 +97,12 @@ const BookingManagement = () => {
 
     return (
         <div className="booking-schedule-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '2rem', color: '#000' }}>Đặt Vé</h1>
-            <p className="text-success mb-4" style={{ fontSize: '1.2rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý đặt vé</p>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Đặt Vé</h1>
+            <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý đặt vé</p>
             <SearchFilterBooking onFilter={handleFilter} />
 
-            <button className="btn btn-primary mb-4" onClick={() => setShowDialogAdd(true)}>Add New Booking</button>
+            <button className="btn mb-4" onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialogAdd(true)}>Tạo Mới</button>
             <AddBookingDialog
                 showDialog={showDialogAdd}
                 setShowDialog={setShowDialogAdd}
