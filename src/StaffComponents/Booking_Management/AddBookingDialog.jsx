@@ -1,12 +1,22 @@
 // AddBookingDialog.jsx
 import React from 'react';
-
-const AddBookingDialog = ({ showDialog, setShowDialog, newBooking, setNewBooking, handleAddBooking, seats }) => {
+const AddBookingDialog = ({
+    showDialog,
+    setShowDialog,
+    newBooking,
+    setNewBooking,
+    handleAddBooking,
+    handleSaveEdit,
+    isEditing,
+    seats
+}) => {
     const handleSeatChange = (seat) => {
         setNewBooking((prevBooking) => {
-            const updatedSeats = prevBooking.seats.includes(seat)
-                ? prevBooking.seats.filter(s => s !== seat)
-                : [...prevBooking.seats, seat];
+            const updatedSeats = Array.isArray(prevBooking.seats)
+                ? prevBooking.seats.includes(seat)
+                    ? prevBooking.seats.filter(s => s !== seat)
+                    : [...prevBooking.seats, seat]
+                : [seat]; // Default to an array if it's undefined
             return { ...prevBooking, seats: updatedSeats };
         });
     };
@@ -19,12 +29,20 @@ const AddBookingDialog = ({ showDialog, setShowDialog, newBooking, setNewBooking
         }));
     };
 
+    const handleSubmit = () => {
+        if (isEditing) {
+            handleSaveEdit(newBooking);
+        } else {
+            handleAddBooking();
+        }
+    };
+
     return (
         <div className={`modal fade ${showDialog ? 'show' : ''}`} style={{ display: showDialog ? 'block' : 'none' }} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Add New Booking</h5>
+                        <h5 className="modal-title">{isEditing ? 'Edit Booking' : 'Add New Booking'}</h5>
                         <button type="button" className="btn-close" onClick={() => setShowDialog(false)} aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
@@ -73,7 +91,6 @@ const AddBookingDialog = ({ showDialog, setShowDialog, newBooking, setNewBooking
                                     onChange={handleInputChange}
                                 />
                             </div>
-                            
                             <div className="mb-3">
                                 <label htmlFor="departureTime" className="form-label">Khởi Hành Lúc</label>
                                 <input
@@ -107,7 +124,7 @@ const AddBookingDialog = ({ showDialog, setShowDialog, newBooking, setNewBooking
                                             type="checkbox"
                                             id={`seat-${seat}`}
                                             value={seat}
-                                            checked={newBooking.seats.includes(seat)}
+                                            checked={Array.isArray(newBooking.seats) && newBooking.seats.includes(seat)}
                                             onChange={() => handleSeatChange(seat)}
                                         />
                                         <label htmlFor={`seat-${seat}`}>{seat}</label>
@@ -118,12 +135,15 @@ const AddBookingDialog = ({ showDialog, setShowDialog, newBooking, setNewBooking
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={() => setShowDialog(false)}>Close</button>
-                        <button type="button" className="btn btn-primary" onClick={handleAddBooking}>Add Booking</button>
+                        <button type="button" className="btn btn-primary" onClick={handleSubmit}>
+                            {isEditing ? 'Save Changes' : 'Add Booking'}
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     );
 };
+
 
 export default AddBookingDialog;

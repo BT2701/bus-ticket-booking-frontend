@@ -11,7 +11,6 @@ const BookingManagement = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingBookingId, setEditingBookingId] = useState(null);
-    const [showDialogAdd, setShowDialogAdd] = useState(false);
     const [newBooking, setNewBooking] = useState({
         customerName: '',
         email: '',
@@ -43,7 +42,7 @@ const BookingManagement = () => {
     const handleAddBooking = () => {
         const newBookingDetails = { id: bookings.length + 1, ...newBooking, bookingTime: new Date().toLocaleString(), seatNumber: newBooking.seats.join(", ") };
         setBookings([...bookings, newBookingDetails]);
-        setShowDialogAdd(false);
+        setShowDialog(false);
         setNewBooking({
             customerName: '',
             email: '',
@@ -59,6 +58,8 @@ const BookingManagement = () => {
     const handleEditBooking = (id) => {
         setIsEditing(true);
         setEditingBookingId(id);
+        const bookingToEdit = bookings.find(booking => booking.id === id);
+        setNewBooking(bookingToEdit); // Set the booking data to the dialog
         setShowDialog(true);
     };
 
@@ -103,14 +104,16 @@ const BookingManagement = () => {
             <SearchFilterBooking onFilter={handleFilter} />
 
             <button className="btn mb-4" onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialogAdd(true)}>Tạo Mới</button>
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialog(true)}>Tạo Mới</button>
             <AddBookingDialog
-                showDialog={showDialogAdd}
-                setShowDialog={setShowDialogAdd}
+                showDialog={showDialog}
+                setShowDialog={setShowDialog}
                 newBooking={newBooking}
                 setNewBooking={setNewBooking}
                 handleAddBooking={handleAddBooking}
                 seats={seats}
+                handleSaveEdit={isEditing ? handleSaveEdit : handleAddBooking}
+                isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
             />
             <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
 
