@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AddTripDialog from './AddSchedule';  // Import dialog component
-import SearchFilter from './SearchFilter'; // Import SearchFilter component
+import SearchFilter from './SearchSchedule'; // Import SearchFilter component
+import TripTable from './ScheduleTable'; // Import TripTable component
 
 const ScheduleManagement = () => {
     const [trips, setTrips] = useState([]);
@@ -89,37 +90,11 @@ const ScheduleManagement = () => {
                 tripToEdit={isEditing ? trips.find(trip => trip.id === editingTripId) : null}
             />
 
-            <table className="table table-hover table-bordered">
-                <thead className="table-success">
-                    <tr>
-                        <th scope="col">Trip ID</th>
-                        <th scope="col">From</th>
-                        <th scope="col">To</th>
-                        <th scope="col">Departure Time</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredTrips.map(trip => (
-                        <tr key={trip.id} className="align-middle">
-                            <td>{trip.id}</td>
-                            <td>{trip.from}</td>
-                            <td>{trip.to}</td>
-                            <td>{trip.departureTime}</td>
-                            <td>
-                                <span className={`badge bg-${trip.status === 'Confirmed' ? 'success' : trip.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
-                                    {trip.status}
-                                </span>
-                            </td>
-                            <td>
-                                <button className="btn btn-info btn-sm me-2" onClick={() => handleEditTrip(trip.id)}>Edit</button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteTrip(trip.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <TripTable
+                trips={filteredTrips}
+                onEdit={handleEditTrip}
+                onDelete={handleDeleteTrip}
+            />
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar as MySidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../utils/theme";
@@ -7,7 +7,6 @@ import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../../Context/UserProvider";
 import ApiService from "../../../Components/Utils/apiService";
@@ -18,19 +17,22 @@ import BookingIcon from '@mui/icons-material/Event';
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   return (
     <MenuItem
       active={selected === title}
       style={{
         color: colors.grey[100],
+        backgroundColor: selected === title ? colors.blueAccent[300] : "transparent", // Change background color when selected
+        '&:hover': {
+          backgroundColor: selected !== title ? colors.blueAccent[200] : colors.blueAccent[300], // Hover only changes color if not selected
+        }
       }}
       onClick={() => setSelected(title)}
       icon={icon}
       component={<Link to={to} />}
     >
       <Typography>{title}</Typography>
-
-      <Link to={to} />
     </MenuItem>
   );
 };
@@ -44,7 +46,6 @@ function Sidebar() {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    console.log(user);
     const userId = user.id || null;
     if(userId) {
       ApiService.get('/api/customers/details')
@@ -54,7 +55,7 @@ function Sidebar() {
             notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + (err?.response?.data?.message || err?.message));
         });
     }
-  }, [user])
+  }, [user]);
 
   return (
     <div className="sidebar">
@@ -122,6 +123,7 @@ function Sidebar() {
                 </Box>
               )}
             </MenuItem>
+
             {!isCollapsed && (
               <Box mb="25px">
                 <Box textAlign="center">
@@ -143,6 +145,7 @@ function Sidebar() {
                 </Box>
               </Box>
             )}
+            
             <Box paddingLeft={isCollapsed ? undefined : "10%"}>
               <Item
                 title="Bảng điều khiển"

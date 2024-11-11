@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchFilterBooking from './SearchFilter';
 import AddBookingDialog from './AddBookingDialog';
+import BookingTable from './BookingTable';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -54,7 +55,7 @@ const BookingManagement = () => {
             seats: [],
         });
     };
-    
+
     const handleEditBooking = (id) => {
         setIsEditing(true);
         setEditingBookingId(id);
@@ -111,45 +112,8 @@ const BookingManagement = () => {
                 handleAddBooking={handleAddBooking}
                 seats={seats}
             />
-            <table className="table table-hover table-bordered">
-                <thead className="table-success">
-                    <tr>
-                        <th scope="col">STT</th>
-                        <th scope="col">Tên Khách Hàng</th>
-                        <th scope="col">Số Điện Thoại</th>
-                        <th scope="col">Số Ghế</th>
-                        <th scope="col">Thời Điểm Đặt</th>
-                        <th scope="col">Trạng Thái</th>
-                        <th scope="col">Lộ Trình</th>
-                        <th scope="col">Khởi Hành Lúc</th>
-                        <th scope="col">Giá Vé</th>
-                        <th scope="col">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredBookings.map(booking => (
-                        <tr key={booking.id} className="align-middle">
-                            <td>{booking.id}</td>
-                            <td>{booking.customerName}</td>
-                            <td>{booking.phoneNumber}</td>
-                            <td>{booking.seatNumber}</td>
-                            <td>{booking.bookingTime}</td>
-                            <td>
-                                <span className={`badge bg-${booking.status === 'Confirmed' ? 'success' : booking.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
-                                    {booking.status}
-                                </span>
-                            </td>
-                            <td>{`${booking.from} - ${booking.to}`}</td>
-                            <td>{booking.departureTime}</td>
-                            <td>{booking.price ? booking.price.toLocaleString() : "0"}</td>
-                            <td>
-                                <button className="btn btn-info btn-sm me-2" onClick={() => handleEditBooking(booking.id)}>Edit</button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteBooking(booking.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
+
         </div>
     );
 };
