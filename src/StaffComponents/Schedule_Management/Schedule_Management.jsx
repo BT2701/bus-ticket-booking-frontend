@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AddTripDialog from './AddSchedule';  // Import dialog component
-import SearchFilter from './SearchFilter'; // Import SearchFilter component
+import SearchFilter from './SearchSchedule'; // Import SearchFilter component
+import TripTable from './ScheduleTable'; // Import TripTable component
+import NotificationDialog from '../../sharedComponents/notificationDialog';
 
 const ScheduleManagement = () => {
     const [trips, setTrips] = useState([]);
@@ -10,6 +12,9 @@ const ScheduleManagement = () => {
     const [showDialog, setShowDialog] = useState(false);  // State for controlling dialog visibility
     const [isEditing, setIsEditing] = useState(false);
     const [editingTripId, setEditingTripId] = useState(null);
+    const [showNotification, setShowNotification] = useState(false);
+    const [tripToDelete, setTripToDelete] = useState(null); // Lưu trữ id của chuyến đi cần xóa
+
 
     useEffect(() => {
         fetchTrips();
@@ -46,7 +51,17 @@ const ScheduleManagement = () => {
     };
 
     const handleDeleteTrip = (id) => {
-        setTrips(trips.filter(trip => trip.id !== id));
+        setShowNotification(true); // Mở dialog cảnh báo
+        setTripToDelete(id);
+    };
+
+    const handleConfirmDelete = () => {
+        setTrips(trips.filter(trip => trip.id !== tripToDelete)); // Xóa chuyến đi
+        setShowNotification(false); // Đóng dialog
+    };
+
+    const handleCancelDelete = () => {
+        setShowNotification(false); // Đóng dialog nếu người dùng hủy bỏ
     };
 
     const handleFilter = (filterCriteria) => {
@@ -74,12 +89,13 @@ const ScheduleManagement = () => {
 
     return (
         <div className="trip-schedule-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '2rem', color: '#000' }}>Lịch Trình</h1>
-            <p className="text-success mb-4" style={{ fontSize: '1.2rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý lịch trình</p>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Lịch Trình</h1>
+            <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý lịch trình</p>
 
             <SearchFilter onFilter={handleFilter} />
 
-            <button className="btn btn-primary mb-4" onClick={() => setShowDialog(true)}>Add New Trip</button>
+            <button className="btn mb-4" onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialog(true)}>Thêm Chuyến</button>
 
             <AddTripDialog
                 show={showDialog}
@@ -88,37 +104,19 @@ const ScheduleManagement = () => {
                 tripToEdit={isEditing ? trips.find(trip => trip.id === editingTripId) : null}
             />
 
-            <table className="table table-hover table-bordered">
-                <thead className="table-success">
-                    <tr>
-                        <th scope="col">Trip ID</th>
-                        <th scope="col">From</th>
-                        <th scope="col">To</th>
-                        <th scope="col">Departure Time</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredTrips.map(trip => (
-                        <tr key={trip.id} className="align-middle">
-                            <td>{trip.id}</td>
-                            <td>{trip.from}</td>
-                            <td>{trip.to}</td>
-                            <td>{trip.departureTime}</td>
-                            <td>
-                                <span className={`badge bg-${trip.status === 'Confirmed' ? 'success' : trip.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
-                                    {trip.status}
-                                </span>
-                            </td>
-                            <td>
-                                <button className="btn btn-info btn-sm me-2" onClick={() => handleEditTrip(trip.id)}>Edit</button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteTrip(trip.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <TripTable
+                trips={filteredTrips}
+                onEdit={handleEditTrip}
+                onDelete={handleDeleteTrip}
+            />
+            <NotificationDialog
+                message="Bạn có chắc muốn xóa?"
+                isOpen={showNotification}
+                onClose={handleCancelDelete}
+                type="warning"
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+            />
         </div>
     );
 };

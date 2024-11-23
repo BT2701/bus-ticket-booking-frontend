@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import SearchFilterBooking from './SearchFilter';
 import AddBookingDialog from './AddBookingDialog';
+import BookingTable from './BookingTable';
+import NotificationDialog from '../../sharedComponents/notificationDialog';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -10,7 +14,6 @@ const BookingManagement = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingBookingId, setEditingBookingId] = useState(null);
-    const [showDialogAdd, setShowDialogAdd] = useState(false);
     const [newBooking, setNewBooking] = useState({
         customerName: '',
         email: '',
@@ -22,7 +25,8 @@ const BookingManagement = () => {
         seats: [],
     });
     const [seats, setSeats] = useState(["A1", "A2", "A3", "B1", "B2", "B3"]);  // Example seats list
-
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [bookingToDelete, setBookingToDelete] = useState(null);
 
     useEffect(() => {
         fetchBookings();
@@ -42,7 +46,7 @@ const BookingManagement = () => {
     const handleAddBooking = () => {
         const newBookingDetails = { id: bookings.length + 1, ...newBooking, bookingTime: new Date().toLocaleString(), seatNumber: newBooking.seats.join(", ") };
         setBookings([...bookings, newBookingDetails]);
-        setShowDialogAdd(false);
+        setShowDialog(false);
         setNewBooking({
             customerName: '',
             email: '',
@@ -54,10 +58,12 @@ const BookingManagement = () => {
             seats: [],
         });
     };
-    
+
     const handleEditBooking = (id) => {
         setIsEditing(true);
         setEditingBookingId(id);
+        const bookingToEdit = bookings.find(booking => booking.id === id);
+        setNewBooking(bookingToEdit); // Set the booking data to the dialog
         setShowDialog(true);
     };
 
@@ -69,7 +75,21 @@ const BookingManagement = () => {
     };
 
     const handleDeleteBooking = (id) => {
-        setBookings(bookings.filter(booking => booking.id !== id));
+        setBookingToDelete(id);
+        setShowDeleteConfirm(true);
+    };
+
+    const confirmDelete = () => {
+        setBookings(bookings.filter(booking => booking.id !== bookingToDelete));
+        setShowDeleteConfirm(false);
+        setBookingToDelete(null);
+        toast.success('Xóa thành công!');
+        // alert('Xóa thành công!');
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteConfirm(false);
+        setBookingToDelete(null);
     };
     const handleFilter = (filterCriteria) => {
         const filtered = bookings.filter(booking => {
@@ -97,58 +117,31 @@ const BookingManagement = () => {
 
     return (
         <div className="booking-schedule-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '2rem', color: '#000' }}>Đặt Vé</h1>
-            <p className="text-success mb-4" style={{ fontSize: '1.2rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý đặt vé</p>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Đặt Vé</h1>
+            <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý đặt vé</p>
             <SearchFilterBooking onFilter={handleFilter} />
 
-            <button className="btn btn-primary mb-4" onClick={() => setShowDialogAdd(true)}>Add New Booking</button>
+            <button className="btn mb-4" onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialog(true)}>Tạo Mới</button>
             <AddBookingDialog
-                showDialog={showDialogAdd}
-                setShowDialog={setShowDialogAdd}
+                showDialog={showDialog}
+                setShowDialog={setShowDialog}
                 newBooking={newBooking}
                 setNewBooking={setNewBooking}
                 handleAddBooking={handleAddBooking}
                 seats={seats}
+                handleSaveEdit={isEditing ? handleSaveEdit : handleAddBooking}
+                isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
             />
-            <table className="table table-hover table-bordered">
-                <thead className="table-success">
-                    <tr>
-                        <th scope="col">STT</th>
-                        <th scope="col">Tên Khách Hàng</th>
-                        <th scope="col">Số Điện Thoại</th>
-                        <th scope="col">Số Ghế</th>
-                        <th scope="col">Thời Điểm Đặt</th>
-                        <th scope="col">Trạng Thái</th>
-                        <th scope="col">Lộ Trình</th>
-                        <th scope="col">Khởi Hành Lúc</th>
-                        <th scope="col">Giá Vé</th>
-                        <th scope="col">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredBookings.map(booking => (
-                        <tr key={booking.id} className="align-middle">
-                            <td>{booking.id}</td>
-                            <td>{booking.customerName}</td>
-                            <td>{booking.phoneNumber}</td>
-                            <td>{booking.seatNumber}</td>
-                            <td>{booking.bookingTime}</td>
-                            <td>
-                                <span className={`badge bg-${booking.status === 'Confirmed' ? 'success' : booking.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
-                                    {booking.status}
-                                </span>
-                            </td>
-                            <td>{`${booking.from} - ${booking.to}`}</td>
-                            <td>{booking.departureTime}</td>
-                            <td>{booking.price ? booking.price.toLocaleString() : "0"}</td>
-                            <td>
-                                <button className="btn btn-info btn-sm me-2" onClick={() => handleEditBooking(booking.id)}>Edit</button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteBooking(booking.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
+            <NotificationDialog
+                message="Bạn có chắc muốn xóa?"
+                isOpen={showDeleteConfirm}
+                onClose={cancelDelete}
+                type="warning"
+                onConfirm={confirmDelete}
+                onCancel={cancelDelete}
+            />
         </div>
     );
 };

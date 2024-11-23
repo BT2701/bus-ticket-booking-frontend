@@ -10,9 +10,9 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
-import formatTimeFromDatabase from '../sharedComponents/formatTimeFromDatabase';
-import formatCurrency from '../sharedComponents/formatMoney';
-import NotificationDialog from '../sharedComponents/notificationDialog';
+import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
+import formatCurrency from '../../sharedComponents/formatMoney';
+import NotificationDialog from '../../sharedComponents/notificationDialog';
 import notificationWithIcon from '../Utils/notification';
 
 const ScheduleDetail = () => {
@@ -85,61 +85,26 @@ const ScheduleDetail = () => {
     // Làm trống danh sách ghế đã chọn
     setSelectedSeats([]);
   };
-  const designSeatIndex = (seatCount) => {
-
-    if (seatCount === 24) {
-      setSeatIndexsDown([
-        ['A02', '', '', 'A01'],
-        ['A03', '', '', 'A04'],
-        ['A06', '', '', 'A05'],
-        ['A07', '', '', 'A08'],
-        ['A10', '', '', 'A09'],
-        ['A11', '', '', 'A12'],
-      ]);
-      setSeatIndexsUp([
-        ['B02', '', '', 'B01'],
-        ['B03', '', '', 'B04'],
-        ['B06', '', '', 'B05'],
-        ['B07', '', '', 'B08'],
-        ['B10', '', '', 'B09'],
-        ['B11', '', '', 'B12'],
-      ]);
+  const designSeatIndex = async (seatCount) => {
+    try {
+      const response = await fetch('/Seats.txt');
+      const data = await response.json();
+      console.log(data);
+      // const data = JSON.parse(data1);
+      if (seatCount === 24) {
+        setSeatIndexsDown(data["24"].down);
+        setSeatIndexsUp(data["24"].up);
+      } else if (seatCount === 32) {
+        setSeatIndexsDown(data["32"].down);
+        setSeatIndexsUp(data["32"].up);
+      } else {
+        setSeatIndexsDown(data["default"].down);
+      }
+    } catch (error) {
+      console.error("Error loading seat data:", error);
     }
-    else if (seatCount === 32) {
-      setSeatIndexsDown([
-        ['A02', '', '', 'A01'],
-        ['A03', '', '', 'A04'],
-        ['A06', '', '', 'A05'],
-        ['A07', '', '', 'A08'],
-        ['A10', '', '', 'A09'],
-        ['A11', '', '', 'A12'],
-        ['A16', 'A15', 'A14', 'A13']
-      ]);
-      setSeatIndexsUp([
-        ['B02', '', '', 'B01'],
-        ['B03', '', '', 'B04'],
-        ['B06', '', '', 'B05'],
-        ['B07', '', '', 'B08'],
-        ['B10', '', '', 'B09'],
-        ['B11', '', '', 'B12'],
-        ['B16', 'B15', 'B14', 'B13']
-      ]);
-    }
-    else {
-      setSeatIndexsDown([
-        ['A04', 'A03', '', 'A02', 'A01'],
-        ['A05', 'A06', '', 'A07', 'A08'],
-        ['A12', 'A11', '', 'A10', 'A09'],
-        ['A13', 'A14', '', 'A15', 'A16'],
-        ['A20', 'A19', '', 'A18', 'A17'],
-        ['A21', 'A22', '', 'A23', 'A24'],
-        ['A28', 'A27', '', 'A26', 'A25'],
-        ['A29', 'A30', '', 'A31', 'A32'],
-        ['A36', 'A35', '', 'A34', 'A33']
-      ]);
-
-    }
-  }
+  };
+  
 
   const Total = () => {
     return price * selectedSeats.length;

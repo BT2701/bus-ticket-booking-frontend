@@ -2,7 +2,7 @@ import "./PopularLine.css";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import formatCurrency from "../sharedComponents/formatMoney";
+import formatCurrency from "../../sharedComponents/formatMoney";
 const PopularLine = ({ route }) => {
   return (
     <Link className="col-md-4 mt-1-9" to="/search">

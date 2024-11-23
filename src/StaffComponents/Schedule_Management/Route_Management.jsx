@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import SearchFilterRoute from './SearchFilterRoute';
-import AddRouteDialog from './AddRoute';
+import { useEffect, useState } from "react";
+import AddRouteDialog from "./AddRoute";
+import RouteTable from "./RouteTable";
+import SearchFilterRoute from "./SearchRoute";
+import NotificationDialog from "../../sharedComponents/notificationDialog";
 
 const RouteManagement = () => {
     const [routes, setRoutes] = useState([]);
@@ -9,8 +10,10 @@ const RouteManagement = () => {
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [editingRouteId, setEditingRouteId] = useState(null);
+    const [editingRoute, setEditingRoute] = useState(null);  // Store the route being edited
     const [showDialogAdd, setShowDialogAdd] = useState(false);
+    const [showDialogDelete, setShowDialogDelete] = useState(false); // Trạng thái để hiển thị cảnh báo xóa
+    const [routeToDelete, setRouteToDelete] = useState(null); // Lưu trữ id của tuyến đường cần xóa
     const [newRoute, setNewRoute] = useState({
         startPoint: '',
         endPoint: '',
@@ -46,32 +49,31 @@ const RouteManagement = () => {
     };
 
     const handleEditRoute = (id) => {
+        const routeToEdit = routes.find(route => route.id === id);
+        setEditingRoute(routeToEdit);  // Set the route data for editing
         setIsEditing(true);
-        setEditingRouteId(id);
-        setShowDialog(true);
+        setShowDialog(true);  // Open dialog for editing
     };
 
     const handleSaveEdit = (updatedRoute) => {
-        setRoutes(routes.map(route => route.id === editingRouteId ? { ...route, ...updatedRoute } : route));
+        setRoutes(routes.map(route => route.id === updatedRoute.id ? updatedRoute : route));
         setShowDialog(false);
         setIsEditing(false);
-        setEditingRouteId(null);
+        setEditingRoute(null);
     };
 
     const handleDeleteRoute = (id) => {
-        setRoutes(routes.filter(route => route.id !== id));
+        setRouteToDelete(id);
+        setShowDialogDelete(true); // Mở cảnh báo xóa
     };
 
-    const handleFilter = (filterCriteria) => {
-        const filtered = routes.filter(route => {
-            return (
-                (!filterCriteria.startPoint || route.startPoint.toLowerCase().includes(filterCriteria.startPoint.toLowerCase())) &&
-                (!filterCriteria.endPoint || route.endPoint.toLowerCase().includes(filterCriteria.endPoint.toLowerCase())) &&
-                (!filterCriteria.distance || route.distance.toString().includes(filterCriteria.distance)) &&
-                (!filterCriteria.estimatedTime || route.estimatedTime.includes(filterCriteria.estimatedTime))
-            );
-        });
-        setFilteredRoutes(filtered);
+    const confirmDeleteRoute = () => {
+        setRoutes(routes.filter(route => route.id !== routeToDelete)); // Xóa tuyến đường
+        setShowDialogDelete(false); // Đóng cảnh báo
+    };
+
+    const cancelDeleteRoute = () => {
+        setShowDialogDelete(false); // Đóng cảnh báo mà không xóa
     };
 
     if (loading) {
@@ -84,47 +86,46 @@ const RouteManagement = () => {
         );
     }
 
+    const handleFilter = (filterCriteria) => {
+        const filtered = routes.filter(route => {
+            return (
+                (!filterCriteria.startPoint || route.startPoint.toLowerCase().includes(filterCriteria.startPoint.toLowerCase())) &&
+                (!filterCriteria.endPoint || route.endPoint.toLowerCase().includes(filterCriteria.endPoint.toLowerCase())) &&
+                (!filterCriteria.distance || route.distance.toString().includes(filterCriteria.distance))
+            );
+        });
+        setFilteredRoutes(filtered);
+    };
+
     return (
         <div className="route-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '2rem', color: '#000' }}>Tuyến Đường</h1>
-            <p className="text-success mb-4" style={{ fontSize: '1.2rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý tuyến đường</p>
-            {/* <SearchFilterRoute onFilter={handleFilter} /> */}
-
-            <button className="btn btn-primary mb-4" onClick={() => setShowDialogAdd(true)}>Thêm Tuyến Đường Mới</button>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Tuyến Đường</h1>
+            <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý tuyến đường</p>
+            <SearchFilterRoute onFilter={handleFilter} />
+            <button className="btn mb-4" style={{ backgroundColor: '#90EE90' }} onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} onClick={() => setShowDialogAdd(true)}>Thêm Tuyến Đường</button>
             <AddRouteDialog
-                showDialog={showDialogAdd}
+                showDialog={showDialog || showDialogAdd}
                 setShowDialog={setShowDialogAdd}
-                newRoute={newRoute}
-                setNewRoute={setNewRoute}
+                route={isEditing ? editingRoute : newRoute}  // Pass the current route (either new or for editing)
+                setRoute={isEditing ? setEditingRoute : setNewRoute}  // Set function depending on add/edit
                 handleAddRoute={handleAddRoute}
+                handleSaveEdit={handleSaveEdit}
+                isEditing={isEditing}
             />
-            <table className="table table-hover table-bordered">
-                <thead className="table-success">
-                    <tr>
-                        <th scope="col">STT</th>
-                        <th scope="col">Điểm Xuất Phát</th>
-                        <th scope="col">Điểm Đến</th>
-                        <th scope="col">Khoảng Cách</th>
-                        <th scope="col">Thời Gian Đi Ước Tính</th>
-                        <th scope="col">Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredRoutes.map(route => (
-                        <tr key={route.id} className="align-middle">
-                            <td>{route.id}</td>
-                            <td>{route.startPoint}</td>
-                            <td>{route.endPoint}</td>
-                            <td>{route.distance} km</td>
-                            <td>{route.estimatedTime}</td>
-                            <td>
-                                <button className="btn btn-info btn-sm me-2" onClick={() => handleEditRoute(route.id)}>Sửa</button>
-                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteRoute(route.id)}>Xóa</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <RouteTable
+                routes={filteredRoutes}
+                handleEditRoute={handleEditRoute}
+                handleDeleteRoute={handleDeleteRoute}
+            />
+            <NotificationDialog
+                message="Bạn có chắc muốn xóa?"
+                isOpen={showDialogDelete}
+                onClose={cancelDeleteRoute}
+                type="warning"
+                onConfirm={confirmDeleteRoute}
+                onCancel={cancelDeleteRoute}
+            />
         </div>
     );
 };

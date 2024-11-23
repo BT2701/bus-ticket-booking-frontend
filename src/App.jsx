@@ -45,6 +45,7 @@ import Driver from "./StaffComponents/driver/Driver";
 import Bus from "./StaffComponents/bus/Bus";
 import BookingManagement from "./StaffComponents/Booking_Management/Booking_management";
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
+import { ToastContainer } from "react-bootstrap";
 
 const App = () => {
   const { state } = useUserContext();
@@ -85,6 +86,7 @@ const App = () => {
 const MainApp = () => {
   return (
     <div className="flex flex-col min-h-screen">
+      <ToastContainer position="top-right"/>
       <Header />
       <div className="flex flex-grow">
         <Routes>
