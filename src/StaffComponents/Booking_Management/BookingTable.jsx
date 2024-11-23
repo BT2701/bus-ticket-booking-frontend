@@ -59,9 +59,9 @@ const BookingTable = ({ bookings, onEdit, onDelete }) => {
                                 {booking.payment ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}
                             </span>
                         </td>
-                        <td>{`${booking.from} - ${booking.to}`}</td>
-                        <td>{formatTimeFromDatabase(booking.departure)}</td>
-                        <td>{booking.cost ? booking.cost.toLocaleString() : "0"}</td>
+                        <td>{`${booking?.schedule.route.from.name} - ${booking?.schedule.route.to.name}`}</td>
+                        <td>{formatTimeFromDatabase(booking?.schedule.departure)}</td>
+                        <td>{booking?.schedule?.price ? booking?.schedule?.price.toLocaleString() : "0"}</td>
                         <td>
                             <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>
                                 <i className="fa fa-eye"></i>

@@ -7,6 +7,7 @@ import NotificationDialog from '../../sharedComponents/notificationDialog';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import Pagination from '../../sharedComponents/Pagination';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -30,11 +31,16 @@ const BookingManagement = () => {
     const [bookingToDelete, setBookingToDelete] = useState(null);
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
+        fetchTotal();
         fetchBookings();
     }, [page]);
-
+    const fetchTotal = async () => {
+        const total = await axios.get(`http://localhost:8080/api/booking/total`);
+        setTotalItems(total.data);
+    }
     const fetchBookings = async () => {
         const response = await axios.get(`http://localhost:8080/api/booking-management?page=${page}&size=${size}`);
         if (response.status === 200) {
@@ -43,7 +49,6 @@ const BookingManagement = () => {
             setLoading(false);
         }
     };
-
     const handleAddBooking = () => {
         const newBookingDetails = { id: bookings.length + 1, ...newBooking, bookingTime: new Date().toLocaleString(), seatNumber: newBooking.seats.join(", ") };
         setBookings([...bookings, newBookingDetails]);
@@ -135,10 +140,12 @@ const BookingManagement = () => {
                 isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
             />
             <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
-            <div>
-                <button className="btn btn-primary" onClick={() => setPage(page - 1)} disabled={page === 0}>Previous</button>
-                <button className="btn btn-primary" onClick={() => setPage(page + 1)} disabled={bookings.length < size}>Next</button>
-            </div>
+            <Pagination
+                page={page}
+                setPage={setPage}
+                totalItems={totalItems}
+                itemsPerPage={size}
+            />
             <NotificationDialog
                 message="Bạn có chắc muốn xóa?"
                 isOpen={showDeleteConfirm}
