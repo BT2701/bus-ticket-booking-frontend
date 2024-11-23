@@ -1,21 +1,6 @@
 import axios from 'axios'; 
 import ApiService from '../Utils/apiService';
 
-
-// Tách riêng hàm lấy dữ liệu từ API
-// export const fetchUniqueRoutes = async () => {
-//     try {
-//       const response = await fetch('http://localhost:8080/api/get-from-to'); // URL API của bạn
-//       if (!response.ok) {
-//         throw new Error('Network response was not ok');
-//       }
-//       const data = await response.json(); // Giả sử API trả về JSON
-//       return data; 
-//     } catch (error) {
-//       console.error('Error fetching unique routes:', error);
-//       return []; // Trả về mảng rỗng trong trường hợp có lỗi
-//     }
-//   };
     export const fetchUniqueRoutes = async () => {
         try {
         const response = await ApiService.get('/api/get-from-to'); // Sử dụng `await` để chờ kết quả từ API
@@ -27,17 +12,19 @@ import ApiService from '../Utils/apiService';
         }
     };
 
-    // Hàm lấy tất cả các tuyến đường
-    export const getAllRoutes = async () => {
+   // Hàm lấy tất cả các tuyến đường với phân trang
+    export const getAllRoutes = async (pageNum, limit) => {
         try {
-            const response = await ApiService.get('http://localhost:8080/api/get-all-routes'); // Thay thế bằng URL API tương ứng
-            console.log(response)
-            return response; // Trả về dữ liệu từ API
+            const url = `http://localhost:8080/api/get-all-routes?pageNum=${pageNum}&limit=${limit}`;
+            const response = await ApiService.get(url);  // Gọi API với tham số pageNum và limit
+            console.log(response);  // In ra kết quả để kiểm tra
+            return response;  // Trả về dữ liệu từ API
         } catch (error) {
             console.error('Error fetching all routes:', error);
-            return []; // Trả về mảng rỗng trong trường hợp có lỗi
+            return [];  // Trả về mảng rỗng trong trường hợp có lỗi
         }
     };
+
   
   export const search = async (pickup, dropoff, departureDate, filters = {}) => {
     const {  lowestPrice, highestPrice, busTypes, sort } = filters;

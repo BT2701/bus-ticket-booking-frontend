@@ -30,11 +30,11 @@ import { useEffect } from "react";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
 import HistorySchedules from "./Components/History/HistorySchedules";
-import HandleContact from "./Components/Staff/Contact/HandleContact";
-import PrintTicket from "./Components/Staff/PrintTicket/PrintTicket";
 import { ColorModeContext, useMode } from "./StaffComponents/utils/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
+import HandleContact from "./StaffComponents/Contact/HandleContact";
+import PrintTicket from "./StaffComponents/PrintTicket/PrintTicket";
 import Test from "./Components/News/NewsPage";
 import { FeedbackProvider } from "./Context/FeedbackProvider";
 import Dashboard from "./StaffComponents/dashboard/Dashboard";
@@ -70,6 +70,8 @@ const App = () => {
                   <Route path="buses" element={<Bus />} />
                   <Route path="booking-management" element={<BookingManagement />} />
                   <Route path="schedule-management" element={<CenterPage/>} /> 
+                  <Route path="handle-contact" element={<HandleContact/>} /> 
+                  <Route path="print-ticket" element={<PrintTicket/>} /> 
                 </Route>
               </Routes>
             </ScheduleProvider>
@@ -105,8 +107,6 @@ const MainApp = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/news" element={<Test />} />
           <Route path="/history" element={<HistorySchedules />} />
-          <Route path="/staff/handleContact" element={<HandleContact />} />
-          <Route path="/staff/PrintTicket" element={<PrintTicket />} />
         </Routes>
       </div>
       <Footer />

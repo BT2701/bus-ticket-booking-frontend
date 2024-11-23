@@ -4,7 +4,7 @@ import ApiService from '../Utils/apiService';
 export const handlePhoneNumberChange = (setPhoneNumber) => (e) => {
     setPhoneNumber(e.target.value);
   };
-  
+
   export const handleCaptchaChange = (setCaptchaValue) => (value) => {
     setCaptchaValue(value);
   };
@@ -12,11 +12,16 @@ export const handlePhoneNumberChange = (setPhoneNumber) => (e) => {
   export const lookupTicket = async (phoneNumber) => {
     try {
         const status = new URLSearchParams(window.location.search).get('status'); // Lấy status từ URL
+        const pageNum = new URLSearchParams(window.location.search).get('pageNum'); // Lấy status từ URL
+        const limit = new URLSearchParams(window.location.search).get('limit'); // Lấy status từ URL
+
 
         // Khởi tạo params với số điện thoại và status
         const params = {
             phoneNumber,
             status: status , // Sử dụng status từ URL, nếu không có thì mặc định là '1'
+            pageNum:pageNum,
+            limit:limit,
         };
 
         // Gửi yêu cầu đến API để tra cứu vé

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import ApiService from '../../Utils/apiService';
+import ApiService from '../../Components/Utils/apiService';
 
 // Hàm để tra cứu vé thông qua ID booking
 export const lookupTicketById = async () => {

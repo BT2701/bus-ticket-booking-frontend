@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect,useLayoutEffect} from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import Modal from 'react-modal';
 import './InfoTicket.css'; // Nhập file CSS
@@ -11,37 +11,29 @@ Modal.setAppElement('#root');
 const InfoTicket = ({ TicketData }) => { 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [TicketStatus, setTicketStatus] = useState(TicketData[8]); // Khởi tạo state với trạng thái ban đầu
-  
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 1: return 'text-success'; // Chưa sử dụng
-      case 2: return 'text-warning'; // Đã sử dụng
-      case 3: return 'text-danger'; // Đã hủy
-      default: return 'text-muted'; // Trạng thái không xác định
-    }
+  const [showCancelButton, setShowCancelButton] = useState(false);
+
+  let ticketTime = TicketData[1]; // Giả sử TicketData[1] là timestamp
+
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp);
+    const formattedTime = date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    const formattedDate = `(${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()})`; // Thêm năm vào đây
+    return `${formattedTime} ${formattedDate}`;
   };
 
-  
-const formatTimestamp = (timestamp) => {
-  const date = new Date(timestamp);
-  const formattedTime = date.toLocaleTimeString('vi-VN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
-  const formattedDate = `(${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()})`; // Thêm năm vào đây
-  return `${formattedTime} ${formattedDate}`;
-};
-
-
-// Hàm định dạng giá tiền
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    minimumFractionDigits: 0,
-  }).format(price);
-};
+  // Hàm định dạng giá tiền
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
 
   const handleCancelClick = async (ticketId) => {
     // Xác nhận trước khi hủy vé
@@ -71,17 +63,32 @@ const formatPrice = (price) => {
     setModalIsOpen(false);
   };
 
-  if (!TicketData || !Array.isArray(TicketData) || TicketData.length < 9) {
-    return <div className="text-danger">Không có thông tin vé để hiển thị.</div>;
-  }
+  useEffect(() => {
+    if (TicketData && Array.isArray(TicketData) && TicketData.length >= 9) {
+      setTicketStatus(TicketData[8]); // Cập nhật state khi TicketData thay đổi
+    }
 
-  // Tính toán thời gian hiện tại và thời gian vé khởi hành
-  const currentTime = new Date().getTime();
-  const ticketTime = TicketData[1]; // Giả sử TicketData[1] là timestamp
+  }, [TicketData]); // Chỉ chạy khi TicketData thay đổi
 
-  // Kiểm tra điều kiện hiển thị nút Hủy
-  const showCancelButton = (TicketStatus == 1 && ticketTime - currentTime < 12 * 60 * 60 * 1000); // Vé chưa sử dụng và cách giờ hiện tại dưới 12 tiếng
+  useEffect(() => {
+    let currentTimeVN = new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' });
+    currentTimeVN = new Date(currentTimeVN).getTime(); // Convert it to timestamp
 
+    ticketTime = TicketData[1];
+
+    // Kiểm tra điều kiện hiển thị nút Hủy
+    if (TicketStatus === 1 && (ticketTime - currentTimeVN > 12 * 60 * 60 * 1000)) {
+      // Chỉ hiển thị nút hủy nếu vé chưa sử dụng và cách giờ hiện tại dưới 12 tiếng
+      setShowCancelButton(true);
+      console.log("cos the huy"+TicketStatus);
+    } else {
+      setShowCancelButton(false);
+      console.log("khong the huy"+TicketStatus);
+      console.log("tickettime"+ticketTime);
+      console.log("vntime"+currentTimeVN);
+    }
+
+  }, [TicketStatus]); // Chỉ chạy khi TicketData thay đổi
 
   return (
     <div className="container m-0 p-0 w-50">
@@ -136,14 +143,15 @@ const formatPrice = (price) => {
                 <strong className={`text-muted fs-5`}>Trạng thái không xác định</strong>
               )}
             </>
+
             {/* Hiển thị nút Hủy nếu điều kiện đúng */}
-            {showCancelButton && (
-              <button className="btn btn-link btn-link-red"
+          {showCancelButton ? (
+            <button className="btn btn-link btn-link-red"
               onClick={() => handleCancelClick(TicketData[9])}
-              >
-                Cancel Ticket
-              </button>
-            )}
+            >
+              Cancel Ticket
+            </button>
+          ) : null} {/* Nếu showCancelButton là false, không làm gì */}
           </div>
         </div>
       </div>

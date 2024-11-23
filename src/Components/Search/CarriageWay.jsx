@@ -3,18 +3,15 @@ import FeedbackButton from '../Feedback/FeedbackButton';
 import FeedbackItem from '../Feedback/FeedbackItem';
 import { faAnglesRight, faAnglesLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { getAllFeedback,getAvgAndTotalFeedback ,getTotalFeedbackCount} from '../Feedback/HandleFeedback'; // Import hàm fetch dữ liệu
-import { useFeedback } from "../../Context/FeedbackProvider";
 import { useSchedule } from "../../Context/ScheduleContext";
-import { useEffect } from "react";
 import axios from "axios";
 
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
-  const { openFeedback, closeFeedback,isOpenFeedback,setIsOpenFeedback} = useFeedback();
+  const [isOpenFeedback, setIsOpenFeedback] = useState(false); // State độc lập cho mỗi CarriageWay
   const [firstClick, setfirstClick] = useState(false); // Số sao trung bình
   const [feedbackData, setFeedbackData] = useState([]); // State cho dữ liệu đánh giá
-  // const [isOpenFeedback, setIsOpenFeedback] = useState(IsOpenFeedback);
   const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
   const [pageSize, setPageSize] = useState(2); // Kích thước mỗi trang
   const [totalFeedback, setTotalFeedback] = useState(0); // Tổng số đánh giá
@@ -25,6 +22,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     console.log(scheduleId);
     const fetchData = async () => {
       try {
+        setIsOpenFeedback(true);
         const schedulesResponse = await axios.get(`${process.env.REACT_APP_API_URL}/schedule?id=${scheduleId}`);     //dat tam id
         updateSchedule(schedulesResponse.data);
         localStorage.setItem('schedule', JSON.stringify(schedulesResponse.data));
@@ -64,7 +62,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     }
   };
 
-   // Hàm để gọi tổng số phản hồi và số sao trung bình chỉ gọi trong lần đầu nhấm
+   // Hàm để gọi tổng số phản hồi và số sao trung bình chỉ gọi trong lần đầu nhấn
    const fetchAvgAndTotalFeedback = async (scheduleId) => {
     setfirstClick(true);
     try {
@@ -125,6 +123,16 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     }
 };
 
+  useEffect(() => {
+    // Mỗi lần busData thay đổi, đóng feedback
+    setIsOpenFeedback(false);
+    setFeedbackData([]); // Xóa dữ liệu feedback cũ để tránh hiển thị nhầm
+    setfirstClick(false); // Đặt lại trạng thái lần nhấn đầu tiên
+    setTotalFeedback(0); // Đặt lại tổng số feedback
+    setAverageRating(0); // Đặt lại số sao trung bình
+    setRatingFilter(0); // Đặt lại bộ lọc sao
+  }, [busData]);
+
 
   return (
     <div className="container m-0 p-0">
@@ -173,9 +181,11 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
             {/* <FeedbackButton scheduleId={busData[8]}/>   */}
             <FeedbackButton 
               scheduleId={busData[8]} 
-              onFeedbackUpdate={setFeedbackDataFromChild}
+              onFeedbackUpdate={setFeedbackDataFromChild} 
               page={currentPage} // Truyền trang hiện tại
               size={pageSize} // Truyền kích thước trang
+              isOpenFeedback={isOpenFeedback} // Truyền state độc lập
+              setIsOpenFeedback={setIsOpenFeedback} // Truyền hàm để quản lý
             />
           </div>
         </div>

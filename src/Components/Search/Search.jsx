@@ -4,11 +4,9 @@ import CarriageWay from "./CarriageWay";
 import SearchInput from "./SearchInput";
 import BusRouteTable from "./BusRouteTable";
 import { search,getAllRoutes } from './HandleSearch'; // Import hàm fetch dữ liệu
-import { useFeedback } from "../../Context/FeedbackProvider";
-
+import Pagination from '@mui/material/Pagination';
 
 const Search = () => {
-  const { openFeedback, closeFeedback} = useFeedback();
   const [filtersExist, setFiltersExist] = useState(false);
   const [searchResults, setSearchResults] = useState({
     formattedResults: [],
@@ -18,9 +16,11 @@ const Search = () => {
   }); 
   const [allRoutes, setAllRoutes] = useState([]); // Thêm state cho tất cả các tuyến đường
   const [isSearching, setIsSearching] = useState(null); // Trạng thái tìm kiếm
+  const [pageNum, setPageNum] = useState(1); 
+  const [totalPages, setTotalPages] = useState(10);  // Tổng số trang
+  const limit=10;
 
   const handleSearch = async (event) => {
-    closeFeedback();
     setIsSearching(1);
     // Lấy giá trị từ URL params cho các filters
     const params = new URLSearchParams(window.location.search);
@@ -47,9 +47,9 @@ const Search = () => {
       let highestPrice = Number.MIN_VALUE;
       const busTypes = new Set();
 
-      const formattedResults = results.map(result => {
+      const formattedResults = results?.map(result => {
         const departure = result[1];
-        const price = result[3]?.price;
+        const price = result[3];
         busTypes.add(result[0]);
 
         if (price < lowestPrice) lowestPrice = price;
@@ -108,7 +108,28 @@ const Search = () => {
       minimumFractionDigits: 0,
     }).format(price);
   };
+  const handlePageChange = (newPageNum) => {
+    setPageNum(newPageNum);
+  };
 
+  const renderPagination = () => {
+    return (
+        <Pagination
+            count={totalPages}  // Tổng số trang
+            page={pageNum}  // Trang hiện tại
+            onChange={(event, value) => handlePageChange(value)}  // Cập nhật trang khi người dùng click
+            shape="rounded"  // Hình dạng của các nút phân trang
+            color="primary"  // Màu sắc cho nút phân trang
+            siblingCount={2}  // Số lượng trang hiển thị ở gần trang hiện tại
+            boundaryCount={1}  // Số lượng trang hiển thị ở đầu và cuối
+        />
+    );
+  };
+
+  useEffect(() => {
+    // Gọi lại fetchAllRoutes() khi pageNum thay đổi
+    fetchAllRoutes();
+  }, [pageNum]);  // Chạy lại effect khi pageNum thay đổi
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -128,17 +149,19 @@ const Search = () => {
 
   const fetchAllRoutes = async () => {
     try {
-        const response = await getAllRoutes(); // Giả định bạn có hàm này để lấy dữ liệu
-        const routes = response.map(route => ({
+        const response = await getAllRoutes(pageNum, limit);  // Gọi API với pageNum và limit
+        const { data, totalElements, currentPage, totalPages } = response;
+        const routes = data?.map(route => ({
             busType: route[0],           // Tên loại xe
-            price: route[3]?.price,             // Giá vé
-            distance: route[1],          // Thời gian khởi hành (có thể chuyển đổi sang định dạng khác nếu cần)
+            price: route[3],             // Giá vé
+            distance: route[1],          // Thời gian khởi hành
             duration: route[2],          // Số ghế còn lại
             from: route[4],              // Điểm xuất phát
             to: route[5],                // Điểm đến
             adressFrom:route[6],
             adressTo:route[7]
         }));
+        setTotalPages(totalPages);
         setAllRoutes(routes); // Cập nhật state với dữ liệu mới
     } catch (error) {
         console.error('Error fetching all routes:', error);
@@ -171,8 +194,6 @@ const Search = () => {
         fetchAllRoutes(); // Gọi hàm fetchAllRoutes
     }
   }, []); // Chỉ chạy khi component mount lần đầu tiên
-
-    
 
   return (
     <div>
@@ -215,6 +236,10 @@ const Search = () => {
                   <BusRouteTable routes={allRoutes} />
                 </tbody>
               </table>
+              {/* Hiển thị phân trang */}
+              <div className="d-flex justify-content-center">
+                {renderPagination()}
+              </div>
               </div>
             ) : (
               <div className='d-flex justify-content-center'>

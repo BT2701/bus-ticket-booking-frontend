@@ -1,10 +1,10 @@
-import ApiService from '../../Utils/apiService';
+import ApiService from '../../Components/Utils/apiService';
 
 // Hàm gọi API để lấy danh sách yêu cầu liên hệ
-const fetchContactRequests = async () => {
+const fetchContactRequests = async (pageNum, limit) => {
     try {
         // Thực hiện GET request đến API lấy danh sách yêu cầu
-        const response = await ApiService.get('http://localhost:8080/api/contacts'); // Thay đổi endpoint nếu cần
+        const response = await ApiService.get(`http://localhost:8080/api/contacts?pageNum=${pageNum}&limit=${limit}`);
         // Kiểm tra nếu phản hồi từ server là thành công
         if (response) {
             return response; // Trả về dữ liệu yêu cầu liên hệ
