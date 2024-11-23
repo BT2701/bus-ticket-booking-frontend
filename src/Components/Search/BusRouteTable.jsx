@@ -5,7 +5,7 @@ const BusRouteTable = ({ routes }) => {
     if (!duration) {
       return 'Chưa có dữ liệu'; // Hoặc giá trị mặc định khác bạn muốn hiển thị
     }
-    
+
     // Tách chuỗi thời gian thành giờ, phút và giây
     const [hours, minutes] = duration.split(':');
     return `${parseInt(hours)} giờ ${parseInt(minutes)} phút`;
@@ -20,29 +20,29 @@ const BusRouteTable = ({ routes }) => {
     window.location.href = url; // Điều hướng đến URL mới
   };
   return (
-        routes.length > 0 ? (
-        routes.map((route, index) => (
-          <tr key={index}>
-            <td>{route.from} ⇒ {route.to}</td>
-            <td>{route.busType}</td>
-            <td>{route.distance} km</td>
-            <td>{formatDuration(route.duration)}</td>
-            <td>{formatPrice(route.price)}</td>
-            <td>
-              <button 
-                className="btn btn-light text-danger" 
-                onClick={() => handleFindTrip(route.adressFrom, route.adressTo)} // route[4] là 'from', route[5] là 'to'
-              >
-                Tìm chuyến xe
-              </button>        
-            </td>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <td colSpan="6" className="text-center">Không có dữ liệu tuyến xe.</td>
+    routes.length > 0 ? (
+      routes.map((route, index) => (
+        <tr key={index}>
+          <td>{route.from} ⇒ {route.to}</td>
+          <td>{route.busType}</td>
+          <td>{route.distance} km</td>
+          <td>{formatDuration(route.duration)}</td>
+          <td>{formatPrice(route?.price)}</td>
+          <td>
+            <button
+              className="btn btn-light text-danger"
+              onClick={() => handleFindTrip(route.adressFrom, route.adressTo)} // route[4] là 'from', route[5] là 'to'
+            >
+              Tìm chuyến xe
+            </button>
+          </td>
         </tr>
-      )
+      ))
+    ) : (
+      <tr>
+        <td colSpan="6" className="text-center">Không có dữ liệu tuyến xe.</td>
+      </tr>
+    )
   );
 };
 

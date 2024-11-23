@@ -6,8 +6,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"; // Import the s
 import { handlePhoneNumberChange, handleCaptchaChange, lookupTicket } from './ticketUtils';
 import './InfoTicket.css'; // Nhập file CSS
 import notificationWithIcon from '../Utils/notification'; // Nhập hàm thông báo
-
-
+import Pagination from '@mui/material/Pagination';
 
 const TicketLookup = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -15,6 +14,9 @@ const TicketLookup = () => {
   const [ticketData, setTicketData] = useState(null); // State để lưu trữ dữ liệu vé
   const [status, setStatus] = useState('unused'); // Trạng thái mặc định
   const [isSearching, setIsSearching] = useState(null); // Trạng thái tìm kiếm
+  const [pageNum, setPageNum] = useState(1); 
+  const [totalPages, setTotalPages] = useState(10);  // Tổng số trang
+  const limit=5;
 
   const updateQueryParams = (e) => {
     e.preventDefault(); // Ngăn không cho form gửi theo cách thông thường
@@ -26,6 +28,8 @@ const TicketLookup = () => {
       if (phoneNumber && phoneNumber.length === 10) {
         params.set('phoneNumber', phoneNumber);
         params.set('status', status); // Sử dụng trạng thái hiện tại
+        params.set('pageNum', pageNum); // Sử dụng trạng thái hiện tại
+        params.set('limit', limit); // Sử dụng trạng thái hiện tại
     }
   
     // Thay đổi URL mà không làm mới trang
@@ -34,8 +38,80 @@ const TicketLookup = () => {
     // Gọi hàm handleSubmit với status đã cập nhật
     handleSubmit(status, e);
     }
-  
   };  
+
+  const fetchData = async () => {
+    if (phoneNumber.length === 10) { // Kiểm tra số điện thoại có 10 chữ số
+      await handleSubmit(status, { preventDefault: () => {} }); // Gọi handleSubmit với status mới và một đối tượng sự kiện giả
+    }
+  };
+  // Hàm xử lý sự kiện cho nút trở lại
+  const handleBackClick = () => {
+      window.location.href = 'http://localhost:3000/invoice?'; // Chuyển hướng đến URL mong muốn
+  };
+
+  const handlePageChange = (newPageNum) => {
+      setPageNum(newPageNum);
+  };
+  const renderPagination = () => {
+      return (
+          <Pagination
+              count={totalPages}  // Tổng số trang
+              page={pageNum}  // Trang hiện tại
+              onChange={(event, value) => handlePageChange(value)}  // Cập nhật trang khi người dùng click
+              shape="rounded"  // Hình dạng của các nút phân trang
+              color="primary"  // Màu sắc cho nút phân trang
+              siblingCount={2}  // Số lượng trang hiển thị ở gần trang hiện tại
+              boundaryCount={1}  // Số lượng trang hiển thị ở đầu và cuối
+          />
+      );
+  };
+
+  //hàm này được gọi khi tìm theo số điện thoại 
+  const handleSubmit = async (newStatus, e) => {
+    e.preventDefault();
+
+    // Kiểm tra số điện thoại trước khi gửi
+    if (!/^0\d{9}$/.test(phoneNumber)) { // Kiểm tra số điện thoại
+      notificationWithIcon('error', 'Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.', '');
+      return; // Ngưng thực hiện nếu số điện thoại không hợp lệ
+    }
+
+    // Kiểm tra ReCAPTCHA trước khi gửi
+    if (!captchaValue) {
+      notificationWithIcon('error', 'Vui lòng xác thực ReCAPTCHA.', '');
+      return; // Ngưng thực hiện nếu chưa xác thực
+    }
+    setStatus(newStatus); // Cập nhật trạng thái
+
+    // Gọi hàm tra cứu vé với status
+    const ticketData = await lookupTicket(phoneNumber); // Truyền chỉ số điện thoại 
+
+    if (ticketData.data && ticketData.data.length > 0) {
+      setTicketData(ticketData.data); // Cập nhật dữ liệu vé
+      setTotalPages(ticketData.totalPages);
+      setIsSearching(1); // Đặt trạng thái đã tìm kiếm
+    } else {
+      if(isSearching==null){
+        notificationWithIcon('error', 'Không có thông tin', '');
+      }
+      setTicketData(null); // Reset dữ liệu vé nếu không tìm thấy
+    }
+  };
+
+  useEffect(() => {
+    if (phoneNumber && phoneNumber.length === 10) {
+      // Tạo đối tượng URLSearchParams từ URL hiện tại
+      const params = new URLSearchParams(window.location.search);
+
+      // Cập nhật query string với pageNum mới
+      params.set('pageNum', pageNum); // pageNum là state hoặc biến bạn đang theo dõi
+
+      // Thay đổi URL mà không reload lại trang
+      window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+      fetchData(); // Gọi hàm để tra cứu dữ liệu vé khi status thay đổi
+      }
+  }, [pageNum]);  // Chạy lại effect khi pageNum thay đổi
 
   // useEffect để đẩy số điện thoại lên URL query params khi phoneNumber thay đổi
   useEffect(() => {
@@ -45,55 +121,9 @@ const TicketLookup = () => {
       params.set('status', status);
     }
     window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
-  }, [status]);
-
-  const handleSubmit = async (newStatus, e) => {
-    e.preventDefault();
-
-     // Kiểm tra số điện thoại trước khi gửi
-    if (!/^0\d{9}$/.test(phoneNumber)) { // Kiểm tra số điện thoại
-      notificationWithIcon('error', 'Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.', '');
-
-            return; // Ngưng thực hiện nếu số điện thoại không hợp lệ
-    }
-
-    // Kiểm tra ReCAPTCHA trước khi gửi
-    if (!captchaValue) {
-      notificationWithIcon('error', 'Vui lòng xác thực ReCAPTCHA.', '');
-      return; // Ngưng thực hiện nếu chưa xác thực
-    }
-
-    setStatus(newStatus); // Cập nhật trạng thái
-
-    // Gọi hàm tra cứu vé với status
-    const ticketData = await lookupTicket(phoneNumber); // Truyền chỉ số điện thoại 
-
-    if (ticketData && ticketData.length > 0) {
-      setTicketData(ticketData); // Cập nhật dữ liệu vé
-      setIsSearching(1); // Đặt trạng thái đã tìm kiếm
-    } else {
-      if(isSearching==null){
-        notificationWithIcon('error', 'Không có thông tin', '');
-      }
-      setTicketData(null); // Reset dữ liệu vé nếu không tìm thấy
-    }
-  };
-  // Theo dõi sự thay đổi của status
-  useEffect(() => {
-    const fetchData = async () => {
-      if (phoneNumber.length === 10) { // Kiểm tra số điện thoại có 10 chữ số
-        await handleSubmit(status, { preventDefault: () => {} }); // Gọi handleSubmit với status mới và một đối tượng sự kiện giả
-      }
-    };
-
+    setPageNum(1);//set lại pageNum =1
     fetchData(); // Gọi hàm để tra cứu dữ liệu vé khi status thay đổi
-  }, [status]); // Chỉ theo dõi status
-
-  // Hàm xử lý sự kiện cho nút trở lại
-  const handleBackClick = () => {
-      window.location.href = 'http://localhost:3000/invoice?'; // Chuyển hướng đến URL mong muốn
-  };
-
+  }, [status]);
 
   return (
     <div>
@@ -161,11 +191,16 @@ const TicketLookup = () => {
       
       {isSearching ? (
         ticketData ? (
-          ticketData.map((ticket, index) => (
-            <div className='d-flex justify-content-center' key={index}>
-              <InfoTicket TicketData={ticket} />
+          <>
+            {ticketData?.map((ticket, index) => (
+              <div className="d-flex justify-content-center" key={index}>
+                <InfoTicket TicketData={ticket} />
+              </div>
+            ))}
+            <div className="d-flex justify-content-center">
+              {renderPagination()}
             </div>
-          ))
+          </>
         ) : (
           <div className='d-flex justify-content-center'>
             <h5>Không có thông tin vé</h5>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import ApiService from '../../Utils/apiService';
+import ApiService from '../../Components/Utils/apiService';
 
 // Hàm để tra cứu vé thông qua ID booking
 export const lookupTicketById = async () => {
@@ -12,7 +12,7 @@ export const lookupTicketById = async () => {
             throw new Error('Mã booking không tồn tại trong query string');
         }
         // Gửi yêu cầu đến API để tra cứu vé bằng ID booking
-        const response = await ApiService.get(`http://localhost:8080/api/staff-lookup-invoice/${idBooking}`);
+        const response = await ApiService.get(`/api/staff-lookup-invoice/${idBooking}`);
         // Trả về dữ liệu vé
         return response; // Trả về dữ liệu vé
     } catch (error) {
@@ -32,7 +32,7 @@ export const updateTicketStatus = async (newStatus) => {
         }
 
         // Gửi yêu cầu đến API để cập nhật trạng thái vé
-        const response = await ApiService.put(`http://localhost:8080/api/update-ticket-status/${idBooking}`, {
+        const response = await ApiService.put(`/api/update-ticket-status/${idBooking}`, {
             status: newStatus, // Truyền trạng thái mới cần cập nhật
         });
         console.log(typeof response);
