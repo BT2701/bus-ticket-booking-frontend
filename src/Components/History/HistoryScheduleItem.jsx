@@ -39,7 +39,7 @@ const HistoryScheduleItem = ({ scheduleData }) => {
 
    // Cập nhật giá trị feedbackValue dựa trên feedback từ scheduleData
    useEffect(() => {
-    const feedback = scheduleData[10]; // Giả sử feedback ở chỉ số 10
+    const feedback = scheduleData[10];
     setFeedbackValue(feedback); // Cập nhật giá trị feedbackValue
   }, [scheduleData]);
 
@@ -125,7 +125,6 @@ const HistoryScheduleItem = ({ scheduleData }) => {
           </div>
         </div>
       </div>
-    {/* Modal đánh giá */}
     {/* Modal đánh giá */}
           <Modal show={showModal} onHide={handleClose}>
             <Modal.Header closeButton>

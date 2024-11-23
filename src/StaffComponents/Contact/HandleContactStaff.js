@@ -1,10 +1,10 @@
-import ApiService from '../../Utils/apiService';
+import ApiService from '../../Components/Utils/apiService';
 
 // Hàm gọi API để lấy danh sách yêu cầu liên hệ
-const fetchContactRequests = async () => {
+const fetchContactRequests = async (pageNum, limit) => {
     try {
         // Thực hiện GET request đến API lấy danh sách yêu cầu
-        const response = await ApiService.get('http://localhost:8080/api/contacts'); // Thay đổi endpoint nếu cần
+        const response = await ApiService.get(`/api/contacts?pageNum=${pageNum}&limit=${limit}`);
         // Kiểm tra nếu phản hồi từ server là thành công
         if (response) {
             return response; // Trả về dữ liệu yêu cầu liên hệ
@@ -29,7 +29,7 @@ const sendMailAndUpdateStatus = async (requestId, resolveTitle, resolveContent, 
 
     try {
         // Gửi yêu cầu POST đến API backend
-        const response = await ApiService.post('http://localhost:8080/api/send-mail-and-update-status', requestBody);
+        const response = await ApiService.post('/api/send-mail-and-update-status', requestBody);
 
         return response; // Trả về phản hồi từ backend nếu thành công
     } catch (error) {

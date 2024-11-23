@@ -5,8 +5,7 @@ import { getAllFeedback } from './HandleFeedback'; // Import hàm fetch dữ li�
 import { useFeedback } from "../../Context/FeedbackProvider";
 
 
-const FeedbackButton = ({ scheduleId, onFeedbackUpdate , page, size}) => {
-    const { openFeedback, closeFeedback,isOpenFeedback,setIsOpenFeedback} = useFeedback();
+const FeedbackButton = ({ scheduleId, onFeedbackUpdate , page, size, isOpenFeedback, setIsOpenFeedback}) => {
     // const [isOpenFeedback, setIsOpenFeedback] = useState(false);
 
     const getFeedback = async () => {
@@ -15,7 +14,7 @@ const FeedbackButton = ({ scheduleId, onFeedbackUpdate , page, size}) => {
             // Nếu trạng thái là đóng (isOpenFeedback = false), trả về mảng rỗng
             onFeedbackUpdate([]);
             return; // Không gọi API
-        }
+        } 
         try {
             const response = await getAllFeedback(scheduleId, page, size);
             const feedbacks = response.map(feedback => ({

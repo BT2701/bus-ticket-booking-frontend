@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect,useState } from 'react';
 import { fetchContactRequests,sendMailAndUpdateStatus } from './HandleContactStaff'; // Import hàm lấy dữ liệu
 import { Modal, Button, Form } from 'react-bootstrap'; // Import Bootstrap modal và button
-import notificationWithIcon from '../../Utils/notification'; // Nhập hàm thông báo
+// import notificationWithIcon from '../../Utils/notification'; // Nhập hàm thông báo
+import notificationWithIcon from '../../Components/Utils/notification'; // Nhập hàm thông báo
+import Pagination from '@mui/material/Pagination';
 
 
 const HandleContact = () => {
@@ -16,10 +18,14 @@ const HandleContact = () => {
     const [isSendingMail, setIsSendingMail] = useState(false); // State quản lý trạng thái gửi mail
     const [countdown, setCountdown] = useState(900); // 15 phút tính bằng giây
     const [canUpdate, setCanUpdate] = useState(false); // Quản lý trạng thái nút cập nhật
+    const [pageNum, setPageNum] = useState(1); 
+    const [totalPages, setTotalPages] = useState(10);  // Tổng số trang
+    const limit=10;
 
     const handleUpdate = async () => {
-        const data = await fetchContactRequests(); // Gọi hàm lấy dữ liệu
-        setRequests(data); // Cập nhật state với dữ liệu lấy được
+        const data = await fetchContactRequests(pageNum, limit); // Gọi hàm lấy dữ liệu
+        setRequests(data.contacts); // Cập nhật state với dữ liệu lấy được
+        setTotalPages(data.totalPages);
         setLoading(false); // Tắt trạng thái loading khi dữ liệu đã sẵn sàng  
         // Đặt lại countdown và không cho phép cập nhật cho đến khi countdown lại bắt đầu
         setCountdown(900); // Reset về 15 phút
@@ -56,6 +62,11 @@ const HandleContact = () => {
         return () => clearInterval(timer); // Dọn dẹp khi component unmount
     }, [canUpdate, countdown]);
 
+    useEffect(() => {
+        // Gọi lại fetchAllRoutes() khi pageNum thay đổi
+        handleUpdate();
+    }, [pageNum]);  // Chạy lại effect khi pageNum thay đổi
+
     // Hiển thị thông báo loading hoặc lỗi nếu có
     if (loading) return <div>Đang tải...</div>;
     if (error) return <div>{error}</div>;
@@ -76,40 +87,56 @@ const HandleContact = () => {
     };
 
     // Hàm xử lý gửi mail
-const handleSendMail = async () => {
-    // Kiểm tra xem tiêu đề và nội dung có tồn tại hay không
-    if (!resolveTitle || !resolveContent) {
-        notificationWithIcon('error', 'Vui lòng nhập tiêu đề và nội dung', '');
-        return; // Dừng thực hiện hàm nếu không có tiêu đề hoặc nội dung
-    }
-    setIsSendingMail(true); // Bật trạng thái loading khi bắt đầu gửi mail
-    // Gọi hàm sendMailAndUpdateStatus và truyền requestId, resolveTitle và resolveContent
-    try {
-        const response = await sendMailAndUpdateStatus(
-            selectedRequest.id,          // ID của yêu cầu đang được chọn
-            resolveTitle,                // Tiêu đề giải quyết nhập từ input
-            resolveContent,              // Nội dung giải quyết nhập từ input
-            selectedRequest.email        // Email của người gửi yêu cầu
-        );
-        console.log(response);
-
-        if (response==true) {
-            notificationWithIcon('success', 'Giải quyết thành công', '');
-
-            // Thêm yêu cầu vào danh sách đã xử lý
-            setResolvedRequests([...resolvedRequests, selectedRequest.id]);
-
-            // Đóng modal sau khi gửi mail thành công
-            handleCloseModal();
-        } else {
-            notificationWithIcon('error', 'yêu cầu đã được xử lý :', '');
-            setResolvedRequests([...resolvedRequests, selectedRequest.id]);
-            handleCloseModal();
+    const handleSendMail = async () => {
+        // Kiểm tra xem tiêu đề và nội dung có tồn tại hay không
+        if (!resolveTitle || !resolveContent) {
+            notificationWithIcon('error', 'Vui lòng nhập tiêu đề và nội dung', '');
+            return; // Dừng thực hiện hàm nếu không có tiêu đề hoặc nội dung
         }
-    } catch (error) {
-        notificationWithIcon('error', 'Có lỗi xảy ra khi gửi mail:', '');
-    }
-};
+        setIsSendingMail(true); // Bật trạng thái loading khi bắt đầu gửi mail
+        // Gọi hàm sendMailAndUpdateStatus và truyền requestId, resolveTitle và resolveContent
+        try {
+            const response = await sendMailAndUpdateStatus(
+                selectedRequest.id,          // ID của yêu cầu đang được chọn
+                resolveTitle,                // Tiêu đề giải quyết nhập từ input
+                resolveContent,              // Nội dung giải quyết nhập từ input
+                selectedRequest.email        // Email của người gửi yêu cầu
+            );
+            console.log(response);
+
+            if (response==true) {
+                notificationWithIcon('success', 'Giải quyết thành công', '');
+
+                // Thêm yêu cầu vào danh sách đã xử lý
+                setResolvedRequests([...resolvedRequests, selectedRequest.id]);
+
+                // Đóng modal sau khi gửi mail thành công
+                handleCloseModal();
+            } else {
+                notificationWithIcon('error', 'yêu cầu đã được xử lý :', '');
+                setResolvedRequests([...resolvedRequests, selectedRequest.id]);
+                handleCloseModal();
+            }
+        } catch (error) {
+            notificationWithIcon('error', 'Có lỗi xảy ra khi gửi mail:', '');
+        }
+    };
+    const handlePageChange = (newPageNum) => {
+        setPageNum(newPageNum);
+    };
+    const renderPagination = () => {
+        return (
+            <Pagination
+                count={totalPages}  // Tổng số trang
+                page={pageNum}  // Trang hiện tại
+                onChange={(event, value) => handlePageChange(value)}  // Cập nhật trang khi người dùng click
+                shape="rounded"  // Hình dạng của các nút phân trang
+                color="primary"  // Màu sắc cho nút phân trang
+                siblingCount={2}  // Số lượng trang hiển thị ở gần trang hiện tại
+                boundaryCount={1}  // Số lượng trang hiển thị ở đầu và cuối
+            />
+        );
+    };
 
 
     // Trả về giao diện hiển thị bảng yêu cầu liên hệ
@@ -130,17 +157,17 @@ const handleSendMail = async () => {
                 <thead className="thead-dark">
                     <tr>
                         <th scope="col" style={{ width: '5%' }}>ID</th>
-                        <th scope="col" style={{ width: '15%' }}>Tên</th> {/* col-3 */}
-                        <th scope="col" style={{ width: '15%' }}>Email</th> {/* col-3 */}
-                        <th scope="col" style={{ width: '10%' }}>Điện Thoại</th> {/* col-2 */}
-                        <th scope="col" style={{ width: '15%' }}>Tiêu đề</th> {/* col-3 */}
-                        <th scope="col" style={{ width: '20%' }}>Nội dung</th> {/* col-3 */}
-                        <th scope="col" style={{ width: '10%' }}>Ngày</th> {/* col-2 */}
-                        <th scope="col" style={{ width: '10%' }}>...</th> {/* Button xử lý */}
+                        <th scope="col" style={{ width: '15%' }}>Tên</th>
+                        <th scope="col" style={{ width: '12%' }}>Email</th>
+                        <th scope="col" style={{ width: '10%' }}>Điện Thoại</th>
+                        <th scope="col" style={{ width: '12%' }}>Tiêu đề</th>
+                        <th scope="col" style={{ width: '20%' }}>Nội dung</th>
+                        <th scope="col" style={{ width: '10%' }}>Ngày</th>
+                        <th scope="col" style={{ width: '13%' }}>...</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {requests.map(request => (
+                    {requests?.map(request => (
                         <tr key={request.id}>
                             <td>{request.id}</td>
                             <td>{request.sender}</td>
@@ -160,6 +187,10 @@ const handleSendMail = async () => {
                     ))}
                 </tbody>
             </table>
+            {/* Hiển thị phân trang */}
+            <div className="d-flex justify-content-center">
+                {renderPagination()}
+            </div>
 
             {/* Modal để xử lý yêu cầu */}
             {selectedRequest && (
