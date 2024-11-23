@@ -6,6 +6,7 @@ import BookingTable from './BookingTable';
 import NotificationDialog from '../../sharedComponents/notificationDialog';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -27,20 +28,20 @@ const BookingManagement = () => {
     const [seats, setSeats] = useState(["A1", "A2", "A3", "B1", "B2", "B3"]);  // Example seats list
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [bookingToDelete, setBookingToDelete] = useState(null);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
 
     useEffect(() => {
         fetchBookings();
-    }, []);
+    }, [page]);
 
     const fetchBookings = async () => {
-        const fetchedBookings = [
-            { id: 1, customerName: "Nguyen Van A", phoneNumber: "0123456789", seatNumber: "A1", bookingTime: "2023-10-01 10:00", status: "Confirmed", from: "Ho Chi Minh", to: "Da Nang", departureTime: "2023-10-05 08:00", price: 500000 },
-            { id: 2, customerName: "Le Thi B", phoneNumber: "0987654321", seatNumber: "B2", bookingTime: "2023-10-02 11:30", status: "Pending", from: "Hanoi", to: "Hue", departureTime: "2023-10-06 09:00", price: 450000 },
-            { id: 3, customerName: "Tran Van C", phoneNumber: "0321654987", seatNumber: "C3", bookingTime: "2023-10-03 12:45", status: "Cancelled", from: "Da Nang", to: "Ho Chi Minh", departureTime: "2023-10-07 14:00", price: 600000 }
-        ];
-        setBookings(fetchedBookings);
-        setFilteredBookings(fetchedBookings);
-        setLoading(false);
+        const response = await axios.get(`http://localhost:8080/api/booking-management?page=${page}&size=${size}`);
+        if (response.status === 200) {
+            setBookings(response.data);
+            setFilteredBookings(response.data);
+            setLoading(false);
+        }
     };
 
     const handleAddBooking = () => {
@@ -134,6 +135,10 @@ const BookingManagement = () => {
                 isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
             />
             <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
+            <div>
+                <button className="btn btn-primary" onClick={() => setPage(page - 1)} disabled={page === 0}>Previous</button>
+                <button className="btn btn-primary" onClick={() => setPage(page + 1)} disabled={bookings.length < size}>Next</button>
+            </div>
             <NotificationDialog
                 message="Bạn có chắc muốn xóa?"
                 isOpen={showDeleteConfirm}

@@ -1,6 +1,7 @@
 // BookingTable.jsx
 import React, { useState } from 'react';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 
 const BookingTable = ({ bookings, onEdit, onDelete }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
@@ -50,17 +51,17 @@ const BookingTable = ({ bookings, onEdit, onDelete }) => {
                     <tr key={booking.id} className="align-middle">
                         <td>{index + 1}</td>
                         <td>{booking.customerName}</td>
-                        <td>{booking.phoneNumber}</td>
-                        <td>{booking.seatNumber}</td>
-                        <td>{booking.bookingTime}</td>
+                        <td>{booking.phone}</td>
+                        <td>{booking.seatNum}</td>
+                        <td>{formatTimeFromDatabase(booking.time)}</td>
                         <td>
-                            <span className={`badge bg-${booking.status === 'Confirmed' ? 'success' : booking.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
-                                {booking.status}
+                            <span className={`badge bg-${booking.payment ? 'success' : 'danger'}`}>
+                                {booking.payment ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}
                             </span>
                         </td>
                         <td>{`${booking.from} - ${booking.to}`}</td>
-                        <td>{booking.departureTime}</td>
-                        <td>{booking.price ? booking.price.toLocaleString() : "0"}</td>
+                        <td>{formatTimeFromDatabase(booking.departure)}</td>
+                        <td>{booking.cost ? booking.cost.toLocaleString() : "0"}</td>
                         <td>
                             <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>
                                 <i className="fa fa-eye"></i>
