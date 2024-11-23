@@ -57,7 +57,7 @@ const Homepage = () => {
         <div className="col"></div>
       </div>
       <div>
-\        <SearchInput />
+        \        <SearchInput />
       </div>
       <div className="container p-0">
         <h2 className="section-title text-center my-5"></h2>
@@ -66,7 +66,7 @@ const Homepage = () => {
         </div>
         <div class="mb-3 homepage-limit">
           <input
-          className="homepage-btn--limit"
+            className="homepage-btn--limit"
             type="number"
             onChange={(e) => setLimit(e.target.value)} // Update limit state on input change
             placeholder="Số lượng tuyến"

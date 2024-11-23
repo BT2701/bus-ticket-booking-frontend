@@ -1,9 +1,9 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import NavSearch from "./NavSearch";
 import CarriageWay from "./CarriageWay";
 import SearchInput from "./SearchInput";
 import BusRouteTable from "./BusRouteTable";
-import { search,getAllRoutes } from './HandleSearch'; // Import hàm fetch dữ liệu
+import { search, getAllRoutes } from './HandleSearch'; // Import hàm fetch dữ liệu
 import Pagination from '@mui/material/Pagination';
 
 const Search = () => {
@@ -13,12 +13,12 @@ const Search = () => {
     lowestPrice: null,
     highestPrice: null,
     busTypes: []
-  }); 
+  });
   const [allRoutes, setAllRoutes] = useState([]); // Thêm state cho tất cả các tuyến đường
   const [isSearching, setIsSearching] = useState(null); // Trạng thái tìm kiếm
-  const [pageNum, setPageNum] = useState(1); 
+  const [pageNum, setPageNum] = useState(1);
   const [totalPages, setTotalPages] = useState(10);  // Tổng số trang
-  const limit=10;
+  const limit = 10;
 
   const handleSearch = async (event) => {
     setIsSearching(1);
@@ -34,10 +34,10 @@ const Search = () => {
 
     // Tạo đối tượng filters chỉ với các tham số có giá trị
     const filters = {
-        ...(lowestPrice && { lowestPrice }),
-        ...(highestPrice && { highestPrice }),
-        ...(busTypes && { busTypes }),
-        ...(sortParam && { sort: sortParam }),
+      ...(lowestPrice && { lowestPrice }),
+      ...(highestPrice && { highestPrice }),
+      ...(busTypes && { busTypes }),
+      ...(sortParam && { sort: sortParam }),
     };
     // Gọi API để lấy dữ liệu tìm kiếm, truyền filters nếu có
     const results = await search(pickup, dropoff, departureDate, filters);
@@ -49,7 +49,7 @@ const Search = () => {
 
       const formattedResults = results?.map(result => {
         const departure = result[1];
-        const price = result[3];
+        const price = result[3]?.price;
         busTypes.add(result[0]);
 
         if (price < lowestPrice) lowestPrice = price;
@@ -114,15 +114,15 @@ const Search = () => {
 
   const renderPagination = () => {
     return (
-        <Pagination
-            count={totalPages}  // Tổng số trang
-            page={pageNum}  // Trang hiện tại
-            onChange={(event, value) => handlePageChange(value)}  // Cập nhật trang khi người dùng click
-            shape="rounded"  // Hình dạng của các nút phân trang
-            color="primary"  // Màu sắc cho nút phân trang
-            siblingCount={2}  // Số lượng trang hiển thị ở gần trang hiện tại
-            boundaryCount={1}  // Số lượng trang hiển thị ở đầu và cuối
-        />
+      <Pagination
+        count={totalPages}  // Tổng số trang
+        page={pageNum}  // Trang hiện tại
+        onChange={(event, value) => handlePageChange(value)}  // Cập nhật trang khi người dùng click
+        shape="rounded"  // Hình dạng của các nút phân trang
+        color="primary"  // Màu sắc cho nút phân trang
+        siblingCount={2}  // Số lượng trang hiển thị ở gần trang hiện tại
+        boundaryCount={1}  // Số lượng trang hiển thị ở đầu và cuối
+      />
     );
   };
 
@@ -139,7 +139,7 @@ const Search = () => {
     const sort = searchParams.get('sort');
     const busTypes = searchParams.get('busTypes');
 
-    if (lowestPrice || highestPrice  || busTypes||sort) {
+    if (lowestPrice || highestPrice || busTypes || sort) {
       setFiltersExist(true);
     } else {
       setFiltersExist(false);
@@ -149,24 +149,24 @@ const Search = () => {
 
   const fetchAllRoutes = async () => {
     try {
-        const response = await getAllRoutes(pageNum, limit);  // Gọi API với pageNum và limit
-        const { data, totalElements, currentPage, totalPages } = response;
-        const routes = data?.map(route => ({
-            busType: route[0],           // Tên loại xe
-            price: route[3],             // Giá vé
-            distance: route[1],          // Thời gian khởi hành
-            duration: route[2],          // Số ghế còn lại
-            from: route[4],              // Điểm xuất phát
-            to: route[5],                // Điểm đến
-            adressFrom:route[6],
-            adressTo:route[7]
-        }));
-        setTotalPages(totalPages);
-        setAllRoutes(routes); // Cập nhật state với dữ liệu mới
+      const response = await getAllRoutes(pageNum, limit);  // Gọi API với pageNum và limit
+      const { data, totalElements, currentPage, totalPages } = response;
+      const routes = data?.map(route => ({
+        busType: route[0],           // Tên loại xe
+        price: route[3]?.price,             // Giá vé
+        distance: route[1],          // Thời gian khởi hành
+        duration: route[2],          // Số ghế còn lại
+        from: route[4],              // Điểm xuất phát
+        to: route[5],                // Điểm đến
+        adressFrom: route[6],
+        adressTo: route[7]
+      }));
+      setTotalPages(totalPages);
+      setAllRoutes(routes); // Cập nhật state với dữ liệu mới
     } catch (error) {
-        console.error('Error fetching all routes:', error);
+      console.error('Error fetching all routes:', error);
     }
-};
+  };
 
 
   // Trong useEffect, gọi fetchAllRoutes
@@ -187,11 +187,11 @@ const Search = () => {
 
     // Kiểm tra nếu có tham số tồn tại
     if (lowestPrice || highestPrice || busTypes || sort) {
-        setFiltersExist(true);
+      setFiltersExist(true);
     } else {
-        setFiltersExist(false);
-        // Kiểm tra nếu isFetchRoutes là giá trị mặc định (null) mới gọi fetchAllRoutes
-        fetchAllRoutes(); // Gọi hàm fetchAllRoutes
+      setFiltersExist(false);
+      // Kiểm tra nếu isFetchRoutes là giá trị mặc định (null) mới gọi fetchAllRoutes
+      fetchAllRoutes(); // Gọi hàm fetchAllRoutes
     }
   }, []); // Chỉ chạy khi component mount lần đầu tiên
 
@@ -201,14 +201,14 @@ const Search = () => {
       <SearchInput handleSearch={handleSearch} />
       <div className="d-flex container p-0">
         <div>
-        {(searchResults.formattedResults.length > 0 || filtersExist) ? (
-            <NavSearch 
+          {(searchResults.formattedResults.length > 0 || filtersExist) ? (
+            <NavSearch
               lowestPrice={searchResults.lowestPrice}
               highestPrice={searchResults.highestPrice}
               busTypes={searchResults.busTypes}
               handleSearch={handleSearch}
             />
-           ) : <p></p>}
+          ) : <p></p>}
         </div>
         <div className="flex-grow-1 ps-3">
           {searchResults.formattedResults.length > 0 ? (
@@ -218,28 +218,28 @@ const Search = () => {
               ))}
             </>
           ) : (
-           (allRoutes.length > 0 && isSearching==null) ? (
+            (allRoutes.length > 0 && isSearching == null) ? (
               <div className="container mt-5">
-              <h3 className="text-center mb-4">Thông tin các tuyến xe</h3>
-              <table className="table table-bordered">
-                <thead className="thead-light">
-                  <tr>
-                    <th>Tuyến xe</th>
-                    <th>Loại xe</th>
-                    <th>Quảng đường</th>
-                    <th>Thời gian hành trình</th>
-                    <th>Giá vé</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <BusRouteTable routes={allRoutes} />
-                </tbody>
-              </table>
-              {/* Hiển thị phân trang */}
-              <div className="d-flex justify-content-center">
-                {renderPagination()}
-              </div>
+                <h3 className="text-center mb-4">Thông tin các tuyến xe</h3>
+                <table className="table table-bordered">
+                  <thead className="thead-light">
+                    <tr>
+                      <th>Tuyến xe</th>
+                      <th>Loại xe</th>
+                      <th>Quảng đường</th>
+                      <th>Thời gian hành trình</th>
+                      <th>Giá vé</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <BusRouteTable routes={allRoutes} />
+                  </tbody>
+                </table>
+                {/* Hiển thị phân trang */}
+                <div className="d-flex justify-content-center">
+                  {renderPagination()}
+                </div>
               </div>
             ) : (
               <div className='d-flex justify-content-center'>
@@ -251,12 +251,12 @@ const Search = () => {
                     width: "70%",
                     height: "70%",
                     objectFit: "contain",
-                  }} 
+                  }}
                 />
               </div>
-            )          
+            )
           )
-        }
+          }
         </div>
       </div>
     </div>
