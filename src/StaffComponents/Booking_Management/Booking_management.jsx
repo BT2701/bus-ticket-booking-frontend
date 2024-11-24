@@ -16,17 +16,6 @@ const BookingManagement = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editingBookingId, setEditingBookingId] = useState(null);
-    const [newBooking, setNewBooking] = useState({
-        customerName: '',
-        email: '',
-        phoneNumber: '',
-        from: '',
-        to: '',
-        departureTime: '',
-        status: 'Pending',
-        seats: [],
-    });
-    const [seats, setSeats] = useState(["A1", "A2", "A3", "B1", "B2", "B3"]);  // Example seats list
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [bookingToDelete, setBookingToDelete] = useState(null);
     const [page, setPage] = useState(0);
@@ -49,33 +38,17 @@ const BookingManagement = () => {
             setLoading(false);
         }
     };
-    const handleAddBooking = () => {
-        const newBookingDetails = { id: bookings.length + 1, ...newBooking, bookingTime: new Date().toLocaleString(), seatNumber: newBooking.seats.join(", ") };
-        setBookings([...bookings, newBookingDetails]);
-        setShowDialog(false);
-        setNewBooking({
-            customerName: '',
-            email: '',
-            phoneNumber: '',
-            from: '',
-            to: '',
-            departureTime: '',
-            status: 'Pending',
-            seats: [],
-        });
-    };
+    
 
     const handleEditBooking = (id) => {
         setIsEditing(true);
         setEditingBookingId(id);
         const bookingToEdit = bookings.find(booking => booking.id === id);
-        setNewBooking(bookingToEdit); // Set the booking data to the dialog
-        setShowDialog(true);
     };
 
     const handleSaveEdit = (updatedBooking) => {
         setBookings(bookings.map(booking => booking.id === editingBookingId ? { ...booking, ...updatedBooking } : booking));
-        setShowDialog(false);
+        // setShowDialog(false);
         setIsEditing(false);
         setEditingBookingId(null);
     };
@@ -89,8 +62,6 @@ const BookingManagement = () => {
         setBookings(bookings.filter(booking => booking.id !== bookingToDelete));
         setShowDeleteConfirm(false);
         setBookingToDelete(null);
-        toast.success('Xóa thành công!');
-        // alert('Xóa thành công!');
     };
 
     const cancelDelete = () => {
@@ -129,16 +100,14 @@ const BookingManagement = () => {
 
             <button className="btn mb-4" onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialog(true)}>Tạo Mới</button>
-            <AddBookingDialog
-                showDialog={showDialog}
-                setShowDialog={setShowDialog}
-                newBooking={newBooking}
-                setNewBooking={setNewBooking}
-                handleAddBooking={handleAddBooking}
-                seats={seats}
-                handleSaveEdit={isEditing ? handleSaveEdit : handleAddBooking}
-                isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
-            />
+            {showDialog && (
+                <AddBookingDialog
+                    onClose={() => setShowDialog(false)} // Đóng dialog
+                />
+            )}
+            <div>
+                <span style={{ color: 'gray', fontStyle: 'italic' }}>*Nhấn đúp chuột để hoàn tất thanh toán</span>
+            </div>
             <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} currentPage={page} size={size} />
             <Pagination
                 page={page}

@@ -2,9 +2,14 @@
 import React, { useState } from 'react';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
+import PaymentDialog from './PaymentDialog';
+import notificationWithIcon from '../../Components/Utils/notification';
 
 const BookingTable = ({ bookings, onEdit, onDelete, currentPage, size }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
+    const [selectedBooking, setSelectedBooking] = useState(null); // Dòng được chọn
+    const [updatedBookings, setUpdatedBookings] = useState(bookings); // Danh sách bookings đã cập nhật
+
 
     const getNestedValue = (obj, key) => {
         const keys = key.split('.');
@@ -44,51 +49,86 @@ const BookingTable = ({ bookings, onEdit, onDelete, currentPage, size }) => {
         }
         return <FaSort />;
     };
+    const handleRowDoubleClick = (booking) => {
+        if (booking.payment) {
+            notificationWithIcon('info', 'Thông Báo', 'Vé đã được thanh toán');
+        } else {
+            setSelectedBooking(booking);
+        }
+    };
+
+    const handlePaymentConfirm = (paymentInfo) => {
+        // Cập nhật trạng thái của booking sau khi thanh toán
+        setUpdatedBookings((prevBookings) =>
+            prevBookings.map((booking) =>
+                booking.id === selectedBooking.id
+                    ? { ...booking, payment: true }
+                    : booking
+            )
+        );
+
+        // Hiển thị thông báo
+        notificationWithIcon('success', 'Thông Báo', 'Thanh toán thành công');
+
+        // Đóng PaymentDialog
+        setSelectedBooking(null);
+    };
 
     return (
-        <table className="table table-hover table-bordered">
-            <thead className="table-success">
-                <tr>
-                    <th scope="col" onClick={() => handleSort('virtualIndex')}>STT {getSortIcon('virtualIndex')}</th>
-                    <th scope="col" onClick={() => handleSort('customerName')}>Tên Khách Hàng {getSortIcon('customerName')}</th>
-                    <th scope="col" onClick={() => handleSort('phone')}>Số Điện Thoại {getSortIcon('phone')}</th>
-                    <th scope="col" onClick={() => handleSort('seatNum')}>Số Ghế {getSortIcon('seatNum')}</th>
-                    <th scope="col" onClick={() => handleSort('time')}>Thời Điểm Đặt {getSortIcon('time')}</th>
-                    <th scope="col" onClick={() => handleSort('payment')}>Trạng Thái {getSortIcon('payment')}</th>
-                    <th scope="col">Lộ Trình</th>
-                    <th scope="col" onClick={() => handleSort('schedule.departure')}>Khởi Hành Lúc {getSortIcon('schedule.departure')}</th>
-                    <th scope="col" onClick={() => handleSort('schedule.price')}>Giá Vé {getSortIcon('schedule.price')}</th>
-                    <th scope="col">Hành Động</th>
-                </tr>
-            </thead>
-            <tbody>
-                {sortedBookings.map((booking, index) => (
-                    <tr key={booking.id} className="align-middle">
-                        <td>{booking.virtualIndex}</td>
-                        <td>{booking.customerName}</td>
-                        <td>{booking.phone}</td>
-                        <td>{booking.seatNum}</td>
-                        <td>{formatTimeFromDatabase(booking.time)}</td>
-                        <td>
-                            <span className={`badge bg-${booking.payment ? 'success' : 'danger'}`}>
-                                {booking.payment ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}
-                            </span>
-                        </td>
-                        <td>{`${booking?.schedule.route.from.name} - ${booking?.schedule.route.to.name}`}</td>
-                        <td>{formatTimeFromDatabase(booking?.schedule.departure)}</td>
-                        <td>{booking?.schedule?.price ? booking?.schedule?.price.toLocaleString() : "0"}</td>
-                        <td>
-                            <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>
-                                <i className="fa fa-eye"></i>
-                            </button>
-                            <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
-                                <i className="fa fa-trash"></i>
-                            </button>
-                        </td>
+        <>
+            <table className="table table-hover table-bordered">
+                <thead className="table-success">
+                    <tr>
+                        <th scope="col" onClick={() => handleSort('virtualIndex')}>STT {getSortIcon('virtualIndex')}</th>
+                        <th scope="col" onClick={() => handleSort('customerName')}>Tên Khách Hàng {getSortIcon('customerName')}</th>
+                        <th scope="col" onClick={() => handleSort('phone')}>Số Điện Thoại {getSortIcon('phone')}</th>
+                        <th scope="col" onClick={() => handleSort('seatNum')}>Số Ghế {getSortIcon('seatNum')}</th>
+                        <th scope="col" onClick={() => handleSort('time')}>Thời Điểm Đặt {getSortIcon('time')}</th>
+                        <th scope="col" onClick={() => handleSort('payment')}>Trạng Thái {getSortIcon('payment')}</th>
+                        <th scope="col">Lộ Trình</th>
+                        <th scope="col" onClick={() => handleSort('schedule.departure')}>Khởi Hành Lúc {getSortIcon('schedule.departure')}</th>
+                        <th scope="col" onClick={() => handleSort('schedule.price')}>Giá Vé {getSortIcon('schedule.price')}</th>
+                        <th scope="col">Hành Động</th>
                     </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {sortedBookings.map((booking, index) => (
+                        <tr key={booking.id} className="align-middle" style={{ cursor: 'pointer' }}
+                            onDoubleClick={() => handleRowDoubleClick(booking)} // Xử lý double-click
+                        >
+                            <td>{booking.virtualIndex}</td>
+                            <td>{booking.customerName}</td>
+                            <td>{booking.phone}</td>
+                            <td>{booking.seatNum}</td>
+                            <td>{formatTimeFromDatabase(booking.time)}</td>
+                            <td>
+                                <span className={`badge bg-${booking.payment ? 'success' : 'danger'}`}>
+                                    {booking.payment ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}
+                                </span>
+                            </td>
+                            <td>{`${booking?.schedule.route.from.name} - ${booking?.schedule.route.to.name}`}</td>
+                            <td>{formatTimeFromDatabase(booking?.schedule.departure)}</td>
+                            <td>{booking?.schedule?.price ? booking?.schedule?.price.toLocaleString() : "0"}</td>
+                            <td>
+                                <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>
+                                    <i className="fa fa-eye"></i>
+                                </button>
+                                <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
+                                    <i className="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {/* Dialog thanh toán */}
+            <PaymentDialog
+                booking={selectedBooking}
+                onClose={() => setSelectedBooking(null)}
+                onConfirm={handlePaymentConfirm}
+            />
+
+        </>
     );
 };
 
