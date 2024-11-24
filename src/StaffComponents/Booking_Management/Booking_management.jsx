@@ -101,12 +101,12 @@ const BookingManagement = () => {
         const filtered = bookings.filter(booking => {
             return (
                 (!filterCriteria.customerName || booking.customerName.toLowerCase().includes(filterCriteria.customerName.toLowerCase())) &&
-                (!filterCriteria.phoneNumber || booking.phoneNumber.includes(filterCriteria.phoneNumber)) &&
-                (!filterCriteria.bookingTime || booking.bookingTime.includes(filterCriteria.bookingTime)) &&
-                (!filterCriteria.status || booking.status.toLowerCase() === filterCriteria.status.toLowerCase()) &&
-                (!filterCriteria.from || booking.from.toLowerCase().includes(filterCriteria.from.toLowerCase())) &&
-                (!filterCriteria.to || booking.to.toLowerCase().includes(filterCriteria.to.toLowerCase())) &&
-                (!filterCriteria.departureTime || booking.departureTime.includes(filterCriteria.departureTime))
+                (!filterCriteria.phoneNumber || booking.phone.includes(filterCriteria.phoneNumber)) &&
+                (!filterCriteria.bookingTime || new Date(booking.time).toLocaleString().includes(filterCriteria.bookingTime)) &&
+                (!filterCriteria.status || (booking.payment !== null ? "1" : "0") === filterCriteria.status) &&
+                (!filterCriteria.from || booking.schedule.route.from.name.toLowerCase().includes(filterCriteria.from.toLowerCase())) &&
+                (!filterCriteria.to || booking.schedule.route.to.name.toLowerCase().includes(filterCriteria.to.toLowerCase())) &&
+                (!filterCriteria.departureTime || new Date(booking.schedule.departure).toLocaleString().includes(filterCriteria.departureTime))
             );
         });
         setFilteredBookings(filtered);
@@ -139,7 +139,7 @@ const BookingManagement = () => {
                 handleSaveEdit={isEditing ? handleSaveEdit : handleAddBooking}
                 isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
             />
-            <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
+            <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} currentPage={page} size={size} />
             <Pagination
                 page={page}
                 setPage={setPage}

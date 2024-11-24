@@ -3,18 +3,33 @@ import React, { useState } from 'react';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 
-const BookingTable = ({ bookings, onEdit, onDelete }) => {
+const BookingTable = ({ bookings, onEdit, onDelete, currentPage, size }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
 
-    const sortedBookings = [...bookings].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-    });
+    const getNestedValue = (obj, key) => {
+        const keys = key.split('.');
+        return keys.reduce((value, k) => (value ? value[k] : null), obj);
+    };
+
+    const sortedBookings = [...bookings]
+        .map((booking, index) => ({
+            ...booking,
+            virtualIndex: index + 1 + currentPage * size, // Tính STT theo vị trí mới
+        }))
+        .sort((a, b) => {
+            const aValue = getNestedValue(a, sortConfig.key);
+            const bValue = getNestedValue(b, sortConfig.key);
+            if (aValue == null) return sortConfig.direction === 'ascending' ? 1 : -1;
+            if (bValue == null) return sortConfig.direction === 'ascending' ? -1 : 1;
+
+            if (aValue < bValue) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
 
     const handleSort = (key) => {
         setSortConfig((prevConfig) => ({
@@ -34,22 +49,22 @@ const BookingTable = ({ bookings, onEdit, onDelete }) => {
         <table className="table table-hover table-bordered">
             <thead className="table-success">
                 <tr>
-                    <th scope="col" onClick={() => handleSort('id')}>STT {getSortIcon('id')}</th>
+                    <th scope="col" onClick={() => handleSort('virtualIndex')}>STT {getSortIcon('virtualIndex')}</th>
                     <th scope="col" onClick={() => handleSort('customerName')}>Tên Khách Hàng {getSortIcon('customerName')}</th>
-                    <th scope="col" onClick={() => handleSort('phoneNumber')}>Số Điện Thoại {getSortIcon('phoneNumber')}</th>
-                    <th scope="col" onClick={() => handleSort('seatNumber')}>Số Ghế {getSortIcon('seatNumber')}</th>
-                    <th scope="col" onClick={() => handleSort('bookingTime')}>Thời Điểm Đặt {getSortIcon('bookingTime')}</th>
-                    <th scope="col" onClick={() => handleSort('status')}>Trạng Thái {getSortIcon('status')}</th>
+                    <th scope="col" onClick={() => handleSort('phone')}>Số Điện Thoại {getSortIcon('phone')}</th>
+                    <th scope="col" onClick={() => handleSort('seatNum')}>Số Ghế {getSortIcon('seatNum')}</th>
+                    <th scope="col" onClick={() => handleSort('time')}>Thời Điểm Đặt {getSortIcon('time')}</th>
+                    <th scope="col" onClick={() => handleSort('payment')}>Trạng Thái {getSortIcon('payment')}</th>
                     <th scope="col">Lộ Trình</th>
-                    <th scope="col" onClick={() => handleSort('departureTime')}>Khởi Hành Lúc {getSortIcon('departureTime')}</th>
-                    <th scope="col" onClick={() => handleSort('price')}>Giá Vé {getSortIcon('price')}</th>
+                    <th scope="col" onClick={() => handleSort('schedule.departure')}>Khởi Hành Lúc {getSortIcon('schedule.departure')}</th>
+                    <th scope="col" onClick={() => handleSort('schedule.price')}>Giá Vé {getSortIcon('schedule.price')}</th>
                     <th scope="col">Hành Động</th>
                 </tr>
             </thead>
             <tbody>
                 {sortedBookings.map((booking, index) => (
                     <tr key={booking.id} className="align-middle">
-                        <td>{index + 1}</td>
+                        <td>{booking.virtualIndex}</td>
                         <td>{booking.customerName}</td>
                         <td>{booking.phone}</td>
                         <td>{booking.seatNum}</td>
