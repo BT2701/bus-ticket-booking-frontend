@@ -126,12 +126,14 @@ const InfoTicket = ({ TicketData }) => {
             <h4 className="text-primary fw-bold mb-0">
               {TicketData[3]?.price ? formatPrice(TicketData[3]?.price) : 'Giá vé chưa có'}
             </h4>
+            <strong style={{ color: TicketData[10] == null ? "red" : "green" }}>
+              {TicketData[10] == null ? "Chưa thanh toán" : "Đã thanh toán"}
+            </strong>
             <strong className="text-muted mb-1">Mã ghế: {TicketData[4] ? TicketData[4] : 'Không có thông tin chỗ'}</strong>
             <strong className=" mb-1">Mã vé: {TicketData[9]}</strong> {/* Hiển thị mã vé */}
             <div onClick={openModal} style={{ cursor: 'pointer' }}>
               <QRCodeCanvas value={"TicketID:" + TicketData[9]} size={76} /> {/* Tạo mã QR cho mã vé */}
             </div>
-
             <>
               {TicketStatus === 1 ? (
                 <strong className={`text-success fs-5`}>Chưa sử dụng</strong>
