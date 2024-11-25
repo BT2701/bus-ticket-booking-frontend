@@ -4,15 +4,23 @@ import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 
 const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
-
+    const getNestedValue = (obj, key) => {
+        const keys = key.split('.');
+        return keys.reduce((value, k) => (value ? value[k] : null), obj);
+    };
     const sortedRoutes = [...routes].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
+        const aValue = getNestedValue(a, sortConfig.key);
+            const bValue = getNestedValue(b, sortConfig.key);
+            if (aValue == null) return sortConfig.direction === 'ascending' ? 1 : -1;
+            if (bValue == null) return sortConfig.direction === 'ascending' ? -1 : 1;
+
+            if (aValue < bValue) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (aValue > bValue) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
     });
 
     const handleSort = (key) => {
@@ -40,17 +48,17 @@ const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
                     <th scope="col" onClick={() => handleSort('id')}>
                         STT {getSortIcon('id')}
                     </th>
-                    <th scope="col" onClick={() => handleSort('startPoint')}>
-                        Điểm Xuất Phát {getSortIcon('startPoint')}
+                    <th scope="col" onClick={() => handleSort('from.name')}>
+                        Điểm Xuất Phát {getSortIcon('from.name')}
                     </th>
-                    <th scope="col" onClick={() => handleSort('endPoint')}>
-                        Điểm Đến {getSortIcon('endPoint')}
+                    <th scope="col" onClick={() => handleSort('to.name')}>
+                        Điểm Đến {getSortIcon('to.name')}
                     </th>
                     <th scope="col" onClick={() => handleSort('distance')}>
                         Khoảng Cách {getSortIcon('distance')}
                     </th>
-                    <th scope="col" onClick={() => handleSort('estimatedTime')}>
-                        Thời Gian Đi Ước Tính {getSortIcon('estimatedTime')}
+                    <th scope="col" onClick={() => handleSort('duration')}>
+                        Thời Gian Đi Ước Tính {getSortIcon('duration')}
                     </th>
                     <th scope="col">Hành Động</th>
                 </tr>
@@ -59,10 +67,10 @@ const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
                 {sortedRoutes.map(route => (
                     <tr key={route.id} className="align-middle">
                         <td>{route.id}</td>
-                        <td>{route.startPoint}</td>
-                        <td>{route.endPoint}</td>
+                        <td>{route.from.name}</td>
+                        <td>{route.to.name}</td>
                         <td>{route.distance} km</td>
-                        <td>{route.estimatedTime}</td>
+                        <td>{route.duration}</td>
                         <td>
                             <button className="btn btn-info btn-sm me-2" onClick={() => handleEditRoute(route.id)}>
                             <i className="fa fa-eye"></i>

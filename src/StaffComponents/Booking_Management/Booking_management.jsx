@@ -4,75 +4,44 @@ import SearchFilterBooking from './SearchFilter';
 import AddBookingDialog from './AddBookingDialog';
 import BookingTable from './BookingTable';
 import NotificationDialog from '../../sharedComponents/notificationDialog';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import Pagination from '../../sharedComponents/Pagination';
+import { useBooking } from '../../Context/BookingContex';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
     const [filteredBookings, setFilteredBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingBookingId, setEditingBookingId] = useState(null);
-    const [newBooking, setNewBooking] = useState({
-        customerName: '',
-        email: '',
-        phoneNumber: '',
-        from: '',
-        to: '',
-        departureTime: '',
-        status: 'Pending',
-        seats: [],
-    });
-    const [seats, setSeats] = useState(["A1", "A2", "A3", "B1", "B2", "B3"]);  // Example seats list
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [bookingToDelete, setBookingToDelete] = useState(null);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
+    const { loader, setLoader } = useBooking();
 
     useEffect(() => {
+        fetchTotal();
         fetchBookings();
-    }, []);
-
+        setLoader(0);
+    }, [page,loader]);
+    const fetchTotal = async () => {
+        const total = await axios.get(`http://localhost:8080/api/booking/total`);
+        setTotalItems(total.data);
+    }
     const fetchBookings = async () => {
-        const fetchedBookings = [
-            { id: 1, customerName: "Nguyen Van A", phoneNumber: "0123456789", seatNumber: "A1", bookingTime: "2023-10-01 10:00", status: "Confirmed", from: "Ho Chi Minh", to: "Da Nang", departureTime: "2023-10-05 08:00", price: 500000 },
-            { id: 2, customerName: "Le Thi B", phoneNumber: "0987654321", seatNumber: "B2", bookingTime: "2023-10-02 11:30", status: "Pending", from: "Hanoi", to: "Hue", departureTime: "2023-10-06 09:00", price: 450000 },
-            { id: 3, customerName: "Tran Van C", phoneNumber: "0321654987", seatNumber: "C3", bookingTime: "2023-10-03 12:45", status: "Cancelled", from: "Da Nang", to: "Ho Chi Minh", departureTime: "2023-10-07 14:00", price: 600000 }
-        ];
-        setBookings(fetchedBookings);
-        setFilteredBookings(fetchedBookings);
-        setLoading(false);
+        const response = await axios.get(`http://localhost:8080/api/booking-management?page=${page}&size=${size}`);
+        if (response.status === 200) {
+            setBookings(response.data);
+            setFilteredBookings(response.data);
+            setLoading(false);
+        }
+        else if (response.status === 404) {
+            setLoading(true);
+        }
     };
-
-    const handleAddBooking = () => {
-        const newBookingDetails = { id: bookings.length + 1, ...newBooking, bookingTime: new Date().toLocaleString(), seatNumber: newBooking.seats.join(", ") };
-        setBookings([...bookings, newBookingDetails]);
-        setShowDialog(false);
-        setNewBooking({
-            customerName: '',
-            email: '',
-            phoneNumber: '',
-            from: '',
-            to: '',
-            departureTime: '',
-            status: 'Pending',
-            seats: [],
-        });
-    };
-
-    const handleEditBooking = (id) => {
-        setIsEditing(true);
-        setEditingBookingId(id);
-        const bookingToEdit = bookings.find(booking => booking.id === id);
-        setNewBooking(bookingToEdit); // Set the booking data to the dialog
-        setShowDialog(true);
-    };
-
-    const handleSaveEdit = (updatedBooking) => {
-        setBookings(bookings.map(booking => booking.id === editingBookingId ? { ...booking, ...updatedBooking } : booking));
-        setShowDialog(false);
-        setIsEditing(false);
-        setEditingBookingId(null);
-    };
+    
 
     const handleDeleteBooking = (id) => {
         setBookingToDelete(id);
@@ -83,8 +52,6 @@ const BookingManagement = () => {
         setBookings(bookings.filter(booking => booking.id !== bookingToDelete));
         setShowDeleteConfirm(false);
         setBookingToDelete(null);
-        toast.success('Xóa thành công!');
-        // alert('Xóa thành công!');
     };
 
     const cancelDelete = () => {
@@ -95,12 +62,12 @@ const BookingManagement = () => {
         const filtered = bookings.filter(booking => {
             return (
                 (!filterCriteria.customerName || booking.customerName.toLowerCase().includes(filterCriteria.customerName.toLowerCase())) &&
-                (!filterCriteria.phoneNumber || booking.phoneNumber.includes(filterCriteria.phoneNumber)) &&
-                (!filterCriteria.bookingTime || booking.bookingTime.includes(filterCriteria.bookingTime)) &&
-                (!filterCriteria.status || booking.status.toLowerCase() === filterCriteria.status.toLowerCase()) &&
-                (!filterCriteria.from || booking.from.toLowerCase().includes(filterCriteria.from.toLowerCase())) &&
-                (!filterCriteria.to || booking.to.toLowerCase().includes(filterCriteria.to.toLowerCase())) &&
-                (!filterCriteria.departureTime || booking.departureTime.includes(filterCriteria.departureTime))
+                (!filterCriteria.phoneNumber || booking.phone.includes(filterCriteria.phoneNumber)) &&
+                (!filterCriteria.bookingTime || new Date(booking.time).toLocaleString().includes(filterCriteria.bookingTime)) &&
+                (!filterCriteria.status || (booking.payment !== null ? "1" : "0") === filterCriteria.status) &&
+                (!filterCriteria.from || booking.schedule.route.from.name.toLowerCase().includes(filterCriteria.from.toLowerCase())) &&
+                (!filterCriteria.to || booking.schedule.route.to.name.toLowerCase().includes(filterCriteria.to.toLowerCase())) &&
+                (!filterCriteria.departureTime || new Date(booking.schedule.departure).toLocaleString().includes(filterCriteria.departureTime))
             );
         });
         setFilteredBookings(filtered);
@@ -123,17 +90,21 @@ const BookingManagement = () => {
 
             <button className="btn mb-4" onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = '#90EE90'} style={{ backgroundColor: '#90EE90' }} onClick={() => setShowDialog(true)}>Tạo Mới</button>
-            <AddBookingDialog
-                showDialog={showDialog}
-                setShowDialog={setShowDialog}
-                newBooking={newBooking}
-                setNewBooking={setNewBooking}
-                handleAddBooking={handleAddBooking}
-                seats={seats}
-                handleSaveEdit={isEditing ? handleSaveEdit : handleAddBooking}
-                isEditing={isEditing ? bookings.find(booking => booking.id === editingBookingId) : null}
+            {showDialog && (
+                <AddBookingDialog
+                    onClose={() => setShowDialog(false)} // Đóng dialog
+                />
+            )}
+            <div>
+                <span style={{ color: 'gray', fontStyle: 'italic' }}>*Nhấn đúp chuột để hoàn tất thanh toán</span>
+            </div>
+            <BookingTable bookings={filteredBookings}  onDelete={handleDeleteBooking} currentPage={page} size={size} />
+            <Pagination
+                page={page}
+                setPage={setPage}
+                totalItems={totalItems}
+                itemsPerPage={size}
             />
-            <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} />
             <NotificationDialog
                 message="Bạn có chắc muốn xóa?"
                 isOpen={showDeleteConfirm}
