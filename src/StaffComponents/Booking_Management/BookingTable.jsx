@@ -4,12 +4,27 @@ import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 import PaymentDialog from './PaymentDialog';
 import notificationWithIcon from '../../Components/Utils/notification';
+import BookingDetailDialog from './BookingDetailDialog';
 
-const BookingTable = ({ bookings, onEdit, onDelete, currentPage, size }) => {
+const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
     const [selectedBooking, setSelectedBooking] = useState(null); // Dòng được chọn
+    const [selectedBooking1, setSelectedBooking1] = useState(null); // Dòng được chọn
     const [updatedBookings, setUpdatedBookings] = useState(bookings); // Danh sách bookings đã cập nhật
+    const handleOpenDialog = (booking) => {
+        setSelectedBooking1(booking);
+    };
 
+    const handleCloseDialog = () => {
+        setSelectedBooking1(null);
+    };
+    const onUpdateBooking = (updatedBooking) => {
+        setUpdatedBookings((prevBookings) =>
+            prevBookings.map((booking) =>
+                booking.id === updatedBooking.id ? updatedBooking : booking
+            )
+        );
+    };
 
     const getNestedValue = (obj, key) => {
         const keys = key.split('.');
@@ -110,13 +125,18 @@ const BookingTable = ({ bookings, onEdit, onDelete, currentPage, size }) => {
                             <td>{formatTimeFromDatabase(booking?.schedule.departure)}</td>
                             <td>{booking?.schedule?.price ? booking?.schedule?.price.toLocaleString() : "0"}</td>
                             <td>
-                                <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(booking.id)}>
-                                    <i className="fa fa-eye"></i>
-                                </button>
-                                <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
-                                    <i className="fa fa-trash"></i>
-                                </button>
+                                {new Date(booking.schedule.departure) > new Date() && (
+                                    <>
+                                        <button className="btn btn-info btn-sm me-2" onClick={() => handleOpenDialog(booking)}>
+                                            <i className="fa fa-eye"></i>
+                                        </button>
+                                        <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
+                                            <i className="fa fa-trash"></i>
+                                        </button>
+                                    </>
+                                )}
                             </td>
+
                         </tr>
                     ))}
                 </tbody>
@@ -127,6 +147,12 @@ const BookingTable = ({ bookings, onEdit, onDelete, currentPage, size }) => {
                 onClose={() => setSelectedBooking(null)}
                 onConfirm={handlePaymentConfirm}
             />
+            {selectedBooking1 && (
+                <BookingDetailDialog
+                    booking={selectedBooking1}
+                    onClose={handleCloseDialog}
+                />
+            )}
 
         </>
     );

@@ -8,6 +8,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Pagination from '../../sharedComponents/Pagination';
+import { useBooking } from '../../Context/BookingContex';
+import { set } from 'date-fns';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -21,11 +23,13 @@ const BookingManagement = () => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
+    const { loader, setLoader } = useBooking();
 
     useEffect(() => {
         fetchTotal();
         fetchBookings();
-    }, [page]);
+        setLoader(0);
+    }, [page,loader]);
     const fetchTotal = async () => {
         const total = await axios.get(`http://localhost:8080/api/booking/total`);
         setTotalItems(total.data);
@@ -36,6 +40,9 @@ const BookingManagement = () => {
             setBookings(response.data);
             setFilteredBookings(response.data);
             setLoading(false);
+        }
+        else if (response.status === 404) {
+            setLoading(true);
         }
     };
     
@@ -108,7 +115,7 @@ const BookingManagement = () => {
             <div>
                 <span style={{ color: 'gray', fontStyle: 'italic' }}>*Nhấn đúp chuột để hoàn tất thanh toán</span>
             </div>
-            <BookingTable bookings={filteredBookings} onEdit={handleEditBooking} onDelete={handleDeleteBooking} currentPage={page} size={size} />
+            <BookingTable bookings={filteredBookings}  onDelete={handleDeleteBooking} currentPage={page} size={size} />
             <Pagination
                 page={page}
                 setPage={setPage}
