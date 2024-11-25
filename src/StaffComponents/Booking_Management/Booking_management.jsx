@@ -4,20 +4,16 @@ import SearchFilterBooking from './SearchFilter';
 import AddBookingDialog from './AddBookingDialog';
 import BookingTable from './BookingTable';
 import NotificationDialog from '../../sharedComponents/notificationDialog';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Pagination from '../../sharedComponents/Pagination';
 import { useBooking } from '../../Context/BookingContex';
-import { set } from 'date-fns';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
     const [filteredBookings, setFilteredBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingBookingId, setEditingBookingId] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [bookingToDelete, setBookingToDelete] = useState(null);
     const [page, setPage] = useState(0);
@@ -46,19 +42,6 @@ const BookingManagement = () => {
         }
     };
     
-
-    const handleEditBooking = (id) => {
-        setIsEditing(true);
-        setEditingBookingId(id);
-        const bookingToEdit = bookings.find(booking => booking.id === id);
-    };
-
-    const handleSaveEdit = (updatedBooking) => {
-        setBookings(bookings.map(booking => booking.id === editingBookingId ? { ...booking, ...updatedBooking } : booking));
-        // setShowDialog(false);
-        setIsEditing(false);
-        setEditingBookingId(null);
-    };
 
     const handleDeleteBooking = (id) => {
         setBookingToDelete(id);
