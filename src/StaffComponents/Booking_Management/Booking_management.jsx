@@ -8,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import Pagination from '../../sharedComponents/Pagination';
 import { useBooking } from '../../Context/BookingContex';
+import { set } from 'date-fns';
+import notificationWithIcon from '../../Components/Utils/notification';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -15,11 +17,11 @@ const BookingManagement = () => {
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [bookingToDelete, setBookingToDelete] = useState(null);
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
     const { loader, setLoader } = useBooking();
+    const [bookingToDelete, setBookingToDelete] = useState("");
 
     useEffect(() => {
         fetchTotal();
@@ -49,14 +51,20 @@ const BookingManagement = () => {
     };
 
     const confirmDelete = () => {
-        setBookings(bookings.filter(booking => booking.id !== bookingToDelete));
+        axios.delete(`http://localhost:8080/api/booking/${bookingToDelete}`)
+            .then(() => {
+                setLoader(1);
+                notificationWithIcon ('success', 'Success', 'Xóa đặt vé thành công');
+            })
+            .catch((error) => {
+                console.log(error);
+                notificationWithIcon ('error', 'Error', 'Xóa đặt vé thất bại');
+            });
         setShowDeleteConfirm(false);
-        setBookingToDelete(null);
     };
 
     const cancelDelete = () => {
         setShowDeleteConfirm(false);
-        setBookingToDelete(null);
     };
     const handleFilter = (filterCriteria) => {
         const filtered = bookings.filter(booking => {

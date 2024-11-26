@@ -18,13 +18,6 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
     const handleCloseDialog = () => {
         setSelectedBooking1(null);
     };
-    const onUpdateBooking = (updatedBooking) => {
-        setUpdatedBookings((prevBookings) =>
-            prevBookings.map((booking) =>
-                booking.id === updatedBooking.id ? updatedBooking : booking
-            )
-        );
-    };
 
     const getNestedValue = (obj, key) => {
         const keys = key.split('.');
@@ -76,7 +69,7 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
         // Cập nhật trạng thái của booking sau khi thanh toán
         setUpdatedBookings((prevBookings) =>
             prevBookings.map((booking) =>
-                booking.id === selectedBooking.id
+                booking.bookingId === selectedBooking.bookingId
                     ? { ...booking, payment: true }
                     : booking
             )
@@ -108,7 +101,7 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
                 </thead>
                 <tbody>
                     {sortedBookings.map((booking, index) => (
-                        <tr key={booking.id} className="align-middle" style={{ cursor: 'pointer' }}
+                        <tr key={booking.bookingId} className="align-middle" style={{ cursor: 'pointer' }}
                             onDoubleClick={() => handleRowDoubleClick(booking)} // Xử lý double-click
                         >
                             <td>{booking.virtualIndex}</td>
@@ -130,7 +123,7 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
                                         <button className="btn btn-info btn-sm me-2" onClick={() => handleOpenDialog(booking)}>
                                             <i className="fa fa-eye"></i>
                                         </button>
-                                        <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.id)}>
+                                        <button className="btn btn-danger btn-sm" onClick={() => onDelete(booking.bookingId)}>
                                             <i className="fa fa-trash"></i>
                                         </button>
                                     </>
