@@ -30,11 +30,11 @@ import { useEffect } from "react";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
 import HistorySchedules from "./Components/History/HistorySchedules";
-import HandleContact from "./Components/Staff/Contact/HandleContact";
-import PrintTicket from "./Components/Staff/PrintTicket/PrintTicket";
 import { ColorModeContext, useMode } from "./StaffComponents/utils/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
+import HandleContact from "./StaffComponents/Contact/HandleContact";
+import PrintTicket from "./StaffComponents/PrintTicket/PrintTicket";
 import Test from "./Components/News/NewsPage";
 import { FeedbackProvider } from "./Context/FeedbackProvider";
 import Dashboard from "./StaffComponents/dashboard/Dashboard";
@@ -46,6 +46,7 @@ import Bus from "./StaffComponents/bus/Bus";
 import BookingManagement from "./StaffComponents/Booking_Management/Booking_management";
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
+import { BookingProvider } from "./Context/BookingContex";
 
 const App = () => {
   const { state } = useUserContext();
@@ -66,25 +67,29 @@ const App = () => {
 
   return (
     <Router>
-      <FeedbackProvider>
-        <PageProvider>
-          <UserProvider>
-            <ScheduleProvider>
-              <Routes>
-                <Route path="/*" element={<MainApp />} />
-                <Route path="/staff/*" element={<StaffLayout />}>
-                  <Route path="" element={<Dashboard />} />
-                  <Route path="users" element={<Team />} />
-                  <Route path="drivers" element={<Driver />} />
-                  <Route path="buses" element={<Bus />} />
-                  <Route path="booking-management" element={<BookingManagement />} />
-                  <Route path="schedule-management" element={<CenterPage/>} /> 
-                </Route>
-              </Routes>
-            </ScheduleProvider>
-          </UserProvider>
-        </PageProvider>
-      </FeedbackProvider>
+      <BookingProvider>
+        <FeedbackProvider>
+          <PageProvider>
+            <UserProvider>
+              <ScheduleProvider>
+                <Routes>
+                  <Route path="/*" element={<MainApp />} />
+                  <Route path="/staff/*" element={<StaffLayout />}>
+                    <Route path="" element={<Dashboard />} />
+                    <Route path="users" element={<Team />} />
+                    <Route path="drivers" element={<Driver />} />
+                    <Route path="buses" element={<Bus />} />
+                    <Route path="booking-management" element={<BookingManagement />} />
+                    <Route path="schedule-management" element={<CenterPage />} />
+                    <Route path="handle-contact" element={<HandleContact />} />
+                    <Route path="print-ticket" element={<PrintTicket />} />
+                  </Route>
+                </Routes>
+              </ScheduleProvider>
+            </UserProvider>
+          </PageProvider>
+        </FeedbackProvider>
+      </BookingProvider>
     </Router>
   );
 };
@@ -92,7 +97,7 @@ const App = () => {
 const MainApp = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <ToastContainer position="top-right"/>
+      <ToastContainer position="top-right" />
       <Header />
       <div className="flex flex-grow">
         <Routes>
@@ -115,8 +120,6 @@ const MainApp = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/news" element={<Test />} />
           <Route path="/history" element={<HistorySchedules />} />
-          <Route path="/staff/handleContact" element={<HandleContact />} />
-          <Route path="/staff/PrintTicket" element={<PrintTicket />} />
         </Routes>
       </div>
       <Footer />

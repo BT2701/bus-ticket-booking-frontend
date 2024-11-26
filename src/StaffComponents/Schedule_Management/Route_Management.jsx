@@ -3,6 +3,8 @@ import AddRouteDialog from "./AddRoute";
 import RouteTable from "./RouteTable";
 import SearchFilterRoute from "./SearchRoute";
 import NotificationDialog from "../../sharedComponents/notificationDialog";
+import Pagination from "../../sharedComponents/Pagination";
+import axios from "axios";
 
 const RouteManagement = () => {
     const [routes, setRoutes] = useState([]);
@@ -20,20 +22,29 @@ const RouteManagement = () => {
         distance: '',
         estimatedTime: '',
     });
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
+        fetchTotal();
         fetchRoutes();
-    }, []);
+    }, [page]);
+
+    const fetchTotal = async () => {
+        const total = await axios.get(`http://localhost:8080/api/route/total`);
+        if (total.status === 200) {
+            setTotalItems(total.data);
+        }
+    };
 
     const fetchRoutes = async () => {
-        const fetchedRoutes = [
-            { id: 1, startPoint: "Ho Chi Minh", endPoint: "Da Nang", distance: 1000, estimatedTime: "15 hours" },
-            { id: 2, startPoint: "Hanoi", endPoint: "Hue", distance: 600, estimatedTime: "10 hours" },
-            { id: 3, startPoint: "Da Nang", endPoint: "Ho Chi Minh", distance: 1200, estimatedTime: "18 hours" }
-        ];
-        setRoutes(fetchedRoutes);
-        setFilteredRoutes(fetchedRoutes);
-        setLoading(false);
+        const response = await axios.get(`http://localhost:8080/api/route-management?page=${page}&size=${size}`);
+        if (response.status === 200) {
+            setRoutes(response.data);
+            setFilteredRoutes(response.data);
+            setLoading(false);
+        }
     };
 
     const handleAddRoute = () => {
@@ -89,8 +100,8 @@ const RouteManagement = () => {
     const handleFilter = (filterCriteria) => {
         const filtered = routes.filter(route => {
             return (
-                (!filterCriteria.startPoint || route.startPoint.toLowerCase().includes(filterCriteria.startPoint.toLowerCase())) &&
-                (!filterCriteria.endPoint || route.endPoint.toLowerCase().includes(filterCriteria.endPoint.toLowerCase())) &&
+                (!filterCriteria.startPoint || route.from.name.toLowerCase().includes(filterCriteria.startPoint.toLowerCase())) &&
+                (!filterCriteria.endPoint || route.to.name.toLowerCase().includes(filterCriteria.endPoint.toLowerCase())) &&
                 (!filterCriteria.distance || route.distance.toString().includes(filterCriteria.distance))
             );
         });
@@ -117,6 +128,12 @@ const RouteManagement = () => {
                 routes={filteredRoutes}
                 handleEditRoute={handleEditRoute}
                 handleDeleteRoute={handleDeleteRoute}
+            />
+            <Pagination
+                page={page}
+                setPage={setPage}
+                totalItems={totalItems}
+                itemsPerPage={size}
             />
             <NotificationDialog
                 message="Bạn có chắc muốn xóa?"

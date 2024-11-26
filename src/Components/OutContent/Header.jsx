@@ -123,32 +123,6 @@ const Header = () => {
                       Về chúng tôi
                     </Link>
                   </li>
-                  <li className="nav-item">
-                    <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "staff/handleContact" && "active"
-                      }`}
-                      onClick={() => {
-                        setPage("staff/handleContact");
-                      }}
-                      to="staff/handleContact"
-                    >
-                      Xử lý liên hệ NV
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "staff/PrintTicket" && "active"
-                      }`}
-                      onClick={() => {
-                        setPage("staff/PrintTicket");
-                      }}
-                      to="staff/PrintTicket"
-                    >
-                      In vé
-                    </Link>
-                  </li>
                 </ul>
                 <div className="d-flex align-items-center">
                   {

@@ -2,10 +2,10 @@ import axios from 'axios';
 import ApiService from '../Utils/apiService';
 
 // Hàm gọi API để lấy danh sách booking đã hoàn thành
-const fetchPastBookings = async (customerId) => {
+const fetchPastBookings = async (customerId,pageNum, limit) => {
   try {
     // Thực hiện GET request đến API lấy booking dựa trên customerId
-    const response = await ApiService.get(`http://localhost:8080/api/lookup-past-bookings/${customerId}`);
+    const response = await ApiService.get(`http://localhost:8080/api/lookup-past-bookings?customerId=${customerId}&pageNum=${pageNum}&limit=${limit}`);
     // Kiểm tra nếu phản hồi từ server là thành công
     if (response ) {
       // Trả về dữ liệu booking nếu có

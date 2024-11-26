@@ -13,6 +13,9 @@ import ApiService from "../../../Components/Utils/apiService";
 import notificationWithIcon from "../../../Components/Utils/notification";
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import BookingIcon from '@mui/icons-material/Event';
+import PrintIcon from '@mui/icons-material/Print';
+import WorkIcon from '@mui/icons-material/Work';
+
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -193,6 +196,20 @@ function Sidebar() {
                 title="Quản lý đặt vé"
                 to="/staff/booking-management"
                 icon={<BookingIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="In vé"
+                to="/staff/print-ticket"
+                icon={<PrintIcon  />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Xử lý liên hệ"
+                to="/staff/handle-contact"
+                icon={<WorkIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />

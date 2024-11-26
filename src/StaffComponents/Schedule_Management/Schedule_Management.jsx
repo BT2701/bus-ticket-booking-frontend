@@ -4,6 +4,8 @@ import AddTripDialog from './AddSchedule';  // Import dialog component
 import SearchFilter from './SearchSchedule'; // Import SearchFilter component
 import TripTable from './ScheduleTable'; // Import TripTable component
 import NotificationDialog from '../../sharedComponents/notificationDialog';
+import Pagination from '../../sharedComponents/Pagination';
+import axios from 'axios';
 
 const ScheduleManagement = () => {
     const [trips, setTrips] = useState([]);
@@ -14,21 +16,29 @@ const ScheduleManagement = () => {
     const [editingTripId, setEditingTripId] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [tripToDelete, setTripToDelete] = useState(null); // Lưu trữ id của chuyến đi cần xóa
-
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
+        fetchTotal();
         fetchTrips();
-    }, []);
+    }, [page]);
+
+    const fetchTotal = async () => {
+        const total = await axios.get(`http://localhost:8080/api/schedule/total`);
+        if (total.status === 200) {
+            setTotalItems(total.data);
+        }
+    };
 
     const fetchTrips = async () => {
-        const fetchedTrips = [
-            { id: 1, from: 'Hà Nội', to: 'Hải Phòng', departureTime: '08:00 AM', status: 'Pending' },
-            { id: 2, from: 'Hồ Chí Minh', to: 'Vũng Tàu', departureTime: '09:30 AM', status: 'Confirmed' },
-            { id: 3, from: 'Đà Nẵng', to: 'Huế', departureTime: '10:00 AM', status: 'Pending' },
-        ];
-        setTrips(fetchedTrips);
-        setFilteredTrips(fetchedTrips);
-        setLoading(false);
+        const response = await axios.get(`http://localhost:8080/api/schedule-management?page=${page}&size=${size}`);
+        if (response.status === 200) {
+            setTrips(response.data);
+            setFilteredTrips(response.data);
+            setLoading(false);
+        }
     };
 
     const handleAddTrip = (newTrip) => {
@@ -65,13 +75,13 @@ const ScheduleManagement = () => {
     };
 
     const handleFilter = (filterCriteria) => {
-        const { from, to, departureTime, status } = filterCriteria;
+        const { from, to, departureTime, arrival } = filterCriteria;
         const filtered = trips.filter(trip => {
             return (
-                (!from || trip.from.toLowerCase().includes(from.toLowerCase())) &&
-                (!to || trip.to.toLowerCase().includes(to.toLowerCase())) &&
-                (!departureTime || trip.departureTime.includes(departureTime)) &&
-                (!status || trip.status.toLowerCase() === status.toLowerCase())
+                (!from || trip.route.from.name.toLowerCase().includes(from.toLowerCase())) &&
+                (!to || trip.route.to.name.toLowerCase().includes(to.toLowerCase())) &&
+                (!departureTime || new Date(trip.departure).toLocaleString().includes(departureTime)) &&
+                (!arrival || trip.arrival.includes(arrival))
             );
         });
         setFilteredTrips(filtered);
@@ -108,6 +118,12 @@ const ScheduleManagement = () => {
                 trips={filteredTrips}
                 onEdit={handleEditTrip}
                 onDelete={handleDeleteTrip}
+            />
+            <Pagination
+                page={page}
+                setPage={setPage}
+                totalItems={totalItems}
+                itemsPerPage={size}
             />
             <NotificationDialog
                 message="Bạn có chắc muốn xóa?"

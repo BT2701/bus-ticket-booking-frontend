@@ -104,7 +104,6 @@ const ScheduleDetail = () => {
       console.error("Error loading seat data:", error);
     }
   };
-  
 
   const Total = () => {
     return price * selectedSeats.length;

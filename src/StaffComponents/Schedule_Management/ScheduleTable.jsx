@@ -1,9 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
+import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 
 const TripTable = ({ trips, onEdit, onDelete }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'asc' });
-
+    const getNestedValue = (obj, key) => {
+        const keys = key.split('.');
+        return keys.reduce((value, k) => (value ? value[k] : null), obj);
+    };
     // Hàm xử lý sắp xếp
     const handleSort = (key) => {
         setSortConfig((prevConfig) => {
@@ -19,10 +23,15 @@ const TripTable = ({ trips, onEdit, onDelete }) => {
     const sortedTrips = useMemo(() => {
         const sortedData = [...trips];
         sortedData.sort((a, b) => {
-            if (a[sortConfig.key] < b[sortConfig.key]) {
+            const aValue = getNestedValue(a, sortConfig.key);
+            const bValue = getNestedValue(b, sortConfig.key);
+            if (aValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
+            if (bValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
+
+            if (aValue < bValue) {
                 return sortConfig.direction === 'asc' ? -1 : 1;
             }
-            if (a[sortConfig.key] > b[sortConfig.key]) {
+            if (aValue > bValue) {
                 return sortConfig.direction === 'asc' ? 1 : -1;
             }
             return 0;
@@ -44,16 +53,18 @@ const TripTable = ({ trips, onEdit, onDelete }) => {
                     <th scope="col" onClick={() => handleSort('id')}>
                         ID {getSortIcon('id')}
                     </th>
-                    <th scope="col" onClick={() => handleSort('from')}>
-                        Đi Từ {getSortIcon('from')}
+                    <th scope="col" onClick={() => handleSort('route.from.name')}>
+                        Đi Từ {getSortIcon('route.from.name')}
                     </th>
-                    <th scope="col" onClick={() => handleSort('to')}>
-                        Đi Đến {getSortIcon('to')}
+                    <th scope="col" onClick={() => handleSort('route.to.name')}>
+                        Đi Đến {getSortIcon('route.to.name')}
                     </th>
-                    <th scope="col" onClick={() => handleSort('departureTime')}>
-                        Khởi Hành Lúc {getSortIcon('departureTime')}
+                    <th scope="col" onClick={() => handleSort('departure')}>
+                        Khởi Hành Lúc {getSortIcon('departure')}
                     </th>
-                    <th scope="col">Trạng Thái</th>
+                    <th scope="col" onClick={() => handleSort('arrival')} >
+                        Dự Kiến Đến{getSortIcon('arrival')}
+                    </th>
                     <th scope="col">Hành Động</th>
                 </tr>
             </thead>
@@ -61,14 +72,10 @@ const TripTable = ({ trips, onEdit, onDelete }) => {
                 {sortedTrips.map(trip => (
                     <tr key={trip.id} className="align-middle">
                         <td>{trip.id}</td>
-                        <td>{trip.from}</td>
-                        <td>{trip.to}</td>
-                        <td>{trip.departureTime}</td>
-                        <td>
-                            <span className={`badge bg-${trip.status === 'Confirmed' ? 'success' : trip.status === 'Cancelled' ? 'danger' : 'secondary'}`}>
-                                {trip.status}
-                            </span>
-                        </td>
+                        <td>{trip.route.from.name}</td>
+                        <td>{trip.route.to.name}</td>
+                        <td>{formatTimeFromDatabase(trip?.departure)}</td>
+                        <td>{formatTimeFromDatabase(trip?.arrival)}</td>
                         <td>
                             <button className="btn btn-info btn-sm me-2" onClick={() => onEdit(trip.id)}>
                                 <i className="fa fa-eye"></i>

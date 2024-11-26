@@ -5,24 +5,25 @@ import ApiService from "../../Components/Utils/apiService";
 import notificationWithIcon from "../../Components/Utils/notification";
 import { useBooking } from "../../Context/BookingContex";
 
-const AddBookingDialog = ({ onClose }) => {
-    const [phone, setPhone] = useState(""); // Số điện thoại
-    const [userName, setUserName] = useState(""); // Tên người dùng
+const BookingDetailDialog = ({ booking, onClose }) => {
+    const [phone, setPhone] = useState(booking.phone); // Số điện thoại
+    const [userName, setUserName] = useState(booking.customerName); // Tên người dùng
     const [email, setEmail] = useState(""); // Email
-    const [selectedSchedule, setSelectedSchedule] = useState(""); // Lịch trình đã chọn
-    const [route, setRoute] = useState(""); // Lộ trình
-    const [departure, setDeparture] = useState(""); // Thời gian khởi hành
-    const [seats, setSeats] = useState([]); // Danh sách ghế đã chọn
+    const [selectedSchedule, setSelectedSchedule] = useState(booking.schedule.id); // Lịch trình đã chọn
+    const [route, setRoute] = useState(`${booking.schedule.route.from.name} - ${booking.schedule.route.to.name}`); // Lộ trình
+    const [departure, setDeparture] = useState(formatTimeFromDatabase(booking.schedule?.departure)); // Thời gian khởi hành
+    const [seats, setSeats] = useState([booking.seatNum]); // Danh sách ghế đã chọn
     const [schedules, setSchedules] = useState([]); // Danh sách lịch trình
     const [userExists, setUserExists] = useState(false); // Kiểm tra người dùng đã tồn tại
     const [seatOptions, setSeatOptions] = useState([]); // Các ghế có thể chọn
-    const [seatCount, setSeatCount] = useState(0); // Số lượng ghế
+    const [seatCount, setSeatCount] = useState(booking.schedule.bus.category.seat_count); // Số lượng ghế
     const [errors, setErrors] = useState({
         fullName: '',
         email: '',
         phone: ''
     });
     const [bookedSeats, setBookedSeats] = useState([]); // Danh sách ghế đã đặt
+    const [bookingId, setBookingId] = useState(booking.bookingId); // Id của booking
     const { loader, setLoader } = useBooking();
 
 
@@ -72,8 +73,12 @@ const AddBookingDialog = ({ onClose }) => {
 
 
     const isBooked = (seat) => {
+        if (seat === booking.seatNum) {
+            return false;
+        }
         return bookedSeats.includes(seat);
     };
+
 
     const handlePhoneChange = async (value) => {
         setPhone(value);
@@ -106,15 +111,21 @@ const AddBookingDialog = ({ onClose }) => {
         }
     };
 
+    // const handleSeatToggle = (seat) => {
+    //     setSeats((prevSeats) =>
+    //         prevSeats.includes(seat)
+    //             ? prevSeats.filter((s) => s !== seat)
+    //             : [...prevSeats, seat]
+    //     );
+    // };
     const handleSeatToggle = (seat) => {
         setSeats((prevSeats) =>
-            prevSeats.includes(seat)
-                ? prevSeats.filter((s) => s !== seat)
-                : [...prevSeats, seat]
+            prevSeats.includes(seat) ? [] : [seat] // Chỉ chọn 1 ghế tại một thời điểm
         );
     };
 
-    const handleAddBooking = () => {
+
+    const handleSave = () => {
         if (!phone || !userName || !email || !selectedSchedule || seats.length === 0) {
             notificationWithIcon('info', 'Thông Báo', 'Vui lòng nhập đầy đủ thông tin!');
             return;
@@ -146,23 +157,28 @@ const AddBookingDialog = ({ onClose }) => {
             setErrors(newErrors);
             return;
         }
+
         const schedule = schedules.find((s) => String(s.id) === String(selectedSchedule));
-        ApiService.post('/api/booking', {
-            email: email,
-            name: userName,
+        ApiService.put(`/api/booking/${bookingId}`, {
+            bookingId: bookingId,
+            customerName: userName,
             phone: phone,
-            schedule: schedule,
-            seats: seats
+            email: email,
+            seatNum: seats[0],
+            time: new Date().toISOString(),
+            payment: 1,
+            schedule: schedule
+            
         })
             .then(response => {
                 console.log('Success:', response.data);
-                notificationWithIcon('success', 'Booked', 'Đặt chỗ thành công!');
+                notificationWithIcon('success', 'Updated', 'Cập nhật thành công!');
                 onClose();
                 setLoader(1);
             })
             .catch(error => {
                 console.error('Error:', error);
-                notificationWithIcon('error', 'Fail', 'Đặt chỗ thất bại!');
+                notificationWithIcon('error', 'Fail', 'Cập nhật thất bại!');
             });
     };
 
@@ -172,7 +188,7 @@ const AddBookingDialog = ({ onClose }) => {
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Thêm Mới Booking</h5>
+                        <h5 className="modal-title">Chi Tiết Đặt Vé</h5>
                         <button type="button" className="btn-close" onClick={onClose}></button>
                     </div>
                     <div className="modal-body">
@@ -229,28 +245,25 @@ const AddBookingDialog = ({ onClose }) => {
                                 ))}
                             </select>
                         </div>
-                        {route && (
-                            <div className="mb-3">
-                                <label>Lộ Trình:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={route}
-                                    disabled
-                                />
-                            </div>
-                        )}
-                        {departure && (
-                            <div className="mb-3">
-                                <label>Khởi Hành Lúc:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    value={departure}
-                                    disabled
-                                />
-                            </div>
-                        )}
+                        <div className="mb-3">
+                            <label>Lộ Trình:</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={route}
+                                disabled
+                            />
+                        </div>
+
+                        <div className="mb-3">
+                            <label>Khởi Hành Lúc:</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={departure}
+                                disabled
+                            />
+                        </div>
                         {seatOptions.length > 0 && (
                             <div className="mb-3">
                                 <label>Chọn Ghế:</label>
@@ -283,14 +296,12 @@ const AddBookingDialog = ({ onClose }) => {
                     </div>
                     <div className="modal-footer">
                         <button className="btn btn-secondary" onClick={onClose}>
-                            Hủy
+                            Đóng
                         </button>
-                        <button
-                            className="btn btn-primary"
-                            onClick={handleAddBooking}
+                        <button className="btn btn-primary" onClick={handleSave}
                             disabled={!selectedSchedule || seats.length === 0}
                         >
-                            Thêm
+                            Lưu Thay Đổi
                         </button>
                     </div>
                 </div>
@@ -299,4 +310,4 @@ const AddBookingDialog = ({ onClose }) => {
     );
 };
 
-export default AddBookingDialog;
+export default BookingDetailDialog;

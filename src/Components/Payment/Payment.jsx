@@ -82,7 +82,7 @@ const Payment = () => {
     }
 
     if(paymentMethod==='normal'){
-      ApiService.post('/api/booking/', {
+      ApiService.post('/api/booking', {
         email: email,
         name: fullName,
         phone: phone,

@@ -33,7 +33,7 @@ const Homepage = () => {
       if (limit > 0) { // Ensure that limit is positive before making the request
         try {
           const response = await ApiService.get(`http://localhost:8080/api/most-popular-route/${limit}`);
-          setRoutes(response);
+          setRoutes(Array.isArray(response) ? response : []);
         } catch (error) {
           setError('Error fetching routes');
           console.error(error);
@@ -57,7 +57,7 @@ const Homepage = () => {
         <div className="col"></div>
       </div>
       <div>
-\        <SearchInput />
+        \        <SearchInput />
       </div>
       <div className="container p-0">
         <h2 className="section-title text-center my-5"></h2>
@@ -66,7 +66,7 @@ const Homepage = () => {
         </div>
         <div className="mb-3 homepage-limit">
           <input
-          className="homepage-btn--limit"
+            className="homepage-btn--limit"
             type="number"
             onChange={(e) => setLimit(e.target.value)} // Update limit state on input change
             placeholder="Số lượng tuyến"

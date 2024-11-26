@@ -85,9 +85,8 @@ const SearchFilterBooking = ({ onFilter }) => {
                         aria-label="Trạng Thái"
                     >
                         <option value="">Chọn trạng thái</option>
-                        <option value="Confirmed">Confirmed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Cancelled">Cancelled</option>
+                        <option value="1">Đã thanh toán</option>
+                        <option value="0">Chưa thanh toán</option>
                     </select>
                 </div>
                 <div className="col-md-3">
