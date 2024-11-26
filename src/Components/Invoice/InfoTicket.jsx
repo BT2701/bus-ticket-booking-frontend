@@ -1,4 +1,4 @@
-import React, { useState ,useEffect,useLayoutEffect} from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import Modal from 'react-modal';
 import './InfoTicket.css'; // Nhập file CSS
@@ -8,7 +8,7 @@ import notificationWithIcon from '../Utils/notification'; // Nhập hàm thông 
 // Thiết lập modal cho React
 Modal.setAppElement('#root');
 
-const InfoTicket = ({ TicketData }) => { 
+const InfoTicket = ({ TicketData }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [TicketStatus, setTicketStatus] = useState(TicketData[8]); // Khởi tạo state với trạng thái ban đầu
   const [showCancelButton, setShowCancelButton] = useState(false);
@@ -38,10 +38,10 @@ const InfoTicket = ({ TicketData }) => {
   const handleCancelClick = async (ticketId) => {
     // Xác nhận trước khi hủy vé
     const confirmed = window.confirm('Bạn có chắc chắn muốn hủy vé này?');
-  
+
     if (confirmed) {
       const response = await cancelTicket(ticketId); // ID của yêu cầu đang được chọn
-  
+
       if (response === true) {
         setTicketStatus(3);
         notificationWithIcon('success', 'Hủy vé thành công', '');
@@ -80,12 +80,12 @@ const InfoTicket = ({ TicketData }) => {
     if (TicketStatus === 1 && (ticketTime - currentTimeVN > 12 * 60 * 60 * 1000)) {
       // Chỉ hiển thị nút hủy nếu vé chưa sử dụng và cách giờ hiện tại dưới 12 tiếng
       setShowCancelButton(true);
-      console.log("cos the huy"+TicketStatus);
+      console.log("cos the huy" + TicketStatus);
     } else {
       setShowCancelButton(false);
-      console.log("khong the huy"+TicketStatus);
-      console.log("tickettime"+ticketTime);
-      console.log("vntime"+currentTimeVN);
+      console.log("khong the huy" + TicketStatus);
+      console.log("tickettime" + ticketTime);
+      console.log("vntime" + currentTimeVN);
     }
 
   }, [TicketStatus]); // Chỉ chạy khi TicketData thay đổi
@@ -116,22 +116,24 @@ const InfoTicket = ({ TicketData }) => {
               <p className="mb-1">
                 <p><span>Từ: </span><strong className='fs-5'>{TicketData[6] ? TicketData[6] : 'Không có thông tin bến xe đi'}</strong></p>
                 <p className='mb-0'><span>Đến: </span><strong className='fs-5'>{TicketData[7] ? TicketData[7] : 'Không có thông tin bến xe đến'}</strong></p>
-                <p className="text-muted mb-0">Thời gian khởi hành: 
-                    <span className='fw-bold'> {TicketData[1] ? formatTimestamp(TicketData[1]) : 'Không có thông tin giờ đi'}</span>
+                <p className="text-muted mb-0">Thời gian khởi hành:
+                  <span className='fw-bold'> {TicketData[1] ? formatTimestamp(TicketData[1]) : 'Không có thông tin giờ đi'}</span>
                 </p>
               </p>
             </div>
           </div>
           <div className="col-md-3 text-center d-flex flex-column justify-content-center align-items-center">
             <h4 className="text-primary fw-bold mb-0">
-              {TicketData[3] ? formatPrice(TicketData[3]) : 'Giá vé chưa có'}
+              {TicketData[3]?.price ? formatPrice(TicketData[3]?.price) : 'Giá vé chưa có'}
             </h4>
+            <strong style={{ color: TicketData[10] == null ? "red" : "green" }}>
+              {TicketData[10] == null ? "Chưa thanh toán" : "Đã thanh toán"}
+            </strong>
             <strong className="text-muted mb-1">Mã ghế: {TicketData[4] ? TicketData[4] : 'Không có thông tin chỗ'}</strong>
             <strong className=" mb-1">Mã vé: {TicketData[9]}</strong> {/* Hiển thị mã vé */}
             <div onClick={openModal} style={{ cursor: 'pointer' }}>
-              <QRCodeCanvas value={"TicketID:"+TicketData[9]} size={76} /> {/* Tạo mã QR cho mã vé */}
+              <QRCodeCanvas value={"TicketID:" + TicketData[9]} size={76} /> {/* Tạo mã QR cho mã vé */}
             </div>
-
             <>
               {TicketStatus === 1 ? (
                 <strong className={`text-success fs-5`}>Chưa sử dụng</strong>
@@ -145,29 +147,29 @@ const InfoTicket = ({ TicketData }) => {
             </>
 
             {/* Hiển thị nút Hủy nếu điều kiện đúng */}
-          {showCancelButton ? (
-            <button className="btn btn-link btn-link-red"
-              onClick={() => handleCancelClick(TicketData[9])}
-            >
-              Cancel Ticket
-            </button>
-          ) : null} {/* Nếu showCancelButton là false, không làm gì */}
+            {showCancelButton ? (
+              <button className="btn btn-link btn-link-red"
+                onClick={() => handleCancelClick(TicketData[9])}
+              >
+                Cancel Ticket
+              </button>
+            ) : null} {/* Nếu showCancelButton là false, không làm gì */}
           </div>
         </div>
       </div>
 
-     {/* Modal hiển thị mã QR lớn */}
-    <Modal
-      isOpen={modalIsOpen}
-      onRequestClose={closeModal}
-      contentLabel="Mã QR"
-      className="Modal"
-      overlayClassName="Overlay"
-    >
-      <div className="qr-container"> {/* Thêm div bao quanh mã QR */}
-        <QRCodeCanvas value={"TicketID:"+TicketData[9]} size={396} /> {/* QR cho mã vé */}
-      </div>
-    </Modal>
+      {/* Modal hiển thị mã QR lớn */}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Mã QR"
+        className="Modal"
+        overlayClassName="Overlay"
+      >
+        <div className="qr-container"> {/* Thêm div bao quanh mã QR */}
+          <QRCodeCanvas value={"TicketID:" + TicketData[9]} size={396} /> {/* QR cho mã vé */}
+        </div>
+      </Modal>
 
     </div>
   );
