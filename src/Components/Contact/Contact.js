@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios'; 
+import axios from 'axios';
 import ApiService from '../Utils/apiService';
 import notificationWithIcon from '../Utils/notification'; // Nhập hàm thông báo
 
@@ -11,7 +11,7 @@ const ContactForm = () => {
     phone: '',
     title: '',
     content: '',
-    status: 0  
+    status: 0
   });
 
   const [errors, setErrors] = useState({}); // State để lưu trữ thông báo lỗi
@@ -56,14 +56,14 @@ const ContactForm = () => {
       setErrors(formErrors); // Cập nhật state lỗi nếu có
     } else {
       // Gửi dữ liệu bằng Axios
-      axios.post('http://localhost:8080/api/contact', formData)
+      ApiService.post('/api/contact', formData)
         .then((response) => {
           notificationWithIcon('success', 'Gửi thành công', '');
           setErrors({}); // Reset thông báo lỗi nếu không có lỗi
           setFormData({ sender: '', email: '', phone: '', title: '', content: '' }); // Reset form
         })
         .catch((error) => {
-          notificationWithIcon('error', 'Có lỗi khi thêm đánh giá', 'Vui lòng thử lại sau.');
+          notificationWithIcon('error', 'Có lỗi khi thêm', 'Vui lòng thử lại sau.');
           // Xử lý lỗi nếu cần
         });
     }
