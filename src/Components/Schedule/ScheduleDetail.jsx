@@ -14,6 +14,9 @@ import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabas
 import formatCurrency from '../../sharedComponents/formatMoney';
 import NotificationDialog from '../../sharedComponents/notificationDialog';
 import notificationWithIcon from '../Utils/notification';
+import CarRouteMap from "../Map/CarRouteMap";
+import { getCoordinatesFromAddress } from '../Map/geolocation';
+
 
 const ScheduleDetail = () => {
   const { schedule, updateSchedule, updateSeatList, updateTotal } = useSchedule();
@@ -26,6 +29,9 @@ const ScheduleDetail = () => {
   const [price, setPrice] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const [pointA, setPointA] = useState(null);
+
+  const [pointB, setPointB] = useState(null);
 
 
   const handleOpenDialog = () => {
@@ -134,6 +140,45 @@ const ScheduleDetail = () => {
     setBookingList(schedule?.bookings);
     setPrice(schedule?.bus.category.price);
   }, [seatCount, schedule]);
+
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      const pickup = JSON.parse(localStorage.getItem('pickup'));
+      const dropoff = JSON.parse(localStorage.getItem('dropoff'));
+
+      if (!pickup || !dropoff) {
+        console.log('Không có địa chỉ pickup hoặc dropoff trong localStorage');
+        return;
+      }
+
+      try {
+        // Gọi API để lấy tọa độ
+        const coordinatesA = await getCoordinatesFromAddress(pickup + ', Vietnam');
+        const coordinatesB = await getCoordinatesFromAddress(dropoff + ', Vietnam');
+
+        if (coordinatesA && coordinatesB) {
+          const pointA = [parseFloat(coordinatesA.lat), parseFloat(coordinatesA.lon)];
+          const pointB = [parseFloat(coordinatesB.lat), parseFloat(coordinatesB.lon)];
+
+          // Lưu tọa độ vào localStorage
+          localStorage.setItem('pointA', JSON.stringify(pointA));
+          localStorage.setItem('pointB', JSON.stringify(pointB));
+
+          // Cập nhật state sau khi lấy tọa độ thành công
+          setPointA(pointA);
+          setPointB(pointB);
+        } else {
+          console.log('Không tìm thấy tọa độ cho một trong các địa điểm');
+        }
+      } catch (error) {
+        console.error('Lỗi khi gọi API:', error);
+      }
+    };
+
+    fetchCoordinates(); // Gọi hàm fetchCoordinates khi useEffect chạy
+  }, []);  // Chỉ chạy lần đầu tiên khi component mount
+
+
   if (!schedule) {
     return <div>Loading...</div>;
   }
@@ -162,6 +207,14 @@ const ScheduleDetail = () => {
               <img src={Guy} alt="driver" />
               <span>{schedule?.bus.driver.name}</span>
             </div>
+          </div>
+          <div>
+            <h4>Tuyến đường</h4>
+            {pointA && pointB ? (
+              <CarRouteMap pointA={pointA} pointB={pointB} />
+            ) : (
+              <p>Đang tải dữ liệu...</p>
+            )}
           </div>
         </div>
       </div>

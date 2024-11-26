@@ -16,7 +16,7 @@ const Header = () => {
           <nav className="navbar navbar-expand-lg navbar-light">
             <div className="container-fluid">
               <Link className="navbar-brand text-light" to="/">
-                <h2 style={{ marginBottom: 0}}> SGU Bus Lines</h2>
+                <h2 style={{ marginBottom: 0 }}> SGU Bus Lines</h2>
               </Link>
               <button
                 className="navbar-toggler homepage-navbar-toggler"
@@ -35,9 +35,8 @@ const Header = () => {
                     <Link
                       aria-current="page"
                       to="/"
-                      className={`nav-link homepage-nav-link ${
-                        page === "homepage" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "homepage" && "active"
+                        }`}
                       onClick={() => {
                         setPage("homepage");
                       }}
@@ -47,9 +46,8 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "search" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "search" && "active"
+                        }`}
                       onClick={() => {
                         setPage("search");
                       }}
@@ -60,9 +58,8 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "news" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "news" && "active"
+                        }`}
                       onClick={() => {
                         setPage("news");
                       }}
@@ -73,9 +70,8 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "invoice" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "invoice" && "active"
+                        }`}
                       onClick={() => {
                         setPage("invoice");
                       }}
@@ -86,9 +82,8 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "history" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "history" && "active"
+                        }`}
                       onClick={() => {
                         setPage("history");
                       }}
@@ -99,9 +94,8 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "contact" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "contact" && "active"
+                        }`}
                       onClick={() => {
                         setPage("contact");
                       }}
@@ -112,9 +106,8 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${
-                        page === "about" && "active"
-                      }`}
+                      className={`nav-link homepage-nav-link ${page === "about" && "active"
+                        }`}
                       onClick={() => {
                         setPage("about");
                       }}
@@ -127,14 +120,13 @@ const Header = () => {
                 <div className="d-flex align-items-center">
                   {
                     user?.id ? (
-                      <Link to="/profile" 
-                          onClick={() => {
-                              setPage("profile");
-                            }}
-                          className={`nav-link homepage-nav-link text-decoration-none text-white ${
-                            page === "profile" && "active"
+                      <Link to="/profile"
+                        onClick={() => {
+                          setPage("profile");
+                        }}
+                        className={`nav-link homepage-nav-link text-decoration-none text-white ${page === "profile" && "active"
                           } `}
-                        >
+                      >
                         {user?.name}
                       </Link>
                     ) : (
@@ -150,7 +142,7 @@ const Header = () => {
                       </Link>
                     )
                   }
-                  
+
                 </div>
               </div>
             </div>

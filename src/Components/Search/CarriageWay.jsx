@@ -8,6 +8,7 @@ import { getAllFeedback, getAvgAndTotalFeedback, getTotalFeedbackCount } from '.
 import { useSchedule } from "../../Context/ScheduleContext";
 import axios from "axios";
 
+
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [isOpenFeedback, setIsOpenFeedback] = useState(false); // State độc lập cho mỗi CarriageWay
   const [firstClick, setfirstClick] = useState(false); // Số sao trung bình
@@ -18,6 +19,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [averageRating, setAverageRating] = useState(0); // Số sao trung bình
   const [ratingFilter, setRatingFilter] = useState(0); // State để lưu số sao cần lọc
   const { schedule, updateSchedule } = useSchedule();
+
   const handleSelectSchedule = (scheduleId) => {
     const fetchData = async () => {
       try {
@@ -31,7 +33,6 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     };
     fetchData();
   };
-
 
   // Hàm này sẽ được truyền vào component con để nhận dữ liệu đánh giá
   const setFeedbackDataFromChild = (data) => {

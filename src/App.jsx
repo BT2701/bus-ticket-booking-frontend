@@ -48,6 +48,7 @@ import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
 import { BookingProvider } from "./Context/BookingContex";
 
+
 const App = () => {
   const { state } = useUserContext();
 
@@ -112,6 +113,7 @@ const MainApp = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/news" element={<Test />} />
           <Route path="/history" element={<HistorySchedules />} />
+
         </Routes>
       </div>
       <Footer />
