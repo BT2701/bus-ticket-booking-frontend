@@ -13,7 +13,7 @@ const Forgot =()=>{
     const onFinish = (values) => {
         setLoading(true);
         
-        ApiService.get('/api/mail/sendEmailToForgotPassword?email=' + values.email)
+        ApiService.post('/api/mail/sendEmailToForgotPassword?email=' + values.email)
             .then((response) => {
                 form.resetFields();
                 notificationWithIcon('success', 'Forgot password', 'Thông tin xác nhập đã được gửi qua email của bạn!');

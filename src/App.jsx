@@ -51,7 +51,15 @@ const App = () => {
   const { state } = useUserContext();
 
   useEffect(() => {
+    // de xoa local storage cu~
+    // const APP_USER_STORAGE = 'BRF-USER-STORAGE';
+    // const APP_ACCESS_TOKEN = 'BRF-ACCESS-TOKEN';
+    // const APP_REFRESH_TOKEN = 'BRF-REFRESH-TOKEN';
 
+    // localStorage.removeItem(APP_USER_STORAGE);
+    // localStorage.removeItem(APP_ACCESS_TOKEN);
+    // localStorage.removeItem(APP_REFRESH_TOKEN);
+    
     console.log('State updated:', state);
   }, [state]);
 

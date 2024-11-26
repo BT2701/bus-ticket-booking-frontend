@@ -3,7 +3,6 @@ import { Button, ProgressBar } from 'react-bootstrap';
 import { CSSTransition } from 'react-transition-group';
 import { CheckCircleOutlined, InfoCircleOutlined, ExclamationCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import './notificationDialog.css';
-import { height } from '@fortawesome/free-brands-svg-icons/fa42Group';
 
 const NotificationDialog = ({ message, isOpen, onClose, type, onConfirm, onCancel, progress }) => {
   const [progressValue, setProgressValue] = useState(progress || 0);
