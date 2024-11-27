@@ -42,7 +42,6 @@ export const lookupTicket = async (phoneNumber) => {
 };
 export const cancelTicket = async (ticketId) => {
     try {
-        alert(`Hủy vé với mã vé: ${ticketId}`);
         // Gửi yêu cầu hủy vé đến API
         const response = await ApiService.post(`/api/cancel-ticket/${ticketId}`);
 

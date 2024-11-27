@@ -7,6 +7,9 @@ import CropFree from '@mui/icons-material/CropFree';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
 import Header from "../dashboard/subComponents/Header";
+import NotificationDialog from "../../sharedComponents/notificationDialog";
+import { useBooking } from '../../Context/BookingContex';
+import axios from 'axios';
 
 
 const PrintTicketComponent = () => {
@@ -18,7 +21,27 @@ const PrintTicketComponent = () => {
   const [isScanning, setIsScanning] = useState(false); // Trạng thái quét QR
   const [isQrSuccess, setIsQrSuccess] = useState(false); // Trạng thái quét QR
   const printRef = useRef();
+  const [showDialogPrint, setShowDialogPrint] = useState(false); // Trạng thái để hiển thị cảnh báo xóa
+  const [payment, setPayment] = useState(false); // Trạng thái để hiển thị cảnh báo xóa
+  const { setLoader } = useBooking();
 
+
+  const PrintTicket = () => {
+    if (payment) {
+      handlePrint();
+    } else {
+      setShowDialogPrint(true); // Mở cảnh báo
+    }
+  };
+
+  const confirmPrintTicket = () => {
+    handlePrint();
+    setShowDialogPrint(false); // Đóng cảnh báo
+  };
+
+  const cancelPrintTicket = () => {
+    setShowDialogPrint(false); // Đóng cảnh báo mà không xóa
+  };
   const handleInputChange = (event) => {
     setTicketCode(event.target.value);
   };
@@ -68,6 +91,15 @@ const PrintTicketComponent = () => {
     if (ticketInfo) {
       setLoading(true); // Bắt đầu loading
       // Giả định in
+      if (!payment) {
+        const paymentResult = await handlePayment();
+
+        if (!paymentResult) {
+          // Xử lý khi thanh toán thất bại
+          setLoading(false); // Kết thúc loading sau khi in xong
+          return false;
+        }
+      }
       const response = await updateTicketStatus(2); // Gọi hàm updateTicketStatus
       setTimeout(() => {
         if (response === true) { // Kiểm tra với kiểu boolean
@@ -82,9 +114,31 @@ const PrintTicketComponent = () => {
           notificationWithIcon('error', 'Có lỗi trong quá trình in vé vui lòng thử lại.', '');
           setLoading(false); // Kết thúc loading sau khi in xong
         }
-      }, 3000); // Chờ 5 giây trước khi thực hiện in
+      }, 3000);
     }
   };
+  const handlePayment = async () => {
+    try {
+      // Thực hiện POST request thanh toán
+      const res = await axios.post('http://localhost:8080/api/payment', {
+        bookingId: ticketInfo[9],
+        method: 'cash',
+        amount: ticketInfo[3],
+      });
+
+      if (res.status === 200) {
+        // Thông báo thanh toán thành công
+        notificationWithIcon('success', 'Thành Công', 'Thanh toán thành công');
+        setLoader(1); // Cập nhật trạng thái loader
+        return true;  // Trả về true nếu thanh toán thành công
+      }
+    } catch (error) {
+      // Thông báo lỗi nếu thanh toán thất bại
+      notificationWithIcon('error', 'Lỗi', 'Thanh toán thất bại');
+      return false;  // Trả về false nếu có lỗi
+    }
+  };
+
 
   const handleScan = (result) => {
     if (result && result.length > 0) {
@@ -173,6 +227,15 @@ const PrintTicketComponent = () => {
     });
   };
 
+  useEffect(() => {
+    if (ticketInfo) {
+      if (ticketInfo[10] !== null) {
+        setPayment(true); // Đã thanh toán
+      } else {
+        setPayment(false); // Chưa thanh toán
+      }
+    }
+  }, [ticketInfo]);
 
   return (
     <>
@@ -211,6 +274,15 @@ const PrintTicketComponent = () => {
           <CropFree fontSize="large" />
         </button>
       </div>
+      <NotificationDialog
+        message="Bạn đã thu tiền mặt chưa?"
+        isOpen={showDialogPrint}
+        onClose={cancelPrintTicket}
+        type="warning"
+        onConfirm={confirmPrintTicket}
+        onCancel={cancelPrintTicket}
+        style={{ zIndex: 3050 }} // Đảm bảo giá trị z-index cao hơn Modal
+      />
 
       {/* QR Scanner Modal */}
       {isScanning && (
@@ -237,72 +309,79 @@ const PrintTicketComponent = () => {
 
 
       {/* Ticket Info Modal */}
-      <Modal show={showTicketModal} onHide={handleCloseTicketModal} size="lg">
+      <Modal show={showTicketModal} onHide={handleCloseTicketModal} size="lg" style={{ zIndex: 1050 }}>
         <Modal.Header closeButton>
           <Modal.Title>Thông tin vé</Modal.Title>
         </Modal.Header>
-        <Modal.Body ref={printRef}>
+        <Modal.Body>
           {ticketInfo ? (
-            <div className="ticket-info-container d-flex align-items-center border p-3 rounded">
-              {/* Icon vé */}
-              <div className="ticket-icon me-3">
-                <img
-                  src="https://media.istockphoto.com/id/1293064741/vector/ticket-vector-icon.jpg?s=612x612&w=0&k=20&c=8QDWEKhTj-38jB8aBYGiyhWXoHR9uy8x39Nojaowhvo="
-                  alt="Ticket Icon"
-                  style={{ width: '120px', height: '120px' }}
-                />
-              </div>
-              {/* Thông tin vé */}
-              <div>
-                <h5 className="mb-2" style={{ color: 'red', fontSize: '1.5rem' }}>
-                  Nhà Xe Phương Trang
-                </h5>
-                <p className="mb-1" style={{ fontSize: '1.2rem' }}>
-                  <strong>Loại xe:</strong> {ticketInfo[0]}
-                </p>
-                <p className="mb-1" style={{ fontSize: '1.2rem' }}>
-                  <strong>Từ:</strong> {ticketInfo[6]}
-                </p>
-                <p className="mb-1" style={{ fontSize: '1.2rem' }}>
-                  <strong>Đến:</strong> {ticketInfo[7]}
-                </p>
-                <p className="mb-1" style={{ fontSize: '1.2rem' }}>
-                  <strong>Thời gian khởi hành:</strong>{' '}
-                  {new Date(ticketInfo[1]).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}{' '}
-                  ({new Date(ticketInfo[1]).toLocaleDateString()})
-                </p>
-              </div>
-              {/* Giá vé và QR Code */}
-              <div className="ms-auto text-center d-flex flex-column align-items-center">
-                <h4 style={{ color: 'blue', fontSize: '1.5rem' }}>
-                  {ticketInfo[3].toLocaleString('vi-VN')} ₫
-                </h4>
-                <p className="mb-1" style={{ fontSize: '1.2rem' }}>
-                  <strong>Mã ghế:</strong> {ticketInfo[4]}
-                </p>
-                <p className="mb-1" style={{ fontSize: '1.2rem' }}>
-                  <strong>Mã vé:</strong> {ticketInfo[9]}
-                </p>
-                <div className="qr-code-container mt-2">
+            <>
+              <div className="ticket-info-container d-flex align-items-center border p-3 rounded" ref={printRef}>
+                {/* Icon vé */}
+                <div className="ticket-icon me-3">
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?data=${ticketInfo[9]}&size=100x100`}
-                    alt="QR Code"
-                    style={{ width: '100px', height: '100px' }}
+                    src="https://media.istockphoto.com/id/1293064741/vector/ticket-vector-icon.jpg?s=612x612&w=0&k=20&c=8QDWEKhTj-38jB8aBYGiyhWXoHR9uy8x39Nojaowhvo="
+                    alt="Ticket Icon"
+                    style={{ width: '120px', height: '120px' }}
                   />
                 </div>
+                {/* Thông tin vé */}
+                <div>
+                  <h5 className="mb-2" style={{ color: 'red', fontSize: '1.5rem' }}>
+                    Nhà Xe Phương Trang
+                  </h5>
+                  <p className="mb-1" style={{ fontSize: '1.2rem' }}>
+                    <strong>Loại xe:</strong> {ticketInfo[0]}
+                  </p>
+                  <p className="mb-1" style={{ fontSize: '1.2rem' }}>
+                    <strong>Từ:</strong> {ticketInfo[6]}
+                  </p>
+                  <p className="mb-1" style={{ fontSize: '1.2rem' }}>
+                    <strong>Đến:</strong> {ticketInfo[7]}
+                  </p>
+                  <p className="mb-1" style={{ fontSize: '1.2rem' }}>
+                    <strong>Thời gian khởi hành:</strong>{' '}
+                    {new Date(ticketInfo[1]).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}{' '}
+                    ({new Date(ticketInfo[1]).toLocaleDateString()})
+                  </p>
+                </div>
+                {/* Giá vé và QR Code */}
+                <div className="ms-auto text-center d-flex flex-column align-items-center">
+                  <h4 style={{ color: 'blue', fontSize: '1.5rem' }}>
+                    {ticketInfo[3].toLocaleString('vi-VN')} ₫
+                  </h4>
+                  <p className="mb-1" style={{ fontSize: '1.2rem' }}>
+                    <strong>Mã ghế:</strong> {ticketInfo[4]}
+                  </p>
+                  <p className="mb-1" style={{ fontSize: '1.2rem' }}>
+                    <strong>Mã vé:</strong> {ticketInfo[9]}
+                  </p>
+                  <div className="qr-code-container mt-2">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?data=${ticketInfo[9]}&size=100x100`}
+                      alt="QR Code"
+                      style={{ width: '100px', height: '100px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
                 <strong
                   style={{
                     color: ticketInfo[10] == null ? 'red' : 'green',
                     fontSize: '1.2rem',
                   }}
                 >
-                  {ticketInfo[10] == null ? 'Chưa thanh toán' : 'Đã thanh toán'}
+                  {ticketInfo[10] == null
+                    ? `Vui lòng thu ${ticketInfo[3].toLocaleString('vi-VN')} ₫ trước khi in vé`
+                    : 'Đã thanh toán'
+                  }
                 </strong>
               </div>
-            </div>
+            </>
 
           ) : (
             <p>Không có thông tin vé.</p>
@@ -313,8 +392,8 @@ const PrintTicketComponent = () => {
             Đóng
           </Button>
           {/* Kiểm tra ticketInfo và giá trị ticketInfo[10] */}
-          {ticketInfo && ticketInfo[10] && (
-            <Button variant="primary" onClick={handlePrint} disabled={loading}>
+          {ticketInfo && (
+            <Button variant="primary" onClick={PrintTicket} disabled={loading}>
               {loading ? (
                 <>
                   <Spinner animation="border" size="sm" className="me-2" />
