@@ -5,6 +5,7 @@ import SearchFilterRoute from "./SearchRoute";
 import NotificationDialog from "../../sharedComponents/notificationDialog";
 import Pagination from "../../sharedComponents/Pagination";
 import axios from "axios";
+import ApiService from "../../Components/Utils/apiService";
 
 const RouteManagement = () => {
     const [routes, setRoutes] = useState([]);
@@ -32,17 +33,17 @@ const RouteManagement = () => {
     }, [page]);
 
     const fetchTotal = async () => {
-        const total = await axios.get(`http://localhost:8080/api/route/total`);
-        if (total.status === 200) {
-            setTotalItems(total.data);
+        const total = await ApiService.get(`/api/route/total`);
+        if (total) {
+            setTotalItems(total);
         }
     };
 
     const fetchRoutes = async () => {
-        const response = await axios.get(`http://localhost:8080/api/route-management?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setRoutes(response.data);
-            setFilteredRoutes(response.data);
+        const response = await ApiService.get(`/api/route-management?page=${page}&size=${size}`);
+        if (response) {
+            setRoutes(response);
+            setFilteredRoutes(response);
             setLoading(false);
         }
     };

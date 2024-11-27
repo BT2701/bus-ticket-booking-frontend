@@ -51,22 +51,22 @@ const AddBookingDialog = ({ onClose }) => {
         }
     }, [selectedSchedule]);
     const fetchBookedSeats = async (scheduleId) => {
-        const response = await axios.get(`http://localhost:8080/api/booked-seats?scheduleId=${scheduleId}`);
-        if (response.status === 200) {
-            setBookedSeats(response.data);
+        const response = await ApiService.get(`/api/booked-seats?scheduleId=${scheduleId}`);
+        if (response) {
+            setBookedSeats(response);
         }
     };
     const fetchUserByPhone = async (phone) => {
-        const response = await axios.get(`http://localhost:8080/api/user?phone=${phone}`);
-        if (response.status === 200) {
-            setEmail(response.data.email);
-            setUserName(response.data.name);
+        const response = await ApiService.get(`/api/user?phone=${phone}`);
+        if (response) {
+            setEmail(response.email);
+            setUserName(response.name);
         }
     };
     const fetchSchedules = async () => {
-        const response = await axios.get(`http://localhost:8080/api/schedules`);
-        if (response.status === 200) {
-            setSchedules(response.data.schedules);
+        const response = await ApiService.get(`/api/schedules`);
+        if (response) {
+            setSchedules(response.schedules);
         }
     };
 

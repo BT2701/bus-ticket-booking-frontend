@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { getAllFeedback, getAvgAndTotalFeedback, getTotalFeedbackCount } from '../Feedback/HandleFeedback'; // Import hàm fetch dữ liệu
 import { useSchedule } from "../../Context/ScheduleContext";
 import axios from "axios";
+import ApiService from "../Utils/apiService";
 
 
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
@@ -24,9 +25,9 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     const fetchData = async () => {
       try {
         // setIsOpenFeedback(true);
-        const schedulesResponse = await axios.get(`http://localhost:8080/api/schedule?id=${scheduleId}`);     //dat tam id
-        updateSchedule(schedulesResponse.data);
-        localStorage.setItem('schedule', JSON.stringify(schedulesResponse.data));
+        const schedulesResponse = await ApiService.get(`/api/schedule?id=${scheduleId}`);     //dat tam id
+        updateSchedule(schedulesResponse);
+        localStorage.setItem('schedule', JSON.stringify(schedulesResponse));
       } catch (error) {
         console.error('Error fetching data:', error);
       }

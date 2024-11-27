@@ -10,6 +10,7 @@ import Pagination from '../../sharedComponents/Pagination';
 import { useBooking } from '../../Context/BookingContex';
 import { set } from 'date-fns';
 import notificationWithIcon from '../../Components/Utils/notification';
+import ApiService from '../../Components/Utils/apiService';
 
 const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
@@ -29,17 +30,17 @@ const BookingManagement = () => {
         setLoader(0);
     }, [page,loader]);
     const fetchTotal = async () => {
-        const total = await axios.get(`http://localhost:8080/api/booking/total`);
-        setTotalItems(total.data);
+        const total = await ApiService.get(`/api/booking/total`);
+        setTotalItems(total);
     }
     const fetchBookings = async () => {
-        const response = await axios.get(`http://localhost:8080/api/booking-management?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setBookings(response.data);
-            setFilteredBookings(response.data);
+        const response = await ApiService.get(`/api/booking-management?page=${page}&size=${size}`);
+        if (response) {
+            setBookings(response);
+            setFilteredBookings(response);
             setLoading(false);
         }
-        else if (response.status === 404) {
+        else {
             setLoading(true);
         }
     };
@@ -51,7 +52,7 @@ const BookingManagement = () => {
     };
 
     const confirmDelete = () => {
-        axios.delete(`http://localhost:8080/api/booking/${bookingToDelete}`)
+        ApiService.delete(`/api/booking/${bookingToDelete}`)
             .then(() => {
                 setLoader(1);
                 notificationWithIcon ('success', 'Success', 'Xóa đặt vé thành công');

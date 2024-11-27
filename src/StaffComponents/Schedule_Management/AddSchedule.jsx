@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Select from "react-select";
 import axios from "axios";
 import notificationWithIcon from "../../Components/Utils/notification";
+import ApiService from "../../Components/Utils/apiService";
 
 const AddTripDialog = ({ show, onClose }) => {
     const [selectedBus, setSelectedBus] = useState(null);
@@ -40,16 +41,16 @@ const AddTripDialog = ({ show, onClose }) => {
     }, [departureTime, selectedRoute]);
 
     const fetchBuses = async () => {
-        const response = await axios.get(`http://localhost:8080/api/busesLimit?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setBuses(response.data);
+        const response = await ApiService.get(`/api/busesLimit?page=${page}&size=${size}`);
+        if (response) {
+            setBuses(response);
         }
     };
 
     const fetchRoutes = async () => {
-        const response = await axios.get(`http://localhost:8080/api/route-management?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setRoutes(response.data);
+        const response = await ApiService.get(`/api/route-management?page=${page}&size=${size}`);
+        if (response) {
+            setRoutes(response);
         }
     };
 
@@ -96,8 +97,8 @@ const AddTripDialog = ({ show, onClose }) => {
             price: price,
         };
 
-        const response = await axios.post(`http://localhost:8080/api/schedule`, trip);
-        if (response.status === 200) {
+        const response = await ApiService.post(`/api/schedule`, trip);
+        if (response) {
             notificationWithIcon('success', 'Thành Công', 'Thêm Chuyến Đi Thành Công!');
         } else {
             notificationWithIcon('error', 'Lỗi', 'Thêm Chuyến Đi Thất Bại!');

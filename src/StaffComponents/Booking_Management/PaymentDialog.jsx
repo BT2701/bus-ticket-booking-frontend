@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import notificationWithIcon from '../../Components/Utils/notification';
 import axios from 'axios';
 import { useBooking } from '../../Context/BookingContex';
+import ApiService from '../../Components/Utils/apiService';
 
 const PaymentDialog = ({ booking, onClose }) => {
     const [selectedMethod, setSelectedMethod] = useState(null); // Phương thức thanh toán
@@ -31,12 +32,12 @@ const PaymentDialog = ({ booking, onClose }) => {
         payment();
     };
     const payment = async () => {
-        await axios.post('http://localhost:8080/api/payment', {
+        await ApiService.post('/api/payment', {
             bookingId: booking.bookingId,
             method: selectedMethod,
             amount: cashAmount,
         }).then((res) => {
-            if (res.status === 200) {
+            if (res) {
                 notificationWithIcon('success', 'Thành Công', 'Thanh toán thành công');
                 setLoader(1);
                 onClose();

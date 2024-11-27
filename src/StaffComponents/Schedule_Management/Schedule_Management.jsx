@@ -6,6 +6,7 @@ import TripTable from './ScheduleTable'; // Import TripTable component
 import NotificationDialog from '../../sharedComponents/notificationDialog';
 import Pagination from '../../sharedComponents/Pagination';
 import axios from 'axios';
+import ApiService from '../../Components/Utils/apiService';
 
 const ScheduleManagement = () => {
     const [trips, setTrips] = useState([]);
@@ -26,17 +27,17 @@ const ScheduleManagement = () => {
     }, [page]);
 
     const fetchTotal = async () => {
-        const total = await axios.get(`http://localhost:8080/api/schedule/total`);
-        if (total.status === 200) {
-            setTotalItems(total.data);
+        const total = await ApiService.get(`/api/schedule/total`);
+        if (total) {
+            setTotalItems(total);
         }
     };
 
     const fetchTrips = async () => {
-        const response = await axios.get(`http://localhost:8080/api/schedule-management?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setTrips(response.data);
-            setFilteredTrips(response.data);
+        const response = await ApiService.get(`/api/schedule-management?page=${page}&size=${size}`);
+        if (response) {
+            setTrips(response);
+            setFilteredTrips(response);
             setLoading(false);
         }
     };
