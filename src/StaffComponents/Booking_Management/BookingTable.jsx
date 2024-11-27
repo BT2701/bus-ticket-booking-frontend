@@ -65,22 +65,6 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
         }
     };
 
-    const handlePaymentConfirm = (paymentInfo) => {
-        // Cập nhật trạng thái của booking sau khi thanh toán
-        setUpdatedBookings((prevBookings) =>
-            prevBookings.map((booking) =>
-                booking.bookingId === selectedBooking.bookingId
-                    ? { ...booking, payment: true }
-                    : booking
-            )
-        );
-
-        // Hiển thị thông báo
-        notificationWithIcon('success', 'Thông Báo', 'Thanh toán thành công');
-
-        // Đóng PaymentDialog
-        setSelectedBooking(null);
-    };
 
     return (
         <>
@@ -138,7 +122,6 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
             <PaymentDialog
                 booking={selectedBooking}
                 onClose={() => setSelectedBooking(null)}
-                onConfirm={handlePaymentConfirm}
             />
             {selectedBooking1 && (
                 <BookingDetailDialog
