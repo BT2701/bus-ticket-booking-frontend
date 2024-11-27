@@ -188,7 +188,9 @@ const ScheduleDetail = () => {
     <div className="schedule-container">
       <div className="schedule-left">
         <div className="schedule-left-top">
-          <img src={BusDefault} alt="bus" />
+          <img
+            src={`http://localhost:8080/api/buses/img/${schedule?.bus.img}` || BusDefault}
+            alt="bus" />
         </div>
         <div className="schedule-left-bot">
           <div className="schedule-left-bot-box">
@@ -206,7 +208,9 @@ const ScheduleDetail = () => {
           <div className="schedule-left-bot-box">
             <label>Tài Xế:</label>
             <div className="schedule-left-bot-box-driver">
-              <img src={Guy} alt="driver" />
+              <img
+                src={`http://localhost:8080/api/drivers/avatar/${schedule?.bus.driver.img}` || Guy}
+                alt="driver" />
               <span>{schedule?.bus.driver.name}</span>
             </div>
           </div>

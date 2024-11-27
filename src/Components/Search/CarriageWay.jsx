@@ -140,8 +140,8 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
         <div className="row g-0">
           <div className="col-md-3 position-relative">
             <img
-              src="https://kiengiangauto.com/wp-content/uploads/2022/09/tong-dai-so-dien-thoai-nha-xe-phuong-trang-rach-gia-kien-giang.jpg"
-              className="img-fluid"
+            src={`http://localhost:8080/api/buses/img/${schedule?.bus.img}` || "https://via.placeholder.com/150"}
+            className="img-fluid"
               alt="Bus"
               style={{
                 width: "90%",

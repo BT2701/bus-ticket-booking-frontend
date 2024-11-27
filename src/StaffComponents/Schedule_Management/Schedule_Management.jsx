@@ -110,8 +110,6 @@ const ScheduleManagement = () => {
             <AddTripDialog
                 show={showDialog}
                 onClose={() => setShowDialog(false)}
-                onSave={isEditing ? handleSaveEdit : handleAddTrip}
-                tripToEdit={isEditing ? trips.find(trip => trip.id === editingTripId) : null}
             />
 
             <TripTable
