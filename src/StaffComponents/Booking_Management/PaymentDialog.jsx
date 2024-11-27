@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import notificationWithIcon from '../../Components/Utils/notification';
 import axios from 'axios';
 import { useBooking } from '../../Context/BookingContex';
-import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 
 const PaymentDialog = ({ booking, onClose }) => {
     const [selectedMethod, setSelectedMethod] = useState(null); // Phương thức thanh toán
