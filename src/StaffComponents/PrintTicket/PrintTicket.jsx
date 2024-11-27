@@ -8,6 +8,8 @@ import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
 import Header from "../dashboard/subComponents/Header";
 import NotificationDialog from "../../sharedComponents/notificationDialog";
+import { useBooking } from '../../Context/BookingContex';
+import axios from 'axios';
 
 
 const PrintTicketComponent = () => {
@@ -21,6 +23,7 @@ const PrintTicketComponent = () => {
   const printRef = useRef();
   const [showDialogPrint, setShowDialogPrint] = useState(false); // Trạng thái để hiển thị cảnh báo xóa
   const [payment, setPayment] = useState(false); // Trạng thái để hiển thị cảnh báo xóa
+  const { setLoader } = useBooking();
 
 
   const PrintTicket = () => {
@@ -89,7 +92,13 @@ const PrintTicketComponent = () => {
       setLoading(true); // Bắt đầu loading
       // Giả định in
       if (!payment) {
-        alert("vé chưa thanh toán thêm payment tiền mặt khi in");
+        const paymentResult = await handlePayment();
+
+        if (!paymentResult) {
+          // Xử lý khi thanh toán thất bại
+          setLoading(false); // Kết thúc loading sau khi in xong
+          return false;
+        }
       }
       const response = await updateTicketStatus(2); // Gọi hàm updateTicketStatus
       setTimeout(() => {
@@ -108,6 +117,28 @@ const PrintTicketComponent = () => {
       }, 3000);
     }
   };
+  const handlePayment = async () => {
+    try {
+      // Thực hiện POST request thanh toán
+      const res = await axios.post('http://localhost:8080/api/payment', {
+        bookingId: ticketInfo[9],
+        method: 'cash',
+        amount: ticketInfo[3],
+      });
+
+      if (res.status === 200) {
+        // Thông báo thanh toán thành công
+        notificationWithIcon('success', 'Thành Công', 'Thanh toán thành công');
+        setLoader(1); // Cập nhật trạng thái loader
+        return true;  // Trả về true nếu thanh toán thành công
+      }
+    } catch (error) {
+      // Thông báo lỗi nếu thanh toán thất bại
+      notificationWithIcon('error', 'Lỗi', 'Thanh toán thất bại');
+      return false;  // Trả về false nếu có lỗi
+    }
+  };
+
 
   const handleScan = (result) => {
     if (result && result.length > 0) {
