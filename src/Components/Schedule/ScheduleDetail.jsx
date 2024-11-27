@@ -8,7 +8,7 @@ import Guy from '../../Static/IMG/guy.jpg'
 import { Button, Modal, Spinner } from 'react-bootstrap'; // For Bootstrap Button
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSyncAlt, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
 import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 import formatCurrency from '../../sharedComponents/formatMoney';
@@ -139,7 +139,7 @@ const ScheduleDetail = () => {
     setSeatCount(schedule?.bus.category.seat_count);
     designSeatIndex(seatCount);
     setBookingList(schedule?.bookings);
-    setPrice(schedule?.bus.category.price);
+    setPrice(schedule?.price);
   }, [seatCount, schedule]);
 
   const fetchCoordinates = async () => {
@@ -228,9 +228,11 @@ const ScheduleDetail = () => {
               <label>Đến:</label>
               <span>{schedule?.route.to.name}<div className="route to"></div></span>
             </div>
-            <button onClick={toggleModal}>Hiển thị Tuyến Đường</button>
+            <button onClick={toggleModal}>
+              <FontAwesomeIcon icon={faMapMarkerAlt} />
+            </button>
           </div>
-          <div className="schedule-right-top-timeline">
+          <div className="schedule-right</button>-top-timeline">
             <label>Xe Rời Bến Lúc:</label>
             <span>{formatTimeFromDatabase(schedule?.departure)}</span>
           </div>

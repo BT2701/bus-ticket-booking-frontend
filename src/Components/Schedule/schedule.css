@@ -278,13 +278,14 @@ h3 {
 .schedule-right-top-route button {
     padding: 0.5em 1em;  
     font-size: 14px;     
-    background-color: rgb(4, 80, 91);
-    color: white;  
+    background-color: rgb(235, 244, 246);
+    color: rgb(5, 100, 131);  
     border: none;  
-    border-radius: 4px; 
+    border-radius: 50%; 
     cursor: pointer;   
     margin-left: 15px;
 }
 .schedule-right-top-route button:hover {
-    background-color: rgb(3, 63, 71); 
+    background-color: rgb(5, 100, 131);
+    color: rgb(235, 244, 246);  
 }
