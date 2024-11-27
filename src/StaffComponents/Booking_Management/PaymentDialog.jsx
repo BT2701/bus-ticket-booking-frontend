@@ -35,7 +35,7 @@ const PaymentDialog = ({ booking, onClose }) => {
         await ApiService.post('/api/payment', {
             bookingId: booking.bookingId,
             method: selectedMethod,
-            amount: cashAmount,
+            amount: booking.schedule.price,
         }).then((res) => {
             if (res) {
                 notificationWithIcon('success', 'Thành Công', 'Thanh toán thành công');

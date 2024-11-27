@@ -5,8 +5,9 @@ import axios from "axios";
 import notificationWithIcon from "../../Components/Utils/notification";
 import ApiService from "../../Components/Utils/apiService";
 import { useSchedule } from "../../Context/ScheduleContext";
+import { Edit } from "@mui/icons-material";
 
-const AddTripDialog = ({ show, onClose }) => {
+const EditTripDialog = ({ show, onClose, schedule }) => {
     const [selectedBus, setSelectedBus] = useState(null);
     const [selectedRoute, setSelectedRoute] = useState(null);
     const [departureTime, setDepartureTime] = useState(new Date());
@@ -21,10 +22,21 @@ const AddTripDialog = ({ show, onClose }) => {
 
     useEffect(() => {
         if (show) {
-            setSelectedBus(null);
-            setSelectedRoute(null);
-            setDepartureTime(new Date());
-            setEstimatedArrivalTime(new Date());
+            setSelectedBus({
+                value: schedule?.bus.id,
+                label: schedule?.bus.busnumber + " - " + schedule.bus.driver.name + " (Driver)",
+                price: schedule?.bus.category.price,
+                bus: schedule?.bus
+            });
+            setSelectedRoute({
+                value: schedule?.route.id,
+                label: schedule?.route.from.name + " - " + schedule?.route.to.name + " - " + schedule?.route.distance + " Km",
+                distance: schedule?.route.distance,
+                route: schedule?.route,
+                duration: schedule?.route.duration
+            });
+            setDepartureTime(new Date(schedule?.departure));
+            setEstimatedArrivalTime(new Date(schedule?.arrival));
             setPrice(0);
         }
     }, [show]);
@@ -94,19 +106,20 @@ const AddTripDialog = ({ show, onClose }) => {
 
     const saveTrip = async () => {
         const trip = {
-            bus: selectedBus.bus,
-            route: selectedRoute.route,
+            id: schedule.id,
+            bus: selectedBus?.bus,
+            route: selectedRoute?.route,
             departure: departureTime,
             arrival: estimatedArrivalTime,
             price: price,
         };
 
-        const response = await ApiService.post(`/api/schedule`, trip);
+        const response = await ApiService.put(`/api/schedule`, trip);
         if (response) {
-            notificationWithIcon('success', 'Thành Công', 'Thêm Chuyến Đi Thành Công!');
+            notificationWithIcon('success', 'Thành Công', 'Cập Nhật Chuyến Đi Thành Công!');
             setLoader(1);
         } else {
-            notificationWithIcon('error', 'Lỗi', 'Thêm Chuyến Đi Thất Bại!');
+            notificationWithIcon('error', 'Lỗi', 'Cập Nhật Chuyến Đi Thất Bại!');
         }
     }
     const formatDateTime = (date) => {
@@ -176,6 +189,7 @@ const AddTripDialog = ({ show, onClose }) => {
                                 </label>
                                 <input type="datetime-local" className="form-control"
                                     onChange={(e) => setDepartureTime(new Date(e.target.value))}
+                                    value={formatDateTime(departureTime)}
                                 />
                             </div>
 
@@ -202,4 +216,4 @@ const AddTripDialog = ({ show, onClose }) => {
     );
 };
 
-export default AddTripDialog;
+export default EditTripDialog;
