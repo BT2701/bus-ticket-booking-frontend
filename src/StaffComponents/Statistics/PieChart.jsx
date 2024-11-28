@@ -1,28 +1,7 @@
 
 import { ResponsivePie } from '@nivo/pie'
 import React from 'react';
-import { convertDataForPieChart } from "./Convertdata";
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-
 const PieChart = ({ data, totalLablel }) => {
-  // const [PieData, setPieData] = useState([]);
-  // const [total, setToTal] = useState();
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await axios.get(`http://localhost:8080/api/statistic/tinhtrangve`);
-  //       const labels = ["Đã thanh toán", "Chưa thanh toán"];
-  //       setPieData(convertDataForPieChart(response.data, labels));
-  //       setToTal(convertDataForPieChart(response.data, labels).reduce((acc, item) => acc + item.value, 0))
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-  //   fetchData();
-
-  // }, [])
-
   return (
     <div style={{ height: 200 }}>
       <ResponsivePie

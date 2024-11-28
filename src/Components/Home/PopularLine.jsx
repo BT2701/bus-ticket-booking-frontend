@@ -5,8 +5,16 @@ import { faArrowRight, faStar } from "@fortawesome/free-solid-svg-icons";
 import formatCurrency from "../../sharedComponents/formatMoney";
 import { useEffect } from "react";
 const PopularLine = ({ route }) => {
+
+
+  const handleFindTrip = (from, to) => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Chuyển đổi thành định dạng YYYY-MM-DD
+    const url = `schedule?pickup=${encodeURIComponent(from)}&dropoff=${encodeURIComponent(to)}&departureDate=${formattedDate}`;
+    window.location.href = url; // Điều hướng đến URL mới
+  };
   return (
-    <Link className="col-md-4 mt-1-9" to="/search" style={{ textDecoration: "none" }}>
+    <div className="col-md-4 mt-1-9" onClick={() => { handleFindTrip(route['fromAddress'], route['toAddress']) }} style={{ cursor: "pointer" }}>
       <div className="popularlineCard text-center">
         <img
           src="https://i.pinimg.com/564x/be/d9/5f/bed95f67a0643a9dcd08b39554c52f0e.jpg"
@@ -62,7 +70,7 @@ const PopularLine = ({ route }) => {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

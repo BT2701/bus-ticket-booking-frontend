@@ -1,8 +1,7 @@
 
 import React from "react";
-import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -33,8 +32,8 @@ const AdminStatistics = () => {
   useEffect(() => {
     fetchDataStatusBooking().then((response) => {
       const labels = ["Đã thanh toán", "Chưa thanh toán"];
-      const dataPieChart = convertDataForPieChart(response.data[0], labels);
-      setPieData(dataPieChart);
+      const dataPieChart = convertDataForPieChart(response[0], labels);
+      dataPieChart.length !== 0 ? setPieData(dataPieChart) : setPieData([]);
       setToTal(dataPieChart.reduce((acc, item) => acc + item.value, 0))
     })
   }, [])

@@ -33,13 +33,12 @@ const Homepage = () => {
     const fetchRoutes = async () => {
       if (numberRoute > 0) { // Ensure that limit is positive before making the request
         try {
-          const response = await ApiService.get(`http://localhost:8080/api/routes/popular/${currentPage}/${numberRoute}`);
+          const response = await ApiService.get(`/api/routes/popular/${currentPage}/${numberRoute}`);
           setRoutes(Array.isArray(response.data) ? response.data : []);
           setNumberPage(Math.ceil(response.totalElements / routesPerPage));
         } catch (error) {
           setError('Error fetching routes');
           console.error(error);
-
         }
       }
       else {
@@ -72,7 +71,7 @@ const Homepage = () => {
         <div className='d-flex justify-content-center'>
           <strong className='fs-2' style={{ color: '#1E90FF ' }}>Tuyến Phổ Biến</strong>
         </div>
-        <div class="mb-3 homepage-limit">
+        <div className="mb-3 homepage-limit">
           <input
             className="homepage-btn--limit"
             type="number"
@@ -88,8 +87,8 @@ const Homepage = () => {
 
           <div className="row">
             {routes
-              .map((route) => (
-                <PopularLine route={route} />
+              .map((route, key) => (
+                <PopularLine route={route} key={key} />
               ))}
           </div>
 

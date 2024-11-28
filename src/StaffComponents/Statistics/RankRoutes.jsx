@@ -9,21 +9,18 @@ import TableHead from '@mui/material/TableHead';
 import Paper from '@mui/material/Paper';
 import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
 import { tokens } from "../utils/theme";
-import { isDateGreaterThan, isDifferenceMoreThan30Days } from './Validation';
-
+import { validateDateForStatisticst } from './Validation';
+import "./LineChartReChart.css"
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import ApiService from "../../Components/Utils/apiService";
 const RankRoutes = () => {
     const theme = useTheme();
-    const colors = tokens(theme.palette.mode);
     const [routesData, setRoutesData] = useState([]);
-
-
-    //Dành cho trường hợp người chọn tùy chọn (họ sẽ chọn ngày để xem thống kê doanh thu).
     const [timeStart, setTimeStart] = useState(new Date().toISOString().split('T')[0]);
     const [timeEnd, setTimeEnd] = useState(new Date().toISOString().split('T')[0]);
     //Xử lý lỗi.
-    const [errorChooseDate, setErrorChooseDate] = useState();
+    const [errorChooseDate, setErrorChooseDate] = useState("");
 
     // Styled TableCell
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -49,25 +46,17 @@ const RankRoutes = () => {
 
     //Check lỗi mỗi khi chọn ngày 
     useEffect(() => {
-        if (!timeStart || !timeEnd) {
-            setErrorChooseDate("Lỗi-Ngày bắt đầu hoặc kết thúc rỗng");
-            setRoutesData([]);
-            return;
-        }
-        if (isDateGreaterThan(timeStart, timeEnd)) {
-            setErrorChooseDate("Lỗi-Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
-            setRoutesData([]);
-            return;
-        }
-        if (isDifferenceMoreThan30Days(timeEnd, timeStart, 30)) {
-            setErrorChooseDate("Lỗi-Chỉ giới hạn trong 30 ngày");
-            setRoutesData([]);
-            return;
-        }
-        else {
-            setErrorChooseDate(null);
-        }
-        fetchData();
+        setErrorChooseDate(validateDateForStatisticst(timeStart, timeEnd));
+        const fetchData = async () => {
+            try {
+                const response = await ApiService.get(`/api/statistic/tuyenxephobien/${timeStart}/${timeEnd}`);
+                response && response.length !== 0 ? setRoutesData(response) : setRoutesData([]);
+            } catch (error) {
+                setRoutesData([]);
+                console.error("Error fetching data:", error);
+            }
+        };
+        validateDateForStatisticst(timeStart, timeEnd) === "" ? fetchData() : setRoutesData([]);
     }, [timeStart, timeEnd])
 
     const handleDateStartChange = (event) => {
@@ -78,21 +67,10 @@ const RankRoutes = () => {
         setTimeEnd(event.target.value);
     }
 
-
     const handleReset = () => {
         setTimeStart(new Date().toISOString().split('T')[0]);
         setTimeEnd(new Date().toISOString().split('T')[0]);
     }
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/api/statistic/tuyenxephobien/${timeStart}/${timeEnd}`);
-            response && response.data.length !== 0 ? setRoutesData(response.data) : setRoutesData([]);
-        } catch (error) {
-            setRoutesData([]);
-            console.error("Error fetching data:", error);
-        }
-    };
 
 
 
@@ -101,13 +79,15 @@ const RankRoutes = () => {
         <div>
             <div style={{ padding: "8px" }}>
                 <div style={{ padding: "0 0 10px 0" }}>
-                    Từ<input type="date" value={timeStart} onChange={(e) => { handleDateStartChange(e) }} style={{ margin: "0 5px 0 5px" }} />
-                    Đến<input type="date" value={timeEnd} onChange={(e) => { handleDateEndChange(e) }} style={{ margin: "0 5px 0 5px" }} />
-                    <button onClick={handleReset} style={{ borderRadius: "5px", border: "1px solid black", padding: "0 2px" }}>Làm mới</button>
+                    <div>
+                        Từ<input type="date" value={timeStart} onChange={(e) => { handleDateStartChange(e) }} style={{ margin: "0 5px 0 5px" }} className={errorChooseDate ? 'isError' : ""} min="1000-01-01" max="9999-12-31" />
+                        Đến<input type="date" value={timeEnd} onChange={(e) => { handleDateEndChange(e) }} style={{ margin: "0 5px 0 5px" }} className={errorChooseDate ? 'isError' : ""} min="1000-01-01" max="9999-12-31" />
+                        <button onClick={handleReset} className='btn-for-all'>Làm mới</button>
+                    </div>
                     {errorChooseDate ? (
-                        <label style={{ color: "red" }}>{errorChooseDate}</label>
+                        <label className='text-noted text-noted-isError'>{errorChooseDate}</label>
                     ) : (
-                        <label style={{ fontStyle: "italic", fontWeight: "600", fontSize: "12px" }}>*Giới hạn trong 30 ngày</label>
+                        <label className='text-noted'>Lưu ý: Được giới hạn trong 30 ngày</label>
                     )}
                 </div>
                 <Box

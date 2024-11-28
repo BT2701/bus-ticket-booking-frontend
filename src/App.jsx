@@ -46,13 +46,8 @@ import Bus from "./StaffComponents/bus/Bus";
 import BookingManagement from "./StaffComponents/Booking_Management/Booking_management";
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
-<<<<<<< HEAD
 import AdminStatistics from "./StaffComponents/Statistics/AdminStatistics";
-=======
 import { BookingProvider } from "./Context/BookingContex";
-
-
->>>>>>> b9046da0f85af420507247c5646a831797c2128c
 const App = () => {
   const { state } = useUserContext();
 
@@ -64,29 +59,6 @@ const App = () => {
 
   return (
     <Router>
-<<<<<<< HEAD
-      <FeedbackProvider>
-        <PageProvider>
-          <UserProvider>
-            <ScheduleProvider>
-              <Routes>
-                <Route path="/*" element={<MainApp />} />
-                <Route path="/staff/*" element={<StaffLayout />}>
-                  <Route path="" element={< AdminStatistics />} />
-                  <Route path="users" element={<Team />} />
-                  <Route path="drivers" element={<Driver />} />
-                  <Route path="buses" element={<Bus />} />
-                  <Route path="booking-management" element={<BookingManagement />} />
-                  <Route path="schedule-management" element={<CenterPage />} />
-                  <Route path="handle-contact" element={<HandleContact />} />
-                  <Route path="print-ticket" element={<PrintTicket />} />
-                </Route>
-              </Routes>
-            </ScheduleProvider>
-          </UserProvider>
-        </PageProvider>
-      </FeedbackProvider>
-=======
       <BookingProvider>
         <FeedbackProvider>
           <PageProvider>
@@ -95,7 +67,7 @@ const App = () => {
                 <Routes>
                   <Route path="/*" element={<MainApp />} />
                   <Route path="/staff/*" element={<StaffLayout />}>
-                    <Route path="" element={<Dashboard />} />
+                    <Route path="" element={<AdminStatistics />} />
                     <Route path="users" element={<Team />} />
                     <Route path="drivers" element={<Driver />} />
                     <Route path="buses" element={<Bus />} />
@@ -110,7 +82,6 @@ const App = () => {
           </PageProvider>
         </FeedbackProvider>
       </BookingProvider>
->>>>>>> b9046da0f85af420507247c5646a831797c2128c
     </Router>
   );
 };

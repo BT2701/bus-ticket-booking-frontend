@@ -105,21 +105,21 @@ const NewsPage = () => {
                                 <h2>Thời sự trong nước và quốc tế</h2>
                             </div>
                             {news.map((article, index) => (
-                                <NewsItem article={article} />
+                                <NewsItem article={article} key={index} />
                             ))}
                         </div>
                         <div className="col-md-4">
                             <div className="mt-4">
                                 <h2>Tin tức thời tiết</h2>
                             </div>
-                            <div class="card mb-3" style={{ maxWidth: "800px" }}>
-                                <div class="row g-0">
-                                    <div class="col-md-4">
+                            <div className="card mb-3" style={{ maxWidth: "800px" }}>
+                                <div className="row g-0">
+                                    <div className="col-md-4">
                                         <img src="https://cdn.24h.com.vn/upload/3-2024/images/2024-09-30/255x170/1727684843-841-thumbnail-width740height495_anh_cat_3_2.jpg" className="img-fluid rounded-start" alt="Hình ảnh tin tức" />
                                     </div>
-                                    <div class="col-md-8">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Bão Krathon giật trên cấp 17 có ảnh hưởng đến đất liền nước ta?</h5>
+                                    <div className="col-md-8">
+                                        <div className="card-body">
+                                            <h5 className="card-title">Bão Krathon giật trên cấp 17 có ảnh hưởng đến đất liền nước ta?</h5>
                                         </div>
                                     </div>
                                 </div>

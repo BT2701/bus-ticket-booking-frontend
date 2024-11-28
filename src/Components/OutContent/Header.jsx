@@ -5,7 +5,9 @@ import { usePageContext } from "../../Context/PageProvider";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../Context/UserProvider";
 import React, { useState, useRef, useEffect } from 'react';
+import ApiService from "../Utils/apiService";
 import axios from 'axios';
+import { Api } from "@mui/icons-material";
 const Header = () => {
   const { page, setPage } = usePageContext();
   const { state: user } = useUserContext();
@@ -17,9 +19,16 @@ const Header = () => {
   const [notiData, setNotiData] = useState([]);
 
   // Xử lý khi click vào một thông báo bất kì 
-  const handleNotificationClick = (notification) => {
-    setSelectedNotification(notification);
-    setIsModalOpen(true);
+  const handleNotificationClick = async (notification) => {
+    try {
+      const notificationId = notification.id;
+      // const response = await axios.put(`http://localhost:8080/api/notification/${notificationId}`);
+      const response = await ApiService.put(`/api/notification/${notificationId}`);
+      setSelectedNotification(notification);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error(error);
+    }
   }
   //Đóng modal 
   const handleCloseModal = () => {
@@ -30,15 +39,16 @@ const Header = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/notification/${user?.id}`);
-        setNotiData(response.data);
+        // const response = user?.id ? await axios.get(`http://localhost:8080/api/notification/${user?.id}`) : [];
+        const response = user?.id ? await ApiService.get(`/api/notification/${user.id}`) : [];
+        setNotiData(response);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
 
-  }, [user])
+  }, [showNotifications])
 
 
 
@@ -227,16 +237,23 @@ const Header = () => {
           >
             <h4>Thông báo</h4>
             <ul style={{ listStyleType: 'none', paddingLeft: '0' }}>
-              {notiData.map((notification, index) => (
-                <li
-                  key={index}
-                  className={notification.status ? "notification-item notification-item_readed" : "notification-item"}
-                  onClick={() => handleNotificationClick(notification)}
-                >
-                  {notification.message}
+              {notiData.length ? (
+                notiData.map((notification, index) => (
+                  <li
+                    key={index}
+                    className={notification.readAt ? "notification-item notification-item_readed" : "notification-item"}
+                    onClick={() => handleNotificationClick(notification)}
+                  >
+                    {notification.title}
+                  </li>
+                ))
+              ) : (
+                <li style={{ textAlign: "center" }}>
+                  Chưa có thông báo
                 </li>
-              ))}
+              )}
             </ul>
+
             {/* Modal to display the selected notification details */}
             {isModalOpen && selectedNotification && (
               <div className="modal">
