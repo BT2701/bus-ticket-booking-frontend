@@ -100,7 +100,7 @@ function UpdateBusDialog({ open, onClose, busData }) {
       notificationWithIcon("success", "Chỉnh sửa xe", "Chỉnh sửa thông tin xe thành công!");
       onClose();
     } catch (err) {
-      setError("Không thể chỉnh sửa xe: " + (err?.response?.data?.message || err?.message));
+      setError("Không thể chỉnh sửa xe: " + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
     }
   };
 

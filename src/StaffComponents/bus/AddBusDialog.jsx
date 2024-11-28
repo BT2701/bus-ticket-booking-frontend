@@ -92,8 +92,8 @@ function AddBusDialog({ open, onClose }) {
       notificationWithIcon("success", "Thêm xe", "Thêm xe thành công!");
       handleClickClose();
     } catch (err) {
-      console.log(err?.response?.data?.message || err?.message);
-      setError("Không thể thêm xe vì: " + (err?.response?.data?.message || err?.message));
+      console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message));
+      setError("Không thể thêm xe vì: " + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
     }
   };
 

@@ -64,7 +64,7 @@ const Homepage = () => {
         <div className='d-flex justify-content-center'>
           <strong className='fs-2' style={{ color: '#1E90FF ' }}>Tuyến Phổ Biến</strong>
         </div>
-        <div class="mb-3 homepage-limit">
+        <div className="mb-3 homepage-limit">
           <input
             className="homepage-btn--limit"
             type="number"

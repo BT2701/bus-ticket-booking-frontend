@@ -32,7 +32,8 @@ const notificationWithIcon = (type, title, msg) => {
     return (
       <div>
         <div>{msg}</div>
-        <Progress percent={percent} showInfo={false} strokeWidth={2} />
+        {/* <Progress percent={percent} showInfo={false} strokeWidth={2} /> */}
+        <Progress percent={percent} showInfo={false} size={2} />
       </div>
     );
   };

@@ -27,7 +27,7 @@ export default function Topbar() {
           navigate("/login");
       })
       .catch((err) => {
-          notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản vì : ' + (err?.response?.data?.message || err?.message));
+          notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
       });
   }
 

@@ -7,7 +7,11 @@ const initialState = {
     phone: "",
     birth: "",
     address: "",
-    email: ""
+    email: "",
+    role: {
+        id: 3,
+        name: "CUSTOMER"
+    }
 };
 
 // Reducer function để quản lý các thay đổi của user
@@ -25,8 +29,7 @@ const userReducer = (state, action) => {
             };
         case 'LOGOUT_USER':
             return {
-                ...state,
-                user: null
+                ...initialState
             };
         default:
             return state;

@@ -119,6 +119,24 @@ const Header = () => {
                 </ul>
                 <div className="d-flex align-items-center">
                   {
+                    user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF") && (
+                      <Link
+                        className={`nav-link homepage-nav-link ${
+                          page === "staff" && "active"
+                        }`}
+                        style={{
+                          marginRight: "25px"
+                        }}
+                        onClick={() => {
+                          setPage("staff");
+                        }}
+                        to="staff"
+                      >
+                        Trang quản lý
+                      </Link>
+                    )
+                  }
+                  {
                     user?.id ? (
                       <Link to="/profile"
                         onClick={() => {

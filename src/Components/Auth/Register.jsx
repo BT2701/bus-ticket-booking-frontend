@@ -33,12 +33,13 @@ const Register =()=>{
             .then((response) => {
                 setLoading(false);
                 form.resetFields();
-                notificationWithIcon('success', 'Register', 'Đăng ký tài khoản thành công!');
+                notificationWithIcon('success', 'Register', 'Đăng ký tài khoản thành công! Hãy xác thực tài khoản tại email của bạn!');
                 navigate("/login");
             })
             .catch((err) => {
                 setLoading(false);
-                notificationWithIcon('error', 'Lỗi', 'Không thể đăng ký tài khoản vì : ' + (err?.response?.data?.message || err?.message));
+                console.error(err)
+                notificationWithIcon('error', 'Lỗi', 'Không thể đăng ký tài khoản');
             }).finally(() => {
                 setLoading(false);
             })

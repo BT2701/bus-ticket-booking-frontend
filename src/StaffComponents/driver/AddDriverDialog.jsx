@@ -86,8 +86,8 @@ function AddDriverDialog({ open, onClose }) {
       notificationWithIcon("success", "Thêm tài xế", "Thêm tài xế thành công!");
       handleClickClose();
     } catch (err) {
-      console.log(err?.response?.data?.message || err?.message);
-      setError("Không thể thêm tài xế vì: " + (err?.response?.data?.message || err?.message));
+      console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message));
+      setError("Không thể thêm tài xế vì: " + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
     }
   };
 

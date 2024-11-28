@@ -9,6 +9,7 @@ import ApiService from "../../Components/Utils/apiService";
 import notificationWithIcon from "../../Components/Utils/notification";
 import UpdateBusDialog from "./UpdateBusDialog";
 import AddBusDialog from "./AddBusDialog";
+import { Modal } from "antd";
 
 
 function Bus() {
@@ -16,10 +17,10 @@ function Bus() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [cars, setCars] = useState([]);
   const [isOpenAddDialog, setIsOpenAddDialog] = useState(false);
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [rowCount, setRowCount] = useState(0); 
+  const [isDeletedCar, setIdDeletedCar] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +34,7 @@ function Bus() {
     };
 
     fetchData();
-  }, [openDialog, isOpenAddDialog, openConfirmDialog, page, pageSize]);
+  }, [openDialog, isOpenAddDialog, page, pageSize, isDeletedCar]);
 
   const handleClickOpenAddDialog = () => {
     setIsOpenAddDialog(true);
@@ -54,28 +55,29 @@ function Bus() {
     if (selectedCar) {
       setOpenDialog(true);
     } else {
-      alert("Vui lòng chọn dòng muốn chỉnh sửa !");
+      notificationWithIcon('warning', 'Cảnh báo', 'Vui lòng chọn dòng muốn chỉnh sửa !');
     }
   };
 
   const handleDeleteClick = () => {
     if (selectedCar) {
-      setOpenConfirmDialog(true);
+      Modal.confirm({
+        title: 'Bạn có muốn xóa xe với id = ' + selectedCar?.id +' không (đồng nghĩa với việc bạn sẽ hủy toàn bộ lịch trình hiện tại của xe đó) ?',
+        okText: 'Có',
+        cancelText: 'Không',
+        onOk: () => {
+          console.log("/api/buses/" + selectedCar.id);
+          ApiService.delete("/api/buses/" + selectedCar.id).then((res) => {
+            setIdDeletedCar(prev => !prev);
+            notificationWithIcon("success", "Xóa", "Xóa xe thành công!");
+          }).catch(err => {
+            notificationWithIcon("error", "Xóa", "Xóa xe thất bại vì : " +  + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+          });
+        },
+      });
     } else {
-      alert("Vui lòng chọn dòng muốn xóa !");
+      notificationWithIcon('warning', 'Cảnh báo', 'Vui lòng chọn dòng muốn xóa !');
     }
-  };
-
-  const handleConfirmDelete = () => {
-    ApiService.delete("/api/buses/" + selectedCar.id).then((res) => {
-      notificationWithIcon("success", "Xóa", "Xóa xe thành công!");
-      setOpenConfirmDialog(false);
-    }).catch(err => {
-      notificationWithIcon("error", "Xóa", "Xóa xe thất bại vì : " +  + (err?.response?.data?.message || err?.message));
-    });
-  };
-  const handleCloseConfirmDialog = () => {
-    setOpenConfirmDialog(false);
   };
 
   const columns = [
@@ -86,7 +88,7 @@ function Bus() {
           <img
             src={params.value !== null ? `http://localhost:8080/api/buses/img/${params.value}` : "https://media.istockphoto.com/id/1396814518/vector/image-coming-soon-no-photo-no-thumbnail-image-available-vector-illustration.jpg?s=612x612&w=0&k=20&c=hnh2OZgQGhf0b46-J2z7aHbIWwq8HNlSDaNp2wn_iko="}
             alt={params.row.name}
-            style={{ width: "60px", height: "60px", borderRadius: "50%" }} // Bạn có thể chỉnh sửa CSS tùy ý
+            style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover" }} // Bạn có thể chỉnh sửa CSS tùy ý
           />
         </div>
       ),
@@ -170,20 +172,6 @@ function Bus() {
 
         <UpdateBusDialog open={openDialog} onClose={handleClose} busData={selectedCar} />
         <AddBusDialog open={isOpenAddDialog} onClose={handleClickCloseAddDialog} />
-
-        {/* Xác nhận xóa */}
-        <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog}>
-          <DialogTitle>Xác nhận xóa</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Bạn có muốn xóa xe với id: {selectedCar?.id}?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseConfirmDialog}>Hủy</Button>
-            <Button onClick={handleConfirmDelete} color="primary">Xóa</Button>
-          </DialogActions>
-        </Dialog>
       </div>
     </Box>
   );

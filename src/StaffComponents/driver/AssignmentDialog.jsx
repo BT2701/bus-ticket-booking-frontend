@@ -45,7 +45,7 @@ function AssignmentDialog({ open, onClose, driver }) {
         setHasMore(false); // Không còn dữ liệu để tải
       }
     } catch (err) {
-      setError("Không thể lấy danh sách xe vì: " + (err?.response?.data?.message || err?.message));
+      setError("Không thể lấy danh sách xe vì: " + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
     } finally {
       setLoading(false);
     }
@@ -84,6 +84,12 @@ function AssignmentDialog({ open, onClose, driver }) {
   };
 
   const handleClickClose = () => {
+    setBusId("");
+    setBusDetails({
+      busnumber: "",
+      imgName: "",
+      category: ""
+    });
     onClose();
   };
 
@@ -102,13 +108,13 @@ function AssignmentDialog({ open, onClose, driver }) {
       notificationWithIcon("success", "Gán tài xế", "Gán tài xế thành công!");
       onClose();
     } catch (err) {
-      console.log(err?.response?.data?.message || err?.message);
-      setError("Không thể gán tài xế vì: " + (err?.response?.data?.message || err?.message));
+      console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message));
+      setError("Không thể gán tài xế vì: " + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={handleClickClose}>
       <DialogTitle>Gán tài xế cho xe</DialogTitle>
       <DialogContent>
         <TextField
