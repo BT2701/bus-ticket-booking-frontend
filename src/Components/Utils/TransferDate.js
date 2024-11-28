@@ -15,3 +15,11 @@ export const convertTimestampToDate = (timestamp) => {
 
     return `${year}-${month}-${day}`; // Trả về định dạng 'YYYY-MM-DD'
 };
+export const convertTimestampToDateReversed = (timestamp) => {
+    const date = new Date(timestamp); // Tạo đối tượng Date từ timestamp
+    const year = date.getFullYear(); // Lấy năm
+    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Lấy tháng (cộng 1 vì tháng tính từ 0)
+    const day = ('0' + date.getDate()).slice(-2); // Lấy ngày
+
+    return `${day}-${month}-${year}`; // Trả về định dạng 'YYYY-MM-DD'
+};

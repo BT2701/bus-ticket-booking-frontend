@@ -21,7 +21,7 @@ const EditProfile =({ isLoginPage, editProfileModal, setEditProfileModal })=>{
     const { state: user, dispatch } = useUserContext();
     const navigate = useNavigate();
 
-    console.log(user);
+    // console.log(user);
 
     useEffect(() => {
         form.setFieldsValue({
@@ -70,13 +70,13 @@ const EditProfile =({ isLoginPage, editProfileModal, setEditProfileModal })=>{
                     setSessionUser(user);
 
                     form.resetFields();
-                    notificationWithIcon('success', 'Update', 'Cập nhật thông tin thành công !');
+                    notificationWithIcon('success', 'Cập nhật', 'Cập nhật thông tin thành công !');
                     setEditProfileModal(false);
                     navigate("/profile");
                 })
                 .catch((err) => {
                     setLoading(false);
-                    notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản vì : ' + (err?.response?.data?.message || err?.message));
+                    notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
                     console.error(err)
                 })
                 .finally(() => { 
@@ -98,12 +98,13 @@ const EditProfile =({ isLoginPage, editProfileModal, setEditProfileModal })=>{
                     setSessionUserKeyAgainstValue('address', response?.data?.address);
     
                     form.resetFields();
-                    notificationWithIcon('success', 'Update', 'Cập nhật thông tin thành công !');
+                    notificationWithIcon('success', 'Cập nhật', 'Cập nhật thông tin thành công !');
                     setEditProfileModal(false);
                 })
                 .catch((err) => {
                     setLoading(false);
-                    notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản vì : ' + (err?.response?.data?.message || err?.message));
+                    console.log(err);
+                    notificationWithIcon('error', 'Lỗi', 'Không thể chỉnh sửa tài khoản vì : ' + ((typeof err === 'string') ? err : ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message))));
                 })
                 .finally(() => { 
                     setLoading(false);
@@ -130,6 +131,7 @@ const EditProfile =({ isLoginPage, editProfileModal, setEditProfileModal })=>{
                 notificationWithIcon('warning', 'Hủy cập nhật thông tin', 'Bạn đã hủy bổ sung cập nhật thông tin vì vậy bạn sẽ phải đăng nhập lại!');
             })
             .catch(err => {
+                console.error(err);
                 notificationWithIcon('error', 'Lỗi', 'Không thể đăng xuất: ' + err.message);
             })
             .finally(() => {
@@ -228,7 +230,7 @@ const EditProfile =({ isLoginPage, editProfileModal, setEditProfileModal })=>{
                             },
                             {
                                 validator: (_, value) => {
-                                    console.log(TransferDatePicker(value))
+                                    // console.log(TransferDatePicker(value))
                                     // Kiểm tra nếu giá trị không hợp lệ
                                     if (!value || !value.isValid() || TransferDatePicker(value) === "1900-01-01") {
                                         return Promise.reject(new Error('Ngày sinh không hợp lệ!'));

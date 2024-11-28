@@ -26,7 +26,6 @@ import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 import Payment from "./Components/Payment/Payment";
 import Invoice from "./Components/Invoice/TicketLookup";
 import { UserProvider, useUserContext } from "./Context/UserProvider";
-import { useEffect } from "react";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
 import HistorySchedules from "./Components/History/HistorySchedules";
@@ -47,22 +46,27 @@ import BookingManagement from "./StaffComponents/Booking_Management/Booking_mana
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
 import { BookingProvider } from "./Context/BookingContex";
+import { useEffect, useState } from "react";
+import ApiService from "./Components/Utils/apiService";
+import notificationWithIcon from "./Components/Utils/notification";
+import { getSessionUser } from "./Components/Utils/authentication";
 
 const App = () => {
-  const { state } = useUserContext();
+  const { state: user } = useUserContext();
+  const [role, setRole] = useState("CUSTOMER");
 
   useEffect(() => {
-    // de xoa local storage cu~
-    // const APP_USER_STORAGE = 'BRF-USER-STORAGE';
-    // const APP_ACCESS_TOKEN = 'BRF-ACCESS-TOKEN';
-    // const APP_REFRESH_TOKEN = 'BRF-REFRESH-TOKEN';
-
-    // localStorage.removeItem(APP_USER_STORAGE);
-    // localStorage.removeItem(APP_ACCESS_TOKEN);
-    // localStorage.removeItem(APP_REFRESH_TOKEN);
-    
-    console.log('State updated:', state);
-  }, [state]);
+    const userId = user.id || null;
+    const userSS = getSessionUser();
+    if(userId && userSS) {
+      ApiService.get('/api/customers/details')
+        .then(res => {
+            setRole(res?.data?.role.name)
+        }).catch((err) => {
+            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+        });
+    }
+  }, [user]);
 
 
   return (
@@ -74,16 +78,20 @@ const App = () => {
               <ScheduleProvider>
                 <Routes>
                   <Route path="/*" element={<MainApp />} />
-                  <Route path="/staff/*" element={<StaffLayout />}>
-                    <Route path="" element={<Dashboard />} />
-                    <Route path="users" element={<Team />} />
-                    <Route path="drivers" element={<Driver />} />
-                    <Route path="buses" element={<Bus />} />
-                    <Route path="booking-management" element={<BookingManagement />} />
-                    <Route path="schedule-management" element={<CenterPage />} />
-                    <Route path="handle-contact" element={<HandleContact />} />
-                    <Route path="print-ticket" element={<PrintTicket />} />
-                  </Route>
+                  {
+                    (role === "ADMIN" || role === "STAFF") && (
+                      <Route path="/staff/*" element={<StaffLayout />}>
+                        <Route path="" element={<Dashboard />} />
+                        <Route path="users" element={<Team />} />
+                        <Route path="drivers" element={<Driver />} />
+                        <Route path="buses" element={<Bus />} />
+                        <Route path="booking-management" element={<BookingManagement />} />
+                        <Route path="schedule-management" element={<CenterPage />} />
+                        <Route path="handle-contact" element={<HandleContact />} />
+                        <Route path="print-ticket" element={<PrintTicket />} />
+                      </Route>
+                    )
+                  }
                 </Routes>
               </ScheduleProvider>
             </UserProvider>

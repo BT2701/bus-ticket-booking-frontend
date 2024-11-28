@@ -87,8 +87,8 @@ function UpdateDriverDialog({ open, onClose, driver }) {
       notificationWithIcon("success", "Cập nhật", "Cập nhật thông tin tài xế thành công!");
       onClose();
     } catch (err) {
-      console.log(err?.response?.data?.message || err?.message);
-      setError("Không thể cập nhật thông tin tài xế vì: " + (err?.response?.data?.message || err?.message));
+      console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message));
+      setError("Không thể cập nhật thông tin tài xế vì: " + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
     }
   };
 

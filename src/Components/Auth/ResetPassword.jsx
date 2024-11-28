@@ -35,12 +35,12 @@ const ResetPassword =()=>{
         
         ApiService.put('/api/customers/forgotPassword', payload)
             .then((response) => {
-                notificationWithIcon('success', 'Reset password', 'Tạo mới mật khẩu thành công!');
+                notificationWithIcon('success', 'Cập nhật lại mật khẩu', 'Tạo mới mật khẩu thành công!');
                 form.resetFields();
                 navigate("/login");
             })
             .catch((err) => {
-                notificationWithIcon('error', 'Lỗi', 'Không thể khôi phục mật khẩu của bạn vì : ' + (err?.response?.data?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', 'Không thể khôi phục mật khẩu của bạn vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
             })
             .finally(() => { 
                 setLoading(false);

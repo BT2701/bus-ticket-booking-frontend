@@ -15,6 +15,7 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import BookingIcon from '@mui/icons-material/Event';
 import PrintIcon from '@mui/icons-material/Print';
 import WorkIcon from '@mui/icons-material/Work';
+import { getSessionUser } from "../../../Components/Utils/authentication";
 
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -50,12 +51,13 @@ function Sidebar() {
 
   useEffect(() => {
     const userId = user.id || null;
-    if(userId) {
+    const userSS = getSessionUser();
+    if(userId && userSS) {
       ApiService.get('/api/customers/details')
         .then(res => {
           setRole(res.data.role.name);
         }).catch((err) => {
-            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + (err?.response?.data?.message || err?.message));
+            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
         });
     }
   }, [user]);

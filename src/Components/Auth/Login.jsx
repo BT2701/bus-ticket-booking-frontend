@@ -5,12 +5,11 @@ import {
   Button, Checkbox, Form, Input
 } from 'antd';
 import { useEffect, useRef, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import ApiService from "../Utils/apiService";
 import { useUserContext } from "../../Context/UserProvider";
 import { getSessionUser, setSessionAccess, setSessionAccessAndRefreshToken, setSessionUser } from "../Utils/authentication";
 import notificationWithIcon from "../Utils/notification";
-import axios from "axios";
 import EditProfile from "../User/EditProfile";
 
 const Login = () => {
@@ -20,6 +19,32 @@ const Login = () => {
     const { state: user, dispatch } = useUserContext();
     const [editProfileModal, setEditProfileModal] = useState(false);
 
+
+    // để lấy verifyToken verify tài khoản 
+    const location = useLocation();
+    const getQueryParameter = (param) => {
+        const searchParams = new URLSearchParams(location.search);
+        return searchParams.get(param);
+    };
+    const verifyToken = getQueryParameter('verifyToken');
+    const isApiVerifyCalled = useRef(false);
+    useEffect(() => {
+        if(!isApiVerifyCalled.current && verifyToken) {
+            isApiVerifyCalled.current = true;         
+               
+            ApiService.get('/api/customers/verify?verifyToken=' + verifyToken)
+                .then((response) => {
+                    notificationWithIcon('success', 'Xác thực tài khoản', 'Xác thực tài khoản thành công!');
+                    
+                    form.resetFields();
+                    navigate("/login");
+                })
+                .catch((err) => {
+                    notificationWithIcon('error', 'Lỗi', ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+                })
+        }
+    }, [])
+
     const onFinish = (values) => {
         setLoading(true);
 
@@ -28,12 +53,10 @@ const Login = () => {
             password: values.password
         };
     
-        console.log(payload);
+        // console.log(payload);
         
         ApiService.post('/api/customers/login', payload)
             .then(async (response) => {
-                console.log(response);
-
                 if (values.remember) {
                     setSessionAccessAndRefreshToken(response?.data?.access_token, response?.data?.refresh_token);
                 } else {
@@ -55,7 +78,7 @@ const Login = () => {
             })
             .catch((err) => {
                 console.log(err);
-                notificationWithIcon('error', 'Lỗi', 'Tài khoản hoặc mật khẩu không chính xác vì : ' +  (err?.response?.data?.message || err?.message));
+                notificationWithIcon('error', 'Lỗi', ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
             })
             .finally(() => { 
                 setLoading(false);
@@ -72,33 +95,34 @@ const Login = () => {
         email: ""
     };
     // dùng useRef để chống re-render 2 lần => tạo 2 lần đăng nhập(2 tokens) => dư thừa 1 token
-    const isApiCalled = useRef(false);
+    const isApiGetInfoFromOauth2Called = useRef(false);
     useEffect(() => {
         const userSS = getSessionUser();
 
-        if(!isApiCalled.current && (userSS === null || JSON.stringify(userSS) === JSON.stringify(initialState))) {
-            isApiCalled.current = true;
-
-            axios.get("http://localhost:8080/api/customers/oauth2-infor", {withCredentials: true})
+        if(!isApiGetInfoFromOauth2Called.current && (userSS === null || JSON.stringify(userSS) === JSON.stringify(initialState))) {
+            isApiGetInfoFromOauth2Called.current = true;
+            ApiService.get("http://localhost:8080/api/customers/oauth2-infor")
                 .then(res => {
                     const response = res?.data;
-                    console.log(response);
+                    // console.log(response);
                     if (response) {
                         const user = {
-                            id: response?.data?.id,
-                            name: response?.data?.name,
-                            phone: response?.data?.phone,
-                            birth: response?.data?.birth || "01-01-1900",
-                            address: response?.data?.address,
-                            email: response?.data?.email
+                            id: response?.id,
+                            name: response?.name,
+                            phone: response?.phone,
+                            birth: response?.birth || "01-01-1900",
+                            address: response?.address,
+                            email: response?.email
                         }
+                        // console.log(user)
         
                         dispatch({
                             type: 'SET_USER',
                             payload: user
                         });
-                        
-                        const phoneNumber = response?.data?.phone;
+
+                        const phoneNumber = response?.phone;
+
                         // nếu chưa có phonenumber => lần đầu đăng nhập => phải cập nhật thông tin 
                         if(phoneNumber === null || phoneNumber === "") {
                             setEditProfileModal(true);
@@ -106,7 +130,7 @@ const Login = () => {
                             setEditProfileModal(false);
         
                             setSessionUser(user);
-                            setSessionAccessAndRefreshToken(response?.data?.access_token, response?.data?.refresh_token);
+                            setSessionAccessAndRefreshToken(response?.access_token, response?.refresh_token);
                         }
                     }
                 })
