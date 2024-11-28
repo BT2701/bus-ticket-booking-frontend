@@ -52,12 +52,12 @@ ApiService.interceptors.response.use(
           const refreshToken = getRefreshToken();
           if(refreshToken === null) {
             // Nếu không có refresh token vì không nhớ mật khẩu
-            removeSessionAndLogoutUser();
+            // removeSessionAndLogoutUser();
             notificationWithIcon('error', 'Lỗi', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
             
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 1000) 
+            // setTimeout(() => {
+            //   window.location.href = '/login';
+            // }, 1000) 
   
 
             return Promise.reject('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'); 
@@ -69,12 +69,12 @@ ApiService.interceptors.response.use(
           return ApiService(originalRequest); // Gửi lại request với access token mới
       } catch (refreshError) {
           // Nếu refresh token hết hạn hoặc không hợp lệ
-          removeSessionAndLogoutUser();
+          // removeSessionAndLogoutUser();
           notificationWithIcon('error', 'Lỗi', 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
           
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 1000) 
+          // setTimeout(() => {
+          //   window.location.href = '/login';
+          // }, 1000) 
 
           return Promise.reject('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'); 
       }

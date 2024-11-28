@@ -5,7 +5,6 @@ import SearchFilter from './SearchSchedule'; // Import SearchFilter component
 import TripTable from './ScheduleTable'; // Import TripTable component
 import NotificationDialog from '../../sharedComponents/notificationDialog';
 import Pagination from '../../sharedComponents/Pagination';
-import axios from 'axios';
 import ApiService from '../../Components/Utils/apiService';
 import { useSchedule } from '../../Context/ScheduleContext';
 import notificationWithIcon from '../../Components/Utils/notification';

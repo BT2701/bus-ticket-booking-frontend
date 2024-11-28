@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Select from "react-select";
-import axios from "axios";
 import notificationWithIcon from "../../Components/Utils/notification";
 import ApiService from "../../Components/Utils/apiService";
 import { useSchedule } from "../../Context/ScheduleContext";
