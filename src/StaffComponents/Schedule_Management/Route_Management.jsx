@@ -5,6 +5,8 @@ import SearchFilterRoute from "./SearchRoute";
 import NotificationDialog from "../../sharedComponents/notificationDialog";
 import Pagination from "../../sharedComponents/Pagination";
 import axios from "axios";
+import ApiService from "../../Components/Utils/apiService";
+import BusStationsDialog from "./Station_Management";
 
 const RouteManagement = () => {
     const [routes, setRoutes] = useState([]);
@@ -25,6 +27,8 @@ const RouteManagement = () => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
+    const [showStations, setShowStations] = useState(false);
+
 
     useEffect(() => {
         fetchTotal();
@@ -32,21 +36,28 @@ const RouteManagement = () => {
     }, [page]);
 
     const fetchTotal = async () => {
-        const total = await axios.get(`http://localhost:8080/api/route/total`);
-        if (total.status === 200) {
-            setTotalItems(total.data);
+        const total = await ApiService.get(`/api/route/total`);
+        if (total) {
+            setTotalItems(total);
         }
     };
 
     const fetchRoutes = async () => {
-        const response = await axios.get(`http://localhost:8080/api/route-management?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setRoutes(response.data);
-            setFilteredRoutes(response.data);
+        const response = await ApiService.get(`/api/route-management?page=${page}&size=${size}`);
+        if (response) {
+            setRoutes(response);
+            setFilteredRoutes(response);
             setLoading(false);
         }
     };
 
+    const handleOpenDialog = () => {
+        setShowStations(true); // Hiển thị dialog
+    };
+
+    const handleCloseDialog = () => {
+        setShowStations(false); // Đóng dialog
+    };
     const handleAddRoute = () => {
         const newRouteDetails = { id: routes.length + 1, ...newRoute };
         setRoutes([...routes, newRouteDetails]);
@@ -110,7 +121,18 @@ const RouteManagement = () => {
 
     return (
         <div className="route-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Tuyến Đường</h1>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Tuyến Đường
+                <button
+                    className="btn btn-light "
+                    style={{ marginLeft: '0.5em', textAlign: 'center' }}
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Stations"
+                    onClick={handleOpenDialog}
+                >
+                    <i className="fa fa-bars"></i>
+                </button>
+            </h1>
             <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý tuyến đường</p>
             <SearchFilterRoute onFilter={handleFilter} />
             <button className="btn mb-4" style={{ backgroundColor: '#90EE90' }} onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
@@ -143,6 +165,9 @@ const RouteManagement = () => {
                 onConfirm={confirmDeleteRoute}
                 onCancel={cancelDeleteRoute}
             />
+            {showStations && (
+                <BusStationsDialog show={showStations} onClose={handleCloseDialog} />
+            )}
         </div>
     );
 };

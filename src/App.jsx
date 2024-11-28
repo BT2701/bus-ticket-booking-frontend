@@ -51,6 +51,7 @@ import ApiService from "./Components/Utils/apiService";
 import notificationWithIcon from "./Components/Utils/notification";
 import { getSessionUser } from "./Components/Utils/authentication";
 
+
 const App = () => {
   const { state: user } = useUserContext();
   const [role, setRole] = useState("CUSTOMER");
@@ -128,6 +129,7 @@ const MainApp = () => {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/news" element={<Test />} />
           <Route path="/history" element={<HistorySchedules />} />
+
         </Routes>
       </div>
       <Footer />

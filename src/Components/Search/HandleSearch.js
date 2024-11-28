@@ -4,7 +4,6 @@ import ApiService from '../Utils/apiService';
 export const fetchUniqueRoutes = async () => {
     try {
         const response = await ApiService.get('/api/get-from-to'); // Sử dụng `await` để chờ kết quả từ API
-        console.log(response);
         return response; // Dữ liệu từ API được trả về từ `response.data`
     } catch (error) {
         console.error('Error fetching unique routes:', error);
@@ -17,7 +16,6 @@ export const getAllRoutes = async (pageNum, limit) => {
     try {
         const url = `/api/get-all-routes?pageNum=${pageNum}&limit=${limit}`;
         const response = await ApiService.get(url);  // Gọi API với tham số pageNum và limit
-        console.log(response);  // In ra kết quả để kiểm tra
         return response;  // Trả về dữ liệu từ API
     } catch (error) {
         console.error('Error fetching all routes:', error);

@@ -1,26 +1,61 @@
 import React, { useState } from 'react';
+import notificationWithIcon from '../../Components/Utils/notification';
+import axios from 'axios';
+import { useBooking } from '../../Context/BookingContex';
+import ApiService from '../../Components/Utils/apiService';
 
-const PaymentDialog = ({ booking, onClose, onConfirm }) => {
+const PaymentDialog = ({ booking, onClose }) => {
     const [selectedMethod, setSelectedMethod] = useState(null); // Phương thức thanh toán
     const [cashAmount, setCashAmount] = useState(''); // Số tiền nếu chọn Cash
+    const [cashReturn, setCashReturn] = useState(0); // Số tiền trả lại
+    const {setLoader } = useBooking();
 
     if (!booking) return null;
 
     const handleMethodSelect = (method) => {
         setSelectedMethod(method);
-        if (method !== 'cash') setCashAmount(''); // Reset số tiền nếu chọn phương thức khác
+        if (method !== 'cash') setCashAmount(''); 
     };
 
     const handleConfirm = () => {
         if (selectedMethod === 'cash' && !cashAmount) {
-            alert('Vui lòng nhập số tiền thanh toán!');
+            notificationWithIcon('info', 'Lưu Ý', 'Vui lòng nhập số tiền thanh toán');
             return;
         }
-        onConfirm({
+        if (selectedMethod === 'momo' || selectedMethod === 'vnpay') {
+            return; // de tam
+        }
+        if (cashAmount < booking.schedule.price) {
+            notificationWithIcon('info', 'Lưu Ý', 'Số tiền thanh toán không đủ');
+            return;
+        }
+        payment();
+    };
+    const payment = async () => {
+        await ApiService.post('/api/payment', {
+            bookingId: booking.bookingId,
             method: selectedMethod,
-            amount: selectedMethod === 'cash' ? cashAmount : booking.schedule.price,
+            amount: booking.schedule.price,
+        }).then((res) => {
+            if (res) {
+                notificationWithIcon('success', 'Thành Công', 'Thanh toán thành công');
+                setLoader(1);
+                onClose();
+            }
+        }).catch((error) => {
+            notificationWithIcon('error', 'Lỗi', 'Thanh toán thất bại');
         });
     };
+
+    const handleCashAmountChange = (e) => {
+        setCashAmount(e.target.value);
+        if (e.target.value - booking.schedule.price < 0) {
+            setCashReturn(0);
+        }
+        else{
+            setCashReturn(e.target.value - booking.schedule.price);
+        }
+    }
 
     return (
         <div className="modal" style={{ display: 'block' }}>
@@ -64,9 +99,16 @@ const PaymentDialog = ({ booking, onClose, onConfirm }) => {
                                     type="number"
                                     className="form-control"
                                     value={cashAmount}
-                                    onChange={(e) => setCashAmount(e.target.value)}
+                                    onChange={(e) => handleCashAmountChange(e)}
                                     placeholder="Nhập số tiền thanh toán"
                                 />
+                                <label style={{marginTop: '0.5em'}}>Số Tiền Trả Lại:</label>
+                                <input type="text" 
+                                    className='form-control'
+                                    value={cashReturn.toLocaleString()+" VND"}
+                                    disabled 
+                                    style={{backgroundColor: '#f8f9fa', color: 'red'}}
+                                    />
                             </div>
                         )}
 

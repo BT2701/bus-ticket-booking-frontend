@@ -6,59 +6,44 @@ import TripTable from './ScheduleTable'; // Import TripTable component
 import NotificationDialog from '../../sharedComponents/notificationDialog';
 import Pagination from '../../sharedComponents/Pagination';
 import axios from 'axios';
+import ApiService from '../../Components/Utils/apiService';
+import { useSchedule } from '../../Context/ScheduleContext';
+import notificationWithIcon from '../../Components/Utils/notification';
 
 const ScheduleManagement = () => {
     const [trips, setTrips] = useState([]);
     const [filteredTrips, setFilteredTrips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);  // State for controlling dialog visibility
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingTripId, setEditingTripId] = useState(null);
     const [showNotification, setShowNotification] = useState(false);
     const [tripToDelete, setTripToDelete] = useState(null); // Lưu trữ id của chuyến đi cần xóa
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
+    const {loader, setLoader} = useSchedule();
 
     useEffect(() => {
         fetchTotal();
         fetchTrips();
-    }, [page]);
+        setLoader(0);
+    }, [page, loader]);
 
     const fetchTotal = async () => {
-        const total = await axios.get(`http://localhost:8080/api/schedule/total`);
-        if (total.status === 200) {
-            setTotalItems(total.data);
+        const total = await ApiService.get(`/api/schedule/total`);
+        if (total) {
+            setTotalItems(total);
         }
     };
 
     const fetchTrips = async () => {
-        const response = await axios.get(`http://localhost:8080/api/schedule-management?page=${page}&size=${size}`);
-        if (response.status === 200) {
-            setTrips(response.data);
-            setFilteredTrips(response.data);
+        const response = await ApiService.get(`/api/schedule-management?page=${page}&size=${size}`);
+        if (response) {
+            setTrips(response);
+            setFilteredTrips(response);
             setLoading(false);
         }
     };
 
-    const handleAddTrip = (newTrip) => {
-        setTrips([...trips, { id: trips.length + 1, ...newTrip }]);
-        setShowDialog(false);  // Close dialog after saving
-    };
-
-    const handleEditTrip = (id) => {
-        const tripToEdit = trips.find(trip => trip.id === id);
-        setIsEditing(true);
-        setEditingTripId(id);
-        setShowDialog(true);  // Open dialog for editing
-    };
-
-    const handleSaveEdit = (updatedTrip) => {
-        setTrips(trips.map(trip => trip.id === editingTripId ? { ...trip, ...updatedTrip } : trip));
-        setShowDialog(false);  // Close dialog after saving
-        setIsEditing(false);
-        setEditingTripId(null);
-    };
 
     const handleDeleteTrip = (id) => {
         setShowNotification(true); // Mở dialog cảnh báo
@@ -66,8 +51,20 @@ const ScheduleManagement = () => {
     };
 
     const handleConfirmDelete = () => {
-        setTrips(trips.filter(trip => trip.id !== tripToDelete)); // Xóa chuyến đi
-        setShowNotification(false); // Đóng dialog
+        ApiService.delete(`/api/schedule/${tripToDelete}`)
+            .then(() => {
+                setShowNotification(false); // Đóng dialog
+                notificationWithIcon('success', 'Thành công', 'Xóa chuyến đi thành công');
+                setLoader(1);
+            })
+            .catch(() => {
+                notificationWithIcon('error', 'Lỗi', 'Xóa chuyến đi thất bại');
+            })
+            .finally(() => {
+                setShowNotification(false); // Đóng dialog
+                setTripToDelete(null);
+            }
+            );
     };
 
     const handleCancelDelete = () => {
@@ -110,13 +107,10 @@ const ScheduleManagement = () => {
             <AddTripDialog
                 show={showDialog}
                 onClose={() => setShowDialog(false)}
-                onSave={isEditing ? handleSaveEdit : handleAddTrip}
-                tripToEdit={isEditing ? trips.find(trip => trip.id === editingTripId) : null}
             />
 
             <TripTable
                 trips={filteredTrips}
-                onEdit={handleEditTrip}
                 onDelete={handleDeleteTrip}
             />
             <Pagination

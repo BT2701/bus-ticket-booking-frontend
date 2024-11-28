@@ -32,7 +32,7 @@ const Homepage = () => {
     const fetchRoutes = async () => {
       if (limit > 0) { // Ensure that limit is positive before making the request
         try {
-          const response = await ApiService.get(`http://localhost:8080/api/most-popular-route/${limit}`);
+          const response = await ApiService.get(`/api/most-popular-route/${limit}`);
           setRoutes(Array.isArray(response) ? response : []);
         } catch (error) {
           setError('Error fetching routes');

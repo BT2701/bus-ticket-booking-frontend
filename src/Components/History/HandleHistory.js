@@ -2,12 +2,12 @@ import axios from 'axios';
 import ApiService from '../Utils/apiService';
 
 // Hàm gọi API để lấy danh sách booking đã hoàn thành
-const fetchPastBookings = async (customerId,pageNum, limit) => {
+const fetchPastBookings = async (customerId, pageNum, limit) => {
   try {
     // Thực hiện GET request đến API lấy booking dựa trên customerId
-    const response = await ApiService.get(`http://localhost:8080/api/lookup-past-bookings?customerId=${customerId}&pageNum=${pageNum}&limit=${limit}`);
+    const response = await ApiService.get(`/api/lookup-past-bookings?customerId=${customerId}&pageNum=${pageNum}&limit=${limit}`);
     // Kiểm tra nếu phản hồi từ server là thành công
-    if (response ) {
+    if (response) {
       // Trả về dữ liệu booking nếu có
       return response;
     } else {
@@ -25,25 +25,25 @@ const fetchPastBookings = async (customerId,pageNum, limit) => {
 
 
 const addFeedback = async (content, rating, bookingId) => {
-    const currentDate = new Date().toISOString(); // Lấy thời gian hiện tại
-    const feedbackData = {
-        content: content,
-        rating: rating,
-        booking: { id: bookingId }, // bookingId là ID của booking
-        date: currentDate, // Thêm trường date
-    };
+  const currentDate = new Date().toISOString(); // Lấy thời gian hiện tại
+  const feedbackData = {
+    content: content,
+    rating: rating,
+    booking: { id: bookingId }, // bookingId là ID của booking
+    date: currentDate, // Thêm trường date
+  };
 
-    try {
-        const response = await ApiService.post('http://localhost:8080/api/addfeedback', feedbackData);
-        return response; // Trả về dữ liệu phản hồi nếu cần
-    } catch (error) {
-        console.error('Có lỗi xảy ra khi gửi đánh giá:', error);
-        throw error; // Ném lỗi để xử lý bên ngoài nếu cần
-    }
+  try {
+    const response = await ApiService.post('/api/addfeedback', feedbackData);
+    return response; // Trả về dữ liệu phản hồi nếu cần
+  } catch (error) {
+    console.error('Có lỗi xảy ra khi gửi đánh giá:', error);
+    throw error; // Ném lỗi để xử lý bên ngoài nếu cần
+  }
 };
 
-  
+
 
 // Xuất addFeedback như một xuất named
-export { addFeedback,fetchPastBookings };  
-  // Xuất hàm fetchPastBookings và addFeedback để có thể sử dụng ở các component khác
+export { addFeedback, fetchPastBookings };
+// Xuất hàm fetchPastBookings và addFeedback để có thể sử dụng ở các component khác

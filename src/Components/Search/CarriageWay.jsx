@@ -7,6 +7,8 @@ import React, { useState, useEffect } from "react";
 import { getAllFeedback, getAvgAndTotalFeedback, getTotalFeedbackCount } from '../Feedback/HandleFeedback'; // Import hàm fetch dữ liệu
 import { useSchedule } from "../../Context/ScheduleContext";
 import axios from "axios";
+import ApiService from "../Utils/apiService";
+
 
 const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [isOpenFeedback, setIsOpenFeedback] = useState(false); // State độc lập cho mỗi CarriageWay
@@ -18,20 +20,20 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [averageRating, setAverageRating] = useState(0); // Số sao trung bình
   const [ratingFilter, setRatingFilter] = useState(0); // State để lưu số sao cần lọc
   const { schedule, updateSchedule } = useSchedule();
+
   const handleSelectSchedule = (scheduleId) => {
     const fetchData = async () => {
       try {
         // setIsOpenFeedback(true);
-        const schedulesResponse = await axios.get(`http://localhost:8080/api/schedule?id=${scheduleId}`);     //dat tam id
-        updateSchedule(schedulesResponse.data);
-        localStorage.setItem('schedule', JSON.stringify(schedulesResponse.data));
+        const schedulesResponse = await ApiService.get(`/api/schedule?id=${scheduleId}`);     //dat tam id
+        updateSchedule(schedulesResponse);
+        localStorage.setItem('schedule', JSON.stringify(schedulesResponse));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
   };
-
 
   // Hàm này sẽ được truyền vào component con để nhận dữ liệu đánh giá
   const setFeedbackDataFromChild = (data) => {
@@ -139,8 +141,8 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
         <div className="row g-0">
           <div className="col-md-3 position-relative">
             <img
-              src="https://kiengiangauto.com/wp-content/uploads/2022/09/tong-dai-so-dien-thoai-nha-xe-phuong-trang-rach-gia-kien-giang.jpg"
-              className="img-fluid"
+            src={`http://localhost:8080/api/buses/img/${schedule?.bus.img}` || "https://via.placeholder.com/150"}
+            className="img-fluid"
               alt="Bus"
               style={{
                 width: "90%",

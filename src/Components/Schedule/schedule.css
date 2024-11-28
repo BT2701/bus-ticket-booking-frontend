@@ -274,3 +274,18 @@ h3 {
 .schedule-right-bot-h6-btn:hover {
     background-color: rgb(90, 115, 115);
 }
+
+.schedule-right-top-route button {
+    padding: 0.5em 1em;  
+    font-size: 14px;     
+    background-color: rgb(235, 244, 246);
+    color: rgb(5, 100, 131);  
+    border: none;  
+    border-radius: 50%; 
+    cursor: pointer;   
+    margin-left: 15px;
+}
+.schedule-right-top-route button:hover {
+    background-color: rgb(5, 100, 131);
+    color: rgb(235, 244, 246);  
+}
