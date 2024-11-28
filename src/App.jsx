@@ -47,11 +47,11 @@ import BookingManagement from "./StaffComponents/Booking_Management/Booking_mana
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
 import { BookingProvider } from "./Context/BookingContex";
+import PaymentSuccess from "./Components/Payment/PaymentSuccess";
 
 
 const App = () => {
   const { state } = useUserContext();
-
   useEffect(() => {
 
     console.log('State updated:', state);
@@ -103,10 +103,10 @@ const MainApp = () => {
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/schedule/detail" element={<ScheduleDetail />} />
           <Route path="/schedule/detail/payment" element={<Payment />} />
+          <Route path="/schedule/detail/payment/success" element={<PaymentSuccess />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/invoice" element={<Invoice />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />

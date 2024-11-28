@@ -1,8 +1,9 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const BookingContext = createContext();
 export const BookingProvider = ({ children }) => {
     const [loader, setLoader] = useState(0);
+
     return (
         <BookingContext.Provider value={{ loader, setLoader }}>
             {children}
