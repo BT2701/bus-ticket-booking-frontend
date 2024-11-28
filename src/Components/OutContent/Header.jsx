@@ -81,7 +81,9 @@ const Header = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link
+                  {
+                    user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF" || user?.role?.name === "CUSTOMER") && (
+                      <Link
                       className={`nav-link homepage-nav-link ${page === "history" && "active"
                         }`}
                       onClick={() => {
@@ -91,6 +93,9 @@ const Header = () => {
                     >
                       Lịch sử chuyến đi
                     </Link>
+                    )
+                  }
+                    
                   </li>
                   <li className="nav-item">
                     <Link

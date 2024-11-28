@@ -9,8 +9,8 @@ const initialState = {
     address: "",
     email: "",
     role: {
-        id: 3,
-        name: "CUSTOMER"
+        id: 0,
+        name: ""
     }
 };
 

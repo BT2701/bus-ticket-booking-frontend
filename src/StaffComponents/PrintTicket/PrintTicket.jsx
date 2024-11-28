@@ -10,6 +10,7 @@ import Header from "../dashboard/subComponents/Header";
 import NotificationDialog from "../../sharedComponents/notificationDialog";
 import { useBooking } from '../../Context/BookingContex';
 import axios from 'axios';
+import ApiService from '../../Components/Utils/apiService';
 
 
 const PrintTicketComponent = () => {
@@ -120,13 +121,13 @@ const PrintTicketComponent = () => {
   const handlePayment = async () => {
     try {
       // Thực hiện POST request thanh toán
-      const res = await axios.post('http://localhost:8080/api/payment', {
+      const res = await ApiService.post('http://localhost:8080/api/payment', {
         bookingId: ticketInfo[9],
         method: 'cash',
         amount: ticketInfo[3],
       });
 
-      if (res.status === 200) {
+      if (res) {
         // Thông báo thanh toán thành công
         notificationWithIcon('success', 'Thành Công', 'Thanh toán thành công');
         setLoader(1); // Cập nhật trạng thái loader
