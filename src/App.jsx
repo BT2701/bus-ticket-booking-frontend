@@ -46,7 +46,7 @@ import Bus from "./StaffComponents/bus/Bus";
 import BookingManagement from "./StaffComponents/Booking_Management/Booking_management";
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
-
+import AdminStatistics from "./StaffComponents/Statistics/AdminStatistics";
 const App = () => {
   const { state } = useUserContext();
 
@@ -65,14 +65,14 @@ const App = () => {
               <Routes>
                 <Route path="/*" element={<MainApp />} />
                 <Route path="/staff/*" element={<StaffLayout />}>
-                  <Route path="" element={<Dashboard />} />
+                  <Route path="" element={< AdminStatistics />} />
                   <Route path="users" element={<Team />} />
                   <Route path="drivers" element={<Driver />} />
                   <Route path="buses" element={<Bus />} />
                   <Route path="booking-management" element={<BookingManagement />} />
-                  <Route path="schedule-management" element={<CenterPage/>} /> 
-                  <Route path="handle-contact" element={<HandleContact/>} /> 
-                  <Route path="print-ticket" element={<PrintTicket/>} /> 
+                  <Route path="schedule-management" element={<CenterPage />} />
+                  <Route path="handle-contact" element={<HandleContact />} />
+                  <Route path="print-ticket" element={<PrintTicket />} />
                 </Route>
               </Routes>
             </ScheduleProvider>
@@ -86,7 +86,7 @@ const App = () => {
 const MainApp = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <ToastContainer position="top-right"/>
+      <ToastContainer position="top-right" />
       <Header />
       <div className="flex flex-grow">
         <Routes>

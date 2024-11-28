@@ -1,0 +1,60 @@
+/* Table Container */
+.table-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f7f6;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Table Title */
+  .table-title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+  }
+  
+  /* Table Style */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  /* Table Header */
+  .table th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    font-size: 1.1rem;
+    text-align: left;
+  }
+  
+  /* Table Body */
+  .table td {
+    background-color: #ffffff;
+    padding: 12px;
+    font-size: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Table Row Hover Effect */
+  .table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* Table Zebra Stripes */
+  .table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* Table Border */
+  .table th, .table td {
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
