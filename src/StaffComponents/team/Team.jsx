@@ -15,7 +15,6 @@ import notificationWithIcon from "../../Components/Utils/notification";
 import { useUserContext } from "../../Context/UserProvider";
 import { Modal } from "antd";
 import { convertTimestampToDateReversed } from "../../Components/Utils/TransferDate";
-import { getSessionUser } from "../../Components/Utils/authentication";
 
 
 function Team() {
@@ -71,19 +70,6 @@ function Team() {
   // };
   
   const { state: user } = useUserContext();
-  const [role, setRole] = useState("");
-  useEffect(() => {
-    const userId = user.id || null;
-    const userSS = getSessionUser();
-    if(userId && userSS) {
-      ApiService.get('/api/customers/details')
-        .then(res => {
-            setRole(res?.data?.role.name)
-        }).catch((err) => {
-            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
-        });
-    }
-  }, [user]);
 
   useEffect(() => {
     // Gọi API khi component được mount
@@ -251,7 +237,7 @@ function Team() {
     }
   ];
   
-  if (role === "ADMIN") {
+  if (user?.role?.name && user?.role?.name === "ADMIN") {
     columns.push({
       field: "lock",
       headerName: "Khóa/Mở khóa",
@@ -339,7 +325,7 @@ function Team() {
           onRowClick={handleRowClick}
         />
 
-        <UserDialog open={openDialog} onClose={handleClose} user={selectedUser} role={role} />
+        <UserDialog open={openDialog} onClose={handleClose} user={selectedUser} role={user?.role?.name || null} />
       </div>
     </Box>
   );

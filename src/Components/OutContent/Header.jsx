@@ -4,28 +4,10 @@ import { faUser } from "@fortawesome/free-solid-svg-icons"; // Import the solid 
 import { usePageContext } from "../../Context/PageProvider";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../Context/UserProvider";
-import { useEffect, useState } from "react";
-import ApiService from "../Utils/apiService";
-import notificationWithIcon from "../Utils/notification";
-import { getSessionUser } from "../Utils/authentication";
 
 const Header = () => {
   const { page, setPage } = usePageContext();
   const { state: user } = useUserContext();
-  const [role, setRole] = useState("");
-
-  useEffect(() => {
-    const userId = user.id || null;
-    const userSS = getSessionUser();
-    if(userId && userSS) {
-      ApiService.get('/api/customers/details')
-        .then(res => {
-            setRole(res?.data?.role.name)
-        }).catch((err) => {
-            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
-        });
-    }
-  }, [user]);
 
   return (
     <div className="header-container">
@@ -137,7 +119,7 @@ const Header = () => {
                 </ul>
                 <div className="d-flex align-items-center">
                   {
-                    role.length !== 0 && (role === "ADMIN" || role === "STAFF") && (
+                    user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF") && (
                       <Link
                         className={`nav-link homepage-nav-link ${
                           page === "staff" && "active"

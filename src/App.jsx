@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   Outlet,
+  useNavigate,
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -47,29 +48,8 @@ import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
 import { BookingProvider } from "./Context/BookingContex";
 import { useEffect, useState } from "react";
-import ApiService from "./Components/Utils/apiService";
-import notificationWithIcon from "./Components/Utils/notification";
-import { getSessionUser } from "./Components/Utils/authentication";
-
 
 const App = () => {
-  const { state: user } = useUserContext();
-  const [role, setRole] = useState("CUSTOMER");
-
-  useEffect(() => {
-    const userId = user.id || null;
-    const userSS = getSessionUser();
-    if(userId && userSS) {
-      ApiService.get('/api/customers/details')
-        .then(res => {
-            setRole(res?.data?.role.name)
-        }).catch((err) => {
-            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
-        });
-    }
-  }, [user]);
-
-
   return (
     <Router>
       <BookingProvider>
@@ -79,20 +59,16 @@ const App = () => {
               <ScheduleProvider>
                 <Routes>
                   <Route path="/*" element={<MainApp />} />
-                  {
-                    (role === "ADMIN" || role === "STAFF") && (
-                      <Route path="/staff/*" element={<StaffLayout />}>
-                        <Route path="" element={<Dashboard />} />
-                        <Route path="users" element={<Team />} />
-                        <Route path="drivers" element={<Driver />} />
-                        <Route path="buses" element={<Bus />} />
-                        <Route path="booking-management" element={<BookingManagement />} />
-                        <Route path="schedule-management" element={<CenterPage />} />
-                        <Route path="handle-contact" element={<HandleContact />} />
-                        <Route path="print-ticket" element={<PrintTicket />} />
-                      </Route>
-                    )
-                  }
+                    <Route path="/staff/*" element={<StaffLayout />}>
+                      <Route path="" element={<Dashboard />} />
+                      <Route path="users" element={<Team />} />
+                      <Route path="drivers" element={<Driver />} />
+                      <Route path="buses" element={<Bus />} />
+                      <Route path="booking-management" element={<BookingManagement />} />
+                      <Route path="schedule-management" element={<CenterPage />} />
+                      <Route path="handle-contact" element={<HandleContact />} />
+                      <Route path="print-ticket" element={<PrintTicket />} />
+                    </Route>
                 </Routes>
               </ScheduleProvider>
             </UserProvider>
@@ -139,6 +115,17 @@ const MainApp = () => {
 
 function StaffLayout() {
   const [theme, colorMode] = useMode();
+  const { state: user } = useUserContext();
+  const [role, setRole] = useState("CUSTOMER");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setRole(user?.role?.name)
+  }, [user])
+
+  if(role === "CUSTOMER") {
+    navigate("/homepage");
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
