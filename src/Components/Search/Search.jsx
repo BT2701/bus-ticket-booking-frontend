@@ -32,6 +32,9 @@ const Search = () => {
     const dropoff = params.get('dropoff') || undefined;
     const departureDate = params.get('departureDate') || undefined;
 
+    localStorage.setItem('pickup', JSON.stringify(pickup));
+    localStorage.setItem('dropoff', JSON.stringify(dropoff));
+
     // Tạo đối tượng filters chỉ với các tham số có giá trị
     const filters = {
       ...(lowestPrice && { lowestPrice }),
@@ -42,7 +45,7 @@ const Search = () => {
     // Gọi API để lấy dữ liệu tìm kiếm, truyền filters nếu có
     const results = await search(pickup, dropoff, departureDate, filters);
 
-    if (results && results.length > 0) {
+    if (results && results?.length > 0) {
       let lowestPrice = Number.MAX_VALUE;
       let highestPrice = Number.MIN_VALUE;
       const busTypes = new Set();
@@ -201,7 +204,7 @@ const Search = () => {
       <SearchInput handleSearch={handleSearch} />
       <div className="d-flex container p-0">
         <div>
-          {(searchResults.formattedResults.length > 0 || filtersExist) ? (
+          {(searchResults.formattedResults?.length > 0 || filtersExist) ? (
             <NavSearch
               lowestPrice={searchResults.lowestPrice}
               highestPrice={searchResults.highestPrice}
@@ -211,14 +214,14 @@ const Search = () => {
           ) : <p></p>}
         </div>
         <div className="flex-grow-1 ps-3">
-          {searchResults.formattedResults.length > 0 ? (
+          {searchResults.formattedResults?.length > 0 ? (
             <>
               {searchResults.formattedResults?.map((result, index) => (
                 <CarriageWay key={index} busData={result} />
               ))}
             </>
           ) : (
-            (allRoutes.length > 0 && isSearching == null) ? (
+            (allRoutes?.length > 0 && isSearching == null) ? (
               <div className="container mt-5">
                 <h3 className="text-center mb-4">Thông tin các tuyến xe</h3>
                 <table className="table table-bordered">

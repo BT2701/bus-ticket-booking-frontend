@@ -5,15 +5,18 @@ import Selected from '../../Static/IMG/selected.png'
 import Available from '../../Static/IMG/available.png'
 import BusDefault from '../../Static/IMG/bus.png'
 import Guy from '../../Static/IMG/guy.jpg'
-import { Button } from 'react-bootstrap'; // For Bootstrap Button
+import { Button, Modal, Spinner } from 'react-bootstrap'; // For Bootstrap Button
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faSyncAlt, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSchedule } from '../../Context/ScheduleContext';
 import formatTimeFromDatabase from '../../sharedComponents/formatTimeFromDatabase';
 import formatCurrency from '../../sharedComponents/formatMoney';
 import NotificationDialog from '../../sharedComponents/notificationDialog';
 import notificationWithIcon from '../Utils/notification';
+import CarRouteMap from "../Map/CarRouteMap";
+import { getCoordinatesFromAddress } from '../Map/geolocation';
+
 
 const ScheduleDetail = () => {
   const { schedule, updateSchedule, updateSeatList, updateTotal } = useSchedule();
@@ -26,6 +29,10 @@ const ScheduleDetail = () => {
   const [price, setPrice] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const [pointA, setPointA] = useState(null);
+
+  const [pointB, setPointB] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   const handleOpenDialog = () => {
@@ -132,8 +139,48 @@ const ScheduleDetail = () => {
     setSeatCount(schedule?.bus.category.seat_count);
     designSeatIndex(seatCount);
     setBookingList(schedule?.bookings);
-    setPrice(schedule?.bus.category.price);
+    setPrice(schedule?.price);
   }, [seatCount, schedule]);
+
+  const fetchCoordinates = async () => {
+    const pickup = JSON.parse(localStorage.getItem('pickup'));
+    const dropoff = JSON.parse(localStorage.getItem('dropoff'));
+
+    if (!pickup || !dropoff) {
+      console.log('Không có địa chỉ pickup hoặc dropoff trong localStorage');
+      return;
+    }
+
+    try {
+      // Gọi API để lấy tọa độ
+      const coordinatesA = await getCoordinatesFromAddress(pickup + ', Vietnam');
+      const coordinatesB = await getCoordinatesFromAddress(dropoff + ', Vietnam');
+
+      if (coordinatesA && coordinatesB) {
+        const pointA = [parseFloat(coordinatesA.lat), parseFloat(coordinatesA.lon)];
+        const pointB = [parseFloat(coordinatesB.lat), parseFloat(coordinatesB.lon)];
+
+        // Lưu tọa độ vào localStorage
+        localStorage.setItem('pointA', JSON.stringify(pointA));
+        localStorage.setItem('pointB', JSON.stringify(pointB));
+
+        // Cập nhật state sau khi lấy tọa độ thành công
+        setPointA(pointA);
+        setPointB(pointB);
+      } else {
+        console.log('Không tìm thấy tọa độ cho một trong các địa điểm');
+      }
+    } catch (error) {
+      console.error('Lỗi khi gọi API:', error);
+    }
+  };
+
+  const toggleModal = async () => {
+    setIsModalOpen(!isModalOpen);
+    await fetchCoordinates();
+  };
+
+
   if (!schedule) {
     return <div>Loading...</div>;
   }
@@ -141,7 +188,9 @@ const ScheduleDetail = () => {
     <div className="schedule-container">
       <div className="schedule-left">
         <div className="schedule-left-top">
-          <img src={BusDefault} alt="bus" />
+          <img
+            src={`http://localhost:8080/api/buses/img/${schedule?.bus.img}` || BusDefault}
+            alt="bus" />
         </div>
         <div className="schedule-left-bot">
           <div className="schedule-left-bot-box">
@@ -159,7 +208,9 @@ const ScheduleDetail = () => {
           <div className="schedule-left-bot-box">
             <label>Tài Xế:</label>
             <div className="schedule-left-bot-box-driver">
-              <img src={Guy} alt="driver" />
+              <img
+                src={`http://localhost:8080/api/drivers/avatar/${schedule?.bus.driver.img}` || Guy}
+                alt="driver" />
               <span>{schedule?.bus.driver.name}</span>
             </div>
           </div>
@@ -181,12 +232,44 @@ const ScheduleDetail = () => {
               <label>Đến:</label>
               <span>{schedule?.route.to.name}<div className="route to"></div></span>
             </div>
+            <button onClick={toggleModal}>
+              <FontAwesomeIcon icon={faMapMarkerAlt} />
+            </button>
           </div>
-          <div className="schedule-right-top-timeline">
+          <div className="schedule-right</button>-top-timeline">
             <label>Xe Rời Bến Lúc:</label>
             <span>{formatTimeFromDatabase(schedule?.departure)}</span>
           </div>
         </div>
+        {/* Modal */}
+        <Modal show={isModalOpen} onHide={toggleModal} size="lg">
+          {/* Modal Header */}
+          <Modal.Header closeButton>
+            <Modal.Title>Tuyến đường</Modal.Title>
+          </Modal.Header>
+
+          {/* Modal Body */}
+          <Modal.Body>
+            <div className="modal-content">
+              {pointA && pointB ? (
+                <CarRouteMap pointA={pointA} pointB={pointB} />
+              ) : (
+                <div className="text-center">
+                  <Spinner animation="border" />
+                  <p>Đang tải dữ liệu...</p>
+                </div>
+              )}
+            </div>
+          </Modal.Body>
+
+          {/* Modal Footer */}
+          <Modal.Footer>
+            <Button variant="secondary" onClick={toggleModal}>
+              Đóng
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <div className="schedule-right-center">
           <div className="min-w-sm mx-auto flex w-[100%] max-w-2xl flex-col px-3 py-1 sm:px-6 2lg:mx-0 2lg:w-auto">
             <div className="flex max-w-xs items-start justify-between pt-5 text-xl font-medium text-black">

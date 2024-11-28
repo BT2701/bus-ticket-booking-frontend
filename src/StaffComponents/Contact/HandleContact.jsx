@@ -1,9 +1,10 @@
-import React, { useEffect,useState } from 'react';
-import { fetchContactRequests,sendMailAndUpdateStatus } from './HandleContactStaff'; // Import hàm lấy dữ liệu
+import React, { useEffect, useState } from 'react';
+import { fetchContactRequests, sendMailAndUpdateStatus } from './HandleContactStaff'; // Import hàm lấy dữ liệu
 import { Modal, Button, Form } from 'react-bootstrap'; // Import Bootstrap modal và button
 // import notificationWithIcon from '../../Utils/notification'; // Nhập hàm thông báo
 import notificationWithIcon from '../../Components/Utils/notification'; // Nhập hàm thông báo
 import Pagination from '@mui/material/Pagination';
+import Header from "../dashboard/subComponents/Header";
 
 
 const HandleContact = () => {
@@ -18,9 +19,9 @@ const HandleContact = () => {
     const [isSendingMail, setIsSendingMail] = useState(false); // State quản lý trạng thái gửi mail
     const [countdown, setCountdown] = useState(900); // 15 phút tính bằng giây
     const [canUpdate, setCanUpdate] = useState(false); // Quản lý trạng thái nút cập nhật
-    const [pageNum, setPageNum] = useState(1); 
+    const [pageNum, setPageNum] = useState(1);
     const [totalPages, setTotalPages] = useState(10);  // Tổng số trang
-    const limit=10;
+    const limit = 10;
 
     const handleUpdate = async () => {
         const data = await fetchContactRequests(pageNum, limit); // Gọi hàm lấy dữ liệu
@@ -33,7 +34,7 @@ const HandleContact = () => {
         // Gọi lại hàm lấy dữ liệu  
     };
 
-   // Hàm lấy dữ liệu yêu cầu liên hệ từ API
+    // Hàm lấy dữ liệu yêu cầu liên hệ từ API
     useEffect(() => {
         const getRequests = async () => {
             // Gọi hàm cập nhật ngay khi component mount
@@ -104,7 +105,7 @@ const HandleContact = () => {
             );
             console.log(response);
 
-            if (response==true) {
+            if (response == true) {
                 notificationWithIcon('success', 'Giải quyết thành công', '');
 
                 // Thêm yêu cầu vào danh sách đã xử lý
@@ -142,11 +143,12 @@ const HandleContact = () => {
     // Trả về giao diện hiển thị bảng yêu cầu liên hệ
     return (
         <div>
+            <Header title="LIÊN HỆ" subtitle="Quản lý liên hệ" />
             <div className="d-flex justify-content-between align-items-center">
-                <h1>Danh sách yêu cầu liên hệ</h1>
-                <Button 
-                    variant="primary" 
-                    onClick={handleUpdate} 
+                <h2></h2>
+                <Button
+                    variant="primary"
+                    onClick={handleUpdate}
                     disabled={!canUpdate} // Vô hiệu hóa nút khi không thể cập nhật
                     className="m-1" // Sử dụng ml-auto để đẩy nút về bên phải
                 >
@@ -206,7 +208,7 @@ const HandleContact = () => {
                         <Form>
                             <Form.Group controlId="resolveTitle ">
                                 <strong className="mb-3">Tiêu đề giải quyết</strong>
-                                <Form.Control type="text" value={resolveTitle} placeholder="Nhập tiêu đề..." onChange={(e) => setResolveTitle(e.target.value)} className="mb-2"/>
+                                <Form.Control type="text" value={resolveTitle} placeholder="Nhập tiêu đề..." onChange={(e) => setResolveTitle(e.target.value)} className="mb-2" />
                             </Form.Group>
                             <Form.Group controlId="resolveContent">
                                 <strong className="mb-3">Nội dung giải quyết</strong>
@@ -216,19 +218,19 @@ const HandleContact = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseModal}>Đóng</Button>
-                        <Button 
-                            variant="primary" 
-                            onClick={handleSendMail} 
+                        <Button
+                            variant="primary"
+                            onClick={handleSendMail}
                             disabled={isSendingMail} // Vô hiệu hóa nút khi đang gửi mail
                         >
-                            {isSendingMail ? 
+                            {isSendingMail ?
                                 <>
                                     <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"> </span>
                                     Đang gửi...
-                                </>                          
-                            : 
-                            'Gửi Mail'}
-                        </Button>                    
+                                </>
+                                :
+                                'Gửi Mail'}
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             )}

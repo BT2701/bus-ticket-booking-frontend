@@ -52,3 +52,13 @@
 .booking-form button:hover {
     background-color: #0056b3;
 }
+.btn-outline-secondary {
+    color: #6c757d;
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+    opacity: 0.7; /* Sậm màu */
+}
+
+.btn-outline-secondary:hover {
+    opacity: 1; /* Sáng hơn khi hover */
+}

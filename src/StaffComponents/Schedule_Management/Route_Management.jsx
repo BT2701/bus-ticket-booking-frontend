@@ -3,6 +3,10 @@ import AddRouteDialog from "./AddRoute";
 import RouteTable from "./RouteTable";
 import SearchFilterRoute from "./SearchRoute";
 import NotificationDialog from "../../sharedComponents/notificationDialog";
+import Pagination from "../../sharedComponents/Pagination";
+import axios from "axios";
+import ApiService from "../../Components/Utils/apiService";
+import BusStationsDialog from "./Station_Management";
 
 const RouteManagement = () => {
     const [routes, setRoutes] = useState([]);
@@ -20,22 +24,40 @@ const RouteManagement = () => {
         distance: '',
         estimatedTime: '',
     });
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+    const [totalItems, setTotalItems] = useState(0);
+    const [showStations, setShowStations] = useState(false);
+
 
     useEffect(() => {
+        fetchTotal();
         fetchRoutes();
-    }, []);
+    }, [page]);
 
-    const fetchRoutes = async () => {
-        const fetchedRoutes = [
-            { id: 1, startPoint: "Ho Chi Minh", endPoint: "Da Nang", distance: 1000, estimatedTime: "15 hours" },
-            { id: 2, startPoint: "Hanoi", endPoint: "Hue", distance: 600, estimatedTime: "10 hours" },
-            { id: 3, startPoint: "Da Nang", endPoint: "Ho Chi Minh", distance: 1200, estimatedTime: "18 hours" }
-        ];
-        setRoutes(fetchedRoutes);
-        setFilteredRoutes(fetchedRoutes);
-        setLoading(false);
+    const fetchTotal = async () => {
+        const total = await ApiService.get(`/api/route/total`);
+        if (total) {
+            setTotalItems(total);
+        }
     };
 
+    const fetchRoutes = async () => {
+        const response = await ApiService.get(`/api/route-management?page=${page}&size=${size}`);
+        if (response) {
+            setRoutes(response);
+            setFilteredRoutes(response);
+            setLoading(false);
+        }
+    };
+
+    const handleOpenDialog = () => {
+        setShowStations(true); // Hiển thị dialog
+    };
+
+    const handleCloseDialog = () => {
+        setShowStations(false); // Đóng dialog
+    };
     const handleAddRoute = () => {
         const newRouteDetails = { id: routes.length + 1, ...newRoute };
         setRoutes([...routes, newRouteDetails]);
@@ -89,8 +111,8 @@ const RouteManagement = () => {
     const handleFilter = (filterCriteria) => {
         const filtered = routes.filter(route => {
             return (
-                (!filterCriteria.startPoint || route.startPoint.toLowerCase().includes(filterCriteria.startPoint.toLowerCase())) &&
-                (!filterCriteria.endPoint || route.endPoint.toLowerCase().includes(filterCriteria.endPoint.toLowerCase())) &&
+                (!filterCriteria.startPoint || route.from.name.toLowerCase().includes(filterCriteria.startPoint.toLowerCase())) &&
+                (!filterCriteria.endPoint || route.to.name.toLowerCase().includes(filterCriteria.endPoint.toLowerCase())) &&
                 (!filterCriteria.distance || route.distance.toString().includes(filterCriteria.distance))
             );
         });
@@ -99,7 +121,18 @@ const RouteManagement = () => {
 
     return (
         <div className="route-management container my-5">
-            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Tuyến Đường</h1>
+            <h1 className="text-uppercase fw-bold" style={{ fontSize: '1.5rem', color: '#000' }}>Tuyến Đường
+                <button
+                    className="btn btn-light "
+                    style={{ marginLeft: '0.5em', textAlign: 'center' }}
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title="Stations"
+                    onClick={handleOpenDialog}
+                >
+                    <i className="fa fa-bars"></i>
+                </button>
+            </h1>
             <p className="text-success mb-4" style={{ fontSize: '1.1rem', fontWeight: 'normal', marginTop: '-10px' }}>Quản lý tuyến đường</p>
             <SearchFilterRoute onFilter={handleFilter} />
             <button className="btn mb-4" style={{ backgroundColor: '#90EE90' }} onMouseEnter={(e) => e.target.style.backgroundColor = '#76c776'}
@@ -118,6 +151,12 @@ const RouteManagement = () => {
                 handleEditRoute={handleEditRoute}
                 handleDeleteRoute={handleDeleteRoute}
             />
+            <Pagination
+                page={page}
+                setPage={setPage}
+                totalItems={totalItems}
+                itemsPerPage={size}
+            />
             <NotificationDialog
                 message="Bạn có chắc muốn xóa?"
                 isOpen={showDialogDelete}
@@ -126,6 +165,9 @@ const RouteManagement = () => {
                 onConfirm={confirmDeleteRoute}
                 onCancel={cancelDeleteRoute}
             />
+            {showStations && (
+                <BusStationsDialog show={showStations} onClose={handleCloseDialog} />
+            )}
         </div>
     );
 };
