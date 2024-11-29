@@ -282,8 +282,8 @@ const Header = () => {
 
             {/* Modal to display the selected notification details */}
             {isModalOpen && selectedNotification && (
-              <div className="modal">
-                <div className="modal-content">
+              <div className="modal notification-modal">
+                <div className="modal-content notification-modal-content">
                   <span style={{ backgroundColor: "#f0f0f0", width: "30px", textAlign: "center", borderRadius: "3px" }} className="close-btn" onClick={handleCloseModal}>&times;</span>
                   <h5>Chi tiết thông báo</h5>
                   <p>{selectedNotification.message}</p>

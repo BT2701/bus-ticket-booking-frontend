@@ -94,7 +94,7 @@ const BookingTable = ({ bookings, onDelete, currentPage, size }) => {
                             <td>{booking.seatNum}</td>
                             <td>{formatTimeFromDatabase(booking.time)}</td>
                             <td>
-                                <span className={`badge bg-${booking.payment ? 'success' : 'danger'}`}>
+                                <span className={`badge bg-${booking.payment ? 'success' : 'danger'}`} style={{fontSize: '10px', padding: '3px'}}>
                                     {booking.payment ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}
                                 </span>
                             </td>
