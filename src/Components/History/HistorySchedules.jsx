@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetchPastBookings } from './HandleHistory'; // Giả sử bạn đã tạo file HandleHistory.js
 import HistoryScheduleItem from './HistoryScheduleItem'; // Nhập component HistoryScheduleItem
 import Pagination from '@mui/material/Pagination';
+import { useUserContext } from '../../Context/UserProvider';
 
 const History = ({ }) => {
   const [pastBookings, setPastBookings] = useState([]);
@@ -9,13 +10,11 @@ const History = ({ }) => {
   const [pageNum, setPageNum] = useState(1); 
   const [totalPages, setTotalPages] = useState(10);  // Tổng số trang
   const limit=10;
-  // *****************************************************************************
-  const customerId=2;//thay customerid vào đây
-  // *****************************************************************************
+  const { state: user } = useUserContext();
 
   // Hàm lấy dữ liệu từ API và cập nhật state
   const loadPastBookings = async () => {
-    const bookings = await fetchPastBookings(customerId,pageNum, limit); 
+    const bookings = await fetchPastBookings(user?.id,pageNum, limit); 
     setPastBookings(bookings.data); // Cập nhật state với dữ liệu lấy được
     setTotalPages(bookings.totalPages);
     setLoading(false); // Đặt trạng thái loading thành false khi dữ liệu đã được tải
@@ -45,10 +44,10 @@ const History = ({ }) => {
 
   // Sử dụng useEffect để lấy dữ liệu khi component mount
   useEffect(() => {
-    // if (customerId) {
-    //   loadPastBookings();
-    // }
-    loadPastBookings();
+    if (user?.id) {
+      loadPastBookings();
+    }
+    // loadPastBookings();
 
   }, []);
 

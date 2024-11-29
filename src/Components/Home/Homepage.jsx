@@ -34,8 +34,11 @@ const Homepage = () => {
       if (numberRoute > 0) { // Ensure that limit is positive before making the request
         try {
           const response = await ApiService.get(`/api/routes/popular/${currentPage}/${numberRoute}`);
+          if (response){
           setRoutes(Array.isArray(response.data) ? response.data : []);
           setNumberPage(Math.ceil(response.totalElements / routesPerPage));
+          }
+
         } catch (error) {
           setError('Error fetching routes');
           console.error(error);
