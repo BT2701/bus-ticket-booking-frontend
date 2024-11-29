@@ -17,7 +17,8 @@ const PopularLine = ({ route }) => {
     <div className="col-md-4 mt-1-9" onClick={() => { handleFindTrip(route['fromAddress'], route['toAddress']) }} style={{ cursor: "pointer" }}>
       <div className="popularlineCard text-center">
         <img
-          src="https://i.pinimg.com/564x/be/d9/5f/bed95f67a0643a9dcd08b39554c52f0e.jpg"
+          // src="https://i.pinimg.com/564x/be/d9/5f/bed95f67a0643a9dcd08b39554c52f0e.jpg"
+          src={`http://localhost:8080/api/buses/img/${route['schedule']?.bus.img}` || "https://via.placeholder.com/150"}
           className="card-img-top"
           alt="..."
         />

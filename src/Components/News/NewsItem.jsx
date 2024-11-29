@@ -14,8 +14,8 @@ const NewsItem = ({ article }) => {
                     <p className="card-text">
                         {article.description}
                     </p>
-                    {/* <p class="card-text">
-                 <small class="text-muted">Cập nhật 5 phút trước</small>
+                    {/* <p className="card-text">
+                 <small className="text-muted">Cập nhật 5 phút trước</small>
              </p> */}
                 </div>
             </div>

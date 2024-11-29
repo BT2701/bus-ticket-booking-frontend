@@ -12,6 +12,9 @@ import {viLocaleText} from '../utils/viLocaleText';
 import UserDialog from "./UserDialog";
 import ApiService from "../../Components/Utils/apiService";
 import notificationWithIcon from "../../Components/Utils/notification";
+import { useUserContext } from "../../Context/UserProvider";
+import { Modal } from "antd";
+import { convertTimestampToDateReversed } from "../../Components/Utils/TransferDate";
 
 
 function Team() {
@@ -22,17 +25,61 @@ function Team() {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [rowCount, setRowCount] = useState(0); 
+  const [rowCount, setRowCount] = useState(0);
+  const { state } = useUserContext();
+
+  // const [searchParams, setSearchParams] = useState({
+  //   id: "",
+  //   name: "",
+  //   email: "",
+  //   phone: ""
+  // });
+  // const handleSearch = () => {
+  //   if (searchParams.phone && !/^\d{10}$/.test(searchParams.phone)) {
+  //     notificationWithIcon('error', 'Lỗi', 'Số điện thoại phải gồm 10 chữ số.');
+  //     return;
+  //   }
+  
+  //   if (
+  //     searchParams.email &&
+  //     !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(searchParams.email)
+  //   ) {
+  //     notificationWithIcon('error', 'Lỗi', 'Email không hợp lệ.');
+  //     return;
+  //   }
+  
+  //   // setPage(0); 
+  //   // fetchData(); 
+  // };
+  // const fetchData = async () => {
+  //   try {
+  //     const query = new URLSearchParams({
+  //       ...searchParams, 
+  //       pageNo: page,
+  //       pageSize: pageSize,
+  //       sortBy: "id",
+  //       sortDir: "asc"
+  //     }).toString();
+  
+  //     const response = await ApiService.get(`/api/customers?${query}`);
+  //     setUsers(response?.content || []);
+  //     setRowCount(response?.totalElements || 0); 
+  //   } catch (error) {
+  //     console.error("Có lỗi xảy ra khi lấy dữ liệu:", error);
+  //   }
+  // };
+  
+  const { state: user } = useUserContext();
 
   useEffect(() => {
     // Gọi API khi component được mount
     const fetchData = async () => {
       try {
         const response = await ApiService.get(
-          `http://localhost:8080/api/customers?pageNo=${page}&pageSize=${pageSize}&sortBy=id&sortDir=asc`
+          `/api/customers?pageNo=${page}&pageSize=${pageSize}&sortBy=id&sortDir=asc`
         );
 
-        setUsers(response?.content || []);
+        setUsers(response?.content?.filter(u => u.id !== state?.id) || []);
         setRowCount(response?.totalElements || 0); 
       } catch (error) {
         console.error("Có lỗi xảy ra khi lấy dữ liệu:", error);
@@ -54,149 +101,172 @@ function Team() {
     if (selectedUser) {
       setOpenDialog(true);
     } else {
-      alert("Vui lòng chọn dòng muốn chỉnh sửa !");
+      notificationWithIcon('warning', 'Cảnh báo', 'Vui lòng chọn dòng muốn chỉnh sửa !');
     }
   };
 
   const handleLockButton = (userId) => {
-    const confirmLock = window.confirm(`Bạn có chắc chắn muốn khóa người dùng có ID: ${userId}?`);
-    if (confirmLock) {
-      ApiService.put('/api/customers/lock/' + userId)
-      .then((response) => {
-          console.log(response);
-
-          setUsers((prevUsers) => 
-            prevUsers.map(user => 
-              user.id === userId ? { ...user, active: false } : user
-            )
-          );
-          notificationWithIcon('success', 'Update', 'Đã khóa người dùng có ID: ' + userId);
-      })
-      .catch((err) => {
-          console.log(err?.response?.data?.message || err?.message)
-          notificationWithIcon('error', 'Lỗi', 'Không thể khóa người dùng vì : ' + (err?.response?.data?.message || err?.message));
-      });
-    }
+    Modal.confirm({
+      title: 'Bạn có muốn khóa người dùng có id = ' + userId +' không?',
+      okText: 'Có',
+      cancelText: 'Không',
+      onOk: () => {
+          ApiService.put('/api/customers/lock/' + userId)
+          .then((response) => {
+              // console.log(response);
+    
+              setUsers((prevUsers) => 
+                prevUsers.map(user => 
+                  user.id === userId ? { ...user, active: false } : user
+                )
+              );
+              notificationWithIcon('success', 'Update', 'Đã khóa người dùng có ID: ' + userId);
+          })
+          .catch((err) => {
+              console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message))
+              notificationWithIcon('error', 'Lỗi', 'Không thể khóa người dùng vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+          });
+      },
+    });
   };
 
   const handleUnLockButton = (userId) => {
-    const confirmUnlock = window.confirm(`Bạn có chắc chắn muốn mở khóa người dùng có ID: ${userId}?`);
-    if (confirmUnlock) {
-      ApiService.put('/api/customers/unlock/' + userId)
-      .then((response) => {
-          console.log(response);
-
-          setUsers((prevUsers) => 
-            prevUsers.map(user => 
-              user.id === userId ? { ...user, active: true } : user
-            )
-          );
-          notificationWithIcon('success', 'Update', 'Đã mở khóa cho người dùng có ID: ' + userId);
-      })
-      .catch((err) => {
-          console.log(err?.response?.data?.message || err?.message)
-          notificationWithIcon('error', 'Lỗi', 'Không thể mở khóa cho người dùng vì : ' + (err?.response?.data?.message || err?.message));
-      });
-    }
+    Modal.confirm({
+      title: 'Bạn có muốn mở khóa cho người dùng có id = ' + userId +' không?',
+      okText: 'Có',
+      cancelText: 'Không',
+      onOk: () => {
+        ApiService.put('/api/customers/unlock/' + userId)
+        .then((response) => {
+            // console.log(response);
+  
+            setUsers((prevUsers) => 
+              prevUsers.map(user => 
+                user.id === userId ? { ...user, active: true } : user
+              )
+            );
+            notificationWithIcon('success', 'Update', 'Đã mở khóa cho người dùng có ID: ' + userId);
+        })
+        .catch((err) => {
+            console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message))
+            notificationWithIcon('error', 'Lỗi', 'Không thể mở khóa cho người dùng vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+        });
+      },
+    });
   };
 
-  // const handleDeleteClick = () => {
-  //   if (selectedUser) {
-  //     alert("Đã xóa thành công !");
-  //   } else {
-  //     alert("Vui lòng chọn dòng muốn xóa !");
-  //   }
-  // };
-
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "id", headerName: "ID", headerClassName: 'center-header', cellClassName: 'center-cell' },
     {
       field: "name",
       headerName: "Tên",
       flex: 1,
-      cellClassName: "name-column--cell",
+      cellClassName: "name-column--cell", 
     },
     {
-      field: "age",
-      headerName: "Tuổi",
-      type: "number",
-      align: "left",
-      headerAlign: "left",
+      field: "birth",
+      headerName: "Năm sinh",
+      flex: 1,
       renderCell: (params) => {
         if (params && params.row && params.row.birth) {
-          const birthDate = new Date(params.row.birth);
-          const currentYear = new Date().getFullYear();
-          const age = currentYear - birthDate.getFullYear();
-          
-          return <span>{age}</span>;  
+          return <span>{convertTimestampToDateReversed(params.row.birth)}</span>;
         }
-        
-        return <span>Không xác định</span>;  
+  
+        return <span>Không xác định</span>;
       },
+      headerClassName: 'center-header',
+      cellClassName: 'center-cell'
     },
-    { field: "phone", headerName: "Số điện thoại", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
+    { 
+      field: "phone", 
+      headerName: "Số điện thoại", 
+      flex: 1,
+      headerClassName: 'center-header',
+      cellClassName: 'center-cell'
+    },
+    { 
+      field: "address", 
+      headerName: "Địa chỉ", 
+      flex: 1,
+      headerClassName: 'center-header',
+      cellClassName: 'center-cell'
+    },
+    { 
+      field: "email", 
+      headerName: "Email", 
+      flex: 1,
+      headerClassName: 'center-header',
+      cellClassName: 'center-cell'
+    },
     {
       field: "access",
       headerName: "Quyền truy cập",
       flex: 1,
-      renderCell: ({ row: { role } }) => (
-        <Box
-          width="60%"
-          m="0 auto"
-          p="0.2rem"
-          display="flex"
-          justifyContent="center"
-          backgroundColor={role ? colors.greenAccent[600] : colors.grey[700]} // Màu nền tùy thuộc vào role
-          borderRadius="5px"
-        >
-          {role ? (
-            <>
-              {role.name === "ADMIN" && <AdminPanelSettingsOutlined />}
-              {role.name === "STAFF" && <SecurityOutlined />}
-              {role.name === "CUSTOMER" && <LockOpenOutlined />}
+      renderCell: ({ row: { role } }) => {
+        return (
+          <Box
+            width="60%"
+            m="0 auto"
+            p="0.2rem"
+            display="flex"
+            justifyContent="center"
+            backgroundColor={role ? colors.greenAccent[600] : colors.grey[700]}
+            borderRadius="5px"
+          >
+            {role && role.name ? (
+              <>
+                {role.name === "ADMIN" && <AdminPanelSettingsOutlined />}
+                {role.name === "STAFF" && <SecurityOutlined />}
+                {role.name === "CUSTOMER" && <LockOpenOutlined />}
+                <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
+                  {role.name === "ADMIN" && "Quản trị viên"}
+                  {role.name === "CUSTOMER" && "Khách hàng"}
+                  {role.name === "STAFF" && "Nhân viên"}
+                </Typography>
+              </>
+            ) : (
               <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
-                {role.name}
+                Không xác định
               </Typography>
-            </>
-          ) : (
-            <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
-              Không xác định
-            </Typography>
-          )}
-        </Box>
-      ),
-    },
-    {
-        field: 'lock',
-        headerName: 'Khóa/Mở khóa',
-        flex: 1,
-        renderCell: (params) => {
-            if (params && params.row && typeof params.row.active === "boolean") {
-              if (params.row.active === true) {
-                return (
-                  <button 
-                    onClick={() => handleLockButton(params.row.id)} 
-                    className="btn-link error-btn-link" 
-                    type="button">
-                    Khóa
-                  </button>
-                );
-              } else {
-                return (
-                  <button 
-                    onClick={() => handleUnLockButton(params.row.id)} 
-                    className="btn-link success-btn-link" 
-                    type="button">
-                    Mở khóa
-                  </button>
-                );
-              }
-            }
-            return <span>Không xác định</span>;
-        },
-    },
+            )}
+          </Box>
+        );
+      },
+      headerClassName: 'center-header',
+      cellClassName: 'center-cell'
+    }
   ];
+  
+  if (user?.role?.name && user?.role?.name === "ADMIN") {
+    columns.push({
+      field: "lock",
+      headerName: "Khóa/Mở khóa",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.active) {
+          return (
+            <button 
+              onClick={() => handleLockButton(params.row.id)} 
+              className="btn-link error-btn-link" 
+              type="button">
+              Khóa
+            </button>
+          );
+        } else {
+          return (
+            <button 
+              onClick={() => handleUnLockButton(params.row.id)} 
+              className="btn-link success-btn-link" 
+              type="button">
+              Mở khóa
+            </button>
+          );
+        }
+      },
+      headerClassName: 'center-header',
+      cellClassName: 'center-cell'
+    });
+  }
 
   return (
     <Box m="0.5rem 1rem">
@@ -209,6 +279,34 @@ function Team() {
             </button>
           </div>
         </div>
+
+        {/* <div className="search-container">
+          <input 
+            type="number" 
+            placeholder="Tìm theo ID" 
+            value={searchParams.id}
+            onChange={(e) => setSearchParams({ ...searchParams, id: e.target.value })}
+          />
+          <input 
+            type="text" 
+            placeholder="Tìm theo tên" 
+            value={searchParams.name}
+            onChange={(e) => setSearchParams({ ...searchParams, name: e.target.value })}
+          />
+          <input 
+            type="text" 
+            placeholder="Tìm theo email" 
+            value={searchParams.email}
+            onChange={(e) => setSearchParams({ ...searchParams, email: e.target.value })}
+          />
+          <input 
+            type="number" 
+            placeholder="Tìm theo SĐT" 
+            value={searchParams.phone}
+            onChange={(e) => setSearchParams({ ...searchParams, phone: e.target.value })}
+          />
+          <button onClick={handleSearch}>Tìm kiếm</button>
+        </div> */}
 
         <DataGrid
           className="data_grid"
@@ -227,7 +325,7 @@ function Team() {
           onRowClick={handleRowClick}
         />
 
-        <UserDialog open={openDialog} onClose={handleClose} user={selectedUser} />
+        <UserDialog open={openDialog} onClose={handleClose} user={selectedUser} role={user?.role?.name || null} />
       </div>
     </Box>
   );

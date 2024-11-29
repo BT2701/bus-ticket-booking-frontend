@@ -10,6 +10,7 @@ import ApiService from "../../Components/Utils/apiService";
 import AddDriverDialog from "./AddDriverDialog";
 import AssignmentDialog from "./AssignmentDialog";
 import ScheduleDialog from "./ScheduleDialog ";
+import notificationWithIcon from "../../Components/Utils/notification";
 
 
 function Driver() {
@@ -69,7 +70,7 @@ function Driver() {
     if (selectedDriver) {
       setOpenDialog(true);
     } else {
-      alert("Vui lòng chọn dòng muốn chỉnh sửa !");
+      notificationWithIcon('warning', 'Cảnh báo', 'Vui lòng chọn dòng muốn chỉnh sửa !');
     }
   };
 
@@ -77,7 +78,7 @@ function Driver() {
     if (selectedDriver  && selectedDriver.id) {
       setIsOpenAssignmentDialog(true);
     } else {
-      alert("Vui lòng chọn tài xế muốn phân công !");
+      notificationWithIcon('warning', 'Cảnh báo', 'Vui lòng chọn tài xế muốn phân công !');
     }
   }
   const handleClickCloseAssignmentDialog = () => {
@@ -93,7 +94,7 @@ function Driver() {
           <img
             src={params?.value !== null ? `http://localhost:8080/api/drivers/avatar/${params?.value}` : "https://media.istockphoto.com/id/1396814518/vector/image-coming-soon-no-photo-no-thumbnail-image-available-vector-illustration.jpg?s=612x612&w=0&k=20&c=hnh2OZgQGhf0b46-J2z7aHbIWwq8HNlSDaNp2wn_iko="}
             alt={params?.row?.name}
-            style={{ width: "60px", height: "60px", borderRadius: "50%" }} 
+            style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover" }} 
           />
         </div>
       ),

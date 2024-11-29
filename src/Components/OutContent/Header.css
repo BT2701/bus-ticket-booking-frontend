@@ -69,3 +69,43 @@
     cursor: pointer;
   }
   
+
+
+
+
+
+
+
+
+
+/* //// */
+  .nav-item.dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    padding: 10px;
+  }
+  
+  .dropdown-link {
+    color: white;
+    padding: 8px 16px;
+    display: block;
+    text-decoration: none;
+  }
+  
+  .dropdown-link:hover {
+    background-color: #575757;
+  }
+  
+  .nav-item.dropdown-wrapper:hover .dropdown-content {
+    display: block;
+  }
+  

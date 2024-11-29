@@ -13,7 +13,7 @@ import {
 import ApiService from '../../Components/Utils/apiService';
 import notificationWithIcon from '../../Components/Utils/notification';
 
-function UserDialog({ open, onClose, user }) {
+function UserDialog({ open, onClose, user, role }) {
   const [newUser, setNewUser] = useState({
     id: '',
     name: '',
@@ -37,7 +37,7 @@ function UserDialog({ open, onClose, user }) {
         role: user.role?.name || '',
       });
 
-      console.log(user);
+      // console.log(user);
     }
   }, [user]);
 
@@ -71,6 +71,16 @@ function UserDialog({ open, onClose, user }) {
   };
 
   const handleClickClose = () => {
+    setNewUser({
+      id: user.id || '',
+      name: user.name || '',
+      address: user.address || '',
+      birth: user.birth ? new Date(user.birth).toISOString().split('T')[0] : '', 
+      email: user.email || '',
+      phone: user.phone || '',
+      role: user.role?.name || '',
+    });
+
     onClose();
   };
 
@@ -86,40 +96,43 @@ function UserDialog({ open, onClose, user }) {
         email: newUser.email,
         phone: newUser.phone,
       }
-      console.log(userPayload)
+      // console.log(userPayload)
       ApiService.put('/api/customers/updateUserFromAdmin/' + newUser.id, userPayload)
-      .then((response) => {
-          console.log(response);
-          
-          // cập nhật role role
-          const assignRolePayload = {
-            customerId: newUser.id,
-            roleName: newUser.role
-          }
-          console.log(assignRolePayload)
-          ApiService.post('/api/roles/assign', assignRolePayload)
-          .then((response) => {
-              console.log(response);
-          })
-          .catch((err) => {
-              console.log(err?.response?.data?.message || err?.message)
-              notificationWithIcon('error', 'Lỗi', 'Không thể cập nhật role cho người dùng vì : ' + (err?.response?.data?.message || err?.message));
-              return;
-          });
+        .then((response) => {
+            // console.log(response);
+            const user = response?.data;
+            // cập nhật role role
+            const assignRolePayload = {
+              customerId: user.id,
+              roleName: newUser.role
+            }
+
+            // console.log(user)
+            if(role === "ADMIN") {
+              ApiService.post('/api/roles/assign', assignRolePayload)
+              .then((response) => {
+                  // console.log(response);
+              })
+              .catch((err) => {
+                  console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message))
+                  notificationWithIcon('error', 'Lỗi', 'Không thể cập nhật role cho người dùng vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+                  return;
+              });
+            }
 
 
-          notificationWithIcon('success', 'Update', 'Cập nhật thông tin người dùng thành công !');
-          onClose();
-      })
-      .catch((err) => {
-          console.log(err?.response?.data?.message || err?.message)
-          notificationWithIcon('error', 'Lỗi', 'Không thể cập nhật thông tin người dùng vì : ' + (err?.response?.data?.message || err?.message));
-      });
+            notificationWithIcon('success', 'Update', 'Cập nhật thông tin người dùng thành công !');
+            onClose();
+        })
+        .catch((err) => {
+            console.log((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message))
+            notificationWithIcon('error', 'Lỗi', 'Không thể cập nhật thông tin người dùng vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
+        });
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={handleClickClose}>
       <DialogTitle>{user ? 'Cập nhật thông tin người dùng' : 'Thêm người dùng mới'}</DialogTitle>
       <DialogContent>
         <TextField
@@ -164,6 +177,7 @@ function UserDialog({ open, onClose, user }) {
           variant="outlined"
           value={newUser.email}
           onChange={handleChange}
+          disabled
         />
         <TextField
           margin="dense"
@@ -174,6 +188,7 @@ function UserDialog({ open, onClose, user }) {
           variant="outlined"
           value={newUser.phone}
           onChange={handleChange}
+          disabled
         />
         <TextField
           margin="dense"
@@ -184,10 +199,11 @@ function UserDialog({ open, onClose, user }) {
           onChange={handleChange}
           fullWidth
           variant="outlined"
+          disabled={role !== "ADMIN"}
         >
-          <MenuItem value="ADMIN">ADMIN</MenuItem>
-          <MenuItem value="CUSTOMER">CUSTOMER</MenuItem>
-          <MenuItem value="STAFF">STAFF</MenuItem>
+          <MenuItem value="ADMIN">Quản trị viên</MenuItem>
+          <MenuItem value="CUSTOMER">Khách hàng</MenuItem>
+          <MenuItem value="STAFF">Nhân viên</MenuItem>
         </TextField>
       </DialogContent>
       <DialogActions>

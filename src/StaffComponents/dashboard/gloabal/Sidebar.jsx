@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Sidebar as MySidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../utils/theme";
@@ -9,8 +9,6 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../../Context/UserProvider";
-import ApiService from "../../../Components/Utils/apiService";
-import notificationWithIcon from "../../../Components/Utils/notification";
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import BookingIcon from '@mui/icons-material/Event';
 import PrintIcon from '@mui/icons-material/Print';
@@ -46,19 +44,6 @@ function Sidebar() {
   const [isCollapsed, setCollapsed] = useState(false);
   const [selected, setSelected] = useState("Bảng điều khiển");
   const { state: user } = useUserContext();
-  const [role, setRole] = useState("");
-
-  useEffect(() => {
-    const userId = user.id || null;
-    if(userId) {
-      ApiService.get('/api/customers/details')
-        .then(res => {
-          setRole(res.data.role.name);
-        }).catch((err) => {
-            notificationWithIcon('error', 'Lỗi', 'Không thể lấy thông tin tài khoản vì : ' + (err?.response?.data?.message || err?.message));
-        });
-    }
-  }, [user]);
 
   return (
     <div className="sidebar">
@@ -143,7 +128,7 @@ function Sidebar() {
                     fontWeight="400"
                     color={colors.greenAccent[500]}
                   >
-                    {role}
+                    {user?.role?.name}
                   </Typography>
                 </Box>
               </Box>

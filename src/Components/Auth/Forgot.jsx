@@ -13,14 +13,14 @@ const Forgot =()=>{
     const onFinish = (values) => {
         setLoading(true);
         
-        ApiService.get('/api/mail/sendEmailToForgotPassword?email=' + values.email)
+        ApiService.post('/api/mail/sendEmailToForgotPassword?email=' + values.email)
             .then((response) => {
                 form.resetFields();
                 notificationWithIcon('success', 'Forgot password', 'Thông tin xác nhập đã được gửi qua email của bạn!');
                 setLoading(false);
             })
             .catch((err) => {
-              notificationWithIcon('error', 'Lỗi', 'Không thể gửi thông tin xác nhận qua email của bạn vì : ' + (err?.response?.data?.message || err?.message));
+              notificationWithIcon('error', 'Lỗi', 'Không thể gửi thông tin xác nhận qua email của bạn vì : ' + ((typeof err === 'string') ? err : (err?.response?.data?.message || err?.message)));
             })
             .finally(() => { 
                 setLoading(false);

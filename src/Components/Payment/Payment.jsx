@@ -4,8 +4,6 @@ import vnpay from '../../Static/IMG/vnpay.png'
 import money from '../../Static/IMG/money.png'
 import { Button } from 'react-bootstrap';
 import './Payment.css'
-import { width } from '@fortawesome/free-brands-svg-icons/fa42Group';
-import { colors } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Link, useNavigate } from 'react-router-dom';
@@ -41,6 +39,7 @@ const Payment = () => {
     { value: 'vnpay', label: 'Vnpay', icon: vnpay },
   ];
 
+
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleSelect = (option) => {
@@ -50,12 +49,12 @@ const Payment = () => {
   };
   const handleBooking = () => {
     // Reset các lỗi trước khi kiểm tra
-    setErrors({ fullName: '', email: '', phone: ''});
+    setErrors({ fullName: '', email: '', phone: '' });
 
     let newErrors = {};
     // Kiểm tra các trường input
     if (!fullName) newErrors.fullName = 'Vui lòng nhập họ và tên';
-    
+
     // Kiểm tra định dạng email
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
@@ -80,8 +79,13 @@ const Payment = () => {
       setErrors(newErrors);
       return;
     }
+    localStorage.setItem('email', email);
+    localStorage.setItem('name', fullName);
+    localStorage.setItem('phone', phone);
+    localStorage.setItem('schedule', JSON.stringify(schedule));
+    localStorage.setItem('seats', JSON.stringify(seatList));
 
-    if(paymentMethod==='normal'){
+    if (paymentMethod === 'normal') {
       ApiService.post('/api/booking', {
         email: email,
         name: fullName,
@@ -90,7 +94,7 @@ const Payment = () => {
         seats: seatList
       })
         .then(response => {
-          console.log('Success:', response.data); 
+          console.log('Success:', response);
           notificationWithIcon('success', 'Booked', 'Đặt chỗ thành công!');
           navigate("/schedule");
         })
@@ -99,10 +103,27 @@ const Payment = () => {
           notificationWithIcon('error', 'Fail', 'Đặt chỗ thất bại!');
         });
     }
-    else{
+    else if (paymentMethod === 'vnpay') {
+      handleVnpay();
+      // handleOpen();
+    }
+    else if (paymentMethod === 'momo') {
       console.log(paymentMethod);
     }
   }
+  const handleVnpay = () => {
+    // /api/vnpay/vnpay-payment-return
+    ApiService.post(`/api/vnpay/submitOrder?amount=${finalTotal}&orderInfo=Thanh toan ve xe`)
+      .then(response => {
+        console.log('Success:', response.redirectUrl);
+        window.location.href = response.redirectUrl;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        notificationWithIcon('error', 'Fail', 'Đặt chỗ thất bại!');
+      });
+  }
+  
   useEffect(() => {
     if (!seatList || !finalTotal) {
       const savedSeats = localStorage.getItem('selectedSeats');
@@ -120,73 +141,73 @@ const Payment = () => {
   return (
     <div className="payment-container">
       <div className="payment-left">
-      <h4>Thông Tin Khách Hàng</h4>
-      <div className="payment-left-information">
-        <label htmlFor="payment-fullname">Họ và Tên:</label>
-        <input 
-          type="text" 
-          id='payment-fullname' 
-          className='form-control' 
-          placeholder='Nguyen Van A' 
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          required 
-        />
-        {errors.fullName && <div className="error-message" style={{ color: 'red' }}>{errors.fullName}</div>}
-      </div>
-      <div className="payment-left-information">
-        <label htmlFor="payment-email">Email:</label>
-        <input 
-          type="email" 
-          id='payment-email' 
-          className='form-control' 
-          placeholder='nva123@gmail.com' 
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        {errors.email && <div className="error-message" style={{ color: 'red' }}>{errors.email}</div>}
-      </div>
-      <div className="payment-left-information">
-        <label htmlFor="payment-phone">Số Điện Thoại:</label>
-        <input 
-          type="number" 
-          id='payment-phone' 
-          className='form-control' 
-          placeholder='03xxxxxxxx' 
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)} 
-          required
-          maxLength={10}
-          minLength={10}
-        />
-        {errors.phone && <div className="error-message" style={{ color: 'red' }}>{errors.phone}</div>}
-      </div>
-      <div className="payment-left-information">
-        <label htmlFor="payment-wallet">Phương Thức Thanh Toán:</label>
-        <div className="custom-select-container form-control" style={{ position: 'relative', width: '250px' }}>
-          <div className="custom-select-display" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
-            {selected.icon && <img src={selected.icon} alt={selected.label} style={{ width: '20px', marginRight: '10px' }} />}
-            {selected.label}
-            <span style={{ float: 'right' }}>▼</span>
-          </div>
-          {isOpen && (
-            <div className="custom-select-options" style={{ border: '1px solid #ccc', marginTop: '5px' }}>
-              {options.map((option) => (
-                <div
-                  key={option.value}
-                  className="custom-select-option"
-                  onClick={() => handleSelect(option)}
-                  style={{ padding: '10px', cursor: 'pointer' }}
-                >
-                  {option.icon && <img src={option.icon} alt={option.label} style={{ width: '20px', marginRight: '10px' }} />}
-                  {option.label}
-                </div>
-              ))}
-            </div>
-          )}
+        <h4>Thông Tin Khách Hàng</h4>
+        <div className="payment-left-information">
+          <label htmlFor="payment-fullname">Họ và Tên:</label>
+          <input
+            type="text"
+            id='payment-fullname'
+            className='form-control'
+            placeholder='Nguyen Van A'
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+          {errors.fullName && <div className="error-message" style={{ color: 'red' }}>{errors.fullName}</div>}
         </div>
-      </div>
+        <div className="payment-left-information">
+          <label htmlFor="payment-email">Email:</label>
+          <input
+            type="email"
+            id='payment-email'
+            className='form-control'
+            placeholder='nva123@gmail.com'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          {errors.email && <div className="error-message" style={{ color: 'red' }}>{errors.email}</div>}
+        </div>
+        <div className="payment-left-information">
+          <label htmlFor="payment-phone">Số Điện Thoại:</label>
+          <input
+            type="number"
+            id='payment-phone'
+            className='form-control'
+            placeholder='03xxxxxxxx'
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+            maxLength={10}
+            minLength={10}
+          />
+          {errors.phone && <div className="error-message" style={{ color: 'red' }}>{errors.phone}</div>}
+        </div>
+        <div className="payment-left-information">
+          <label htmlFor="payment-wallet">Phương Thức Thanh Toán:</label>
+          <div className="custom-select-container form-control" style={{ position: 'relative', width: '250px' }}>
+            <div className="custom-select-display" onClick={toggleDropdown} style={{ cursor: 'pointer' }}>
+              {selected.icon && <img src={selected.icon} alt={selected.label} style={{ width: '20px', marginRight: '10px' }} />}
+              {selected.label}
+              <span style={{ float: 'right' }}>▼</span>
+            </div>
+            {isOpen && (
+              <div className="custom-select-options" style={{ border: '1px solid #ccc', marginTop: '5px' }}>
+                {options.map((option) => (
+                  <div
+                    key={option.value}
+                    className="custom-select-option"
+                    onClick={() => handleSelect(option)}
+                    style={{ padding: '10px', cursor: 'pointer' }}
+                  >
+                    {option.icon && <img src={option.icon} alt={option.label} style={{ width: '20px', marginRight: '10px' }} />}
+                    {option.label}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <div className="payment-right">
         <div className="payment-booking-status">

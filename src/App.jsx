@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   Outlet,
+  useNavigate,
 } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -26,7 +27,6 @@ import ScheduleDetail from "./Components/Schedule/ScheduleDetail";
 import Payment from "./Components/Payment/Payment";
 import Invoice from "./Components/Invoice/TicketLookup";
 import { UserProvider, useUserContext } from "./Context/UserProvider";
-import { useEffect } from "react";
 import ResetPassword from "./Components/Auth/ResetPassword";
 import { ScheduleProvider } from "./Context/ScheduleContext";
 import HistorySchedules from "./Components/History/HistorySchedules";
@@ -48,15 +48,9 @@ import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
 import AdminStatistics from "./StaffComponents/Statistics/AdminStatistics";
 import { BookingProvider } from "./Context/BookingContex";
+import PaymentSuccess from "./Components/Payment/PaymentSuccess";
+import { useEffect, useState } from "react";
 const App = () => {
-  const { state } = useUserContext();
-
-  useEffect(() => {
-
-    console.log('State updated:', state);
-  }, [state]);
-
-
   return (
     <Router>
       <BookingProvider>
@@ -76,13 +70,13 @@ const App = () => {
                     <Route path="handle-contact" element={<HandleContact />} />
                     <Route path="print-ticket" element={<PrintTicket />} />
                   </Route>
-                </Routes>
-              </ScheduleProvider>
-            </UserProvider>
-          </PageProvider>
-        </FeedbackProvider>
-      </BookingProvider>
-    </Router>
+                </Routes >
+              </ScheduleProvider >
+            </UserProvider >
+          </PageProvider >
+        </FeedbackProvider >
+      </BookingProvider >
+    </Router >
   );
 };
 
@@ -102,10 +96,10 @@ const MainApp = () => {
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/schedule/detail" element={<ScheduleDetail />} />
           <Route path="/schedule/detail/payment" element={<Payment />} />
+          <Route path="/schedule/detail/payment/success" element={<PaymentSuccess />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/invoice" element={<Invoice />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot" element={<Forgot />} />
@@ -122,6 +116,17 @@ const MainApp = () => {
 
 function StaffLayout() {
   const [theme, colorMode] = useMode();
+  const { state: user } = useUserContext();
+  const [role, setRole] = useState("CUSTOMER");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setRole(user?.role?.name)
+  }, [user])
+
+  if (role === "CUSTOMER") {
+    navigate("/homepage");
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
