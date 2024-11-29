@@ -53,7 +53,7 @@ const ChangePassword =({ changePasswordModal, setChangePasswordModal, isPassword
                 form.resetFields();
 
                 Modal.confirm({
-                    title: 'Bạn có muốn đăng xuất toàn bộ không?',
+                    title: 'Bạn có muốn đăng xuất toàn bộ không (bao gồm phiên đăng nhập của bạn)?',
                     okText: 'Có',
                     cancelText: 'Không',
                     onOk: () => {
