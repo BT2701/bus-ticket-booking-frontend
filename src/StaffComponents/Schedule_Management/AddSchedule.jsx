@@ -16,7 +16,7 @@ const AddTripDialog = ({ show, onClose }) => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(5);
     const [speed, setSpeed] = useState(60);
-    const {loader, setLoader} = useSchedule();
+    const { loader, setLoader } = useSchedule();
 
     useEffect(() => {
         if (show) {
@@ -71,7 +71,7 @@ const AddTripDialog = ({ show, onClose }) => {
     };
 
     const handleArrivalChange = () => {
-        if(selectedRoute) {
+        if (selectedRoute) {
             const routeDistance = selectedRoute.distance;
             const arrivalTime = new Date(departureTime);
             const [hours, minutes] = selectedRoute.duration.split(':').map(Number);
@@ -101,18 +101,27 @@ const AddTripDialog = ({ show, onClose }) => {
         };
 
         const response = await ApiService.post(`/api/schedule`, trip);
-        if (response) {
+        if (response.id) {
             notificationWithIcon('success', 'Thành Công', 'Thêm Chuyến Đi Thành Công!');
             setLoader(1);
         } else {
-            notificationWithIcon('error', 'Lỗi', 'Thêm Chuyến Đi Thất Bại!');
+            notificationWithIcon('info', 'Thông Báo', 'Xe này đã có lịch trình khác tại thời điểm này!');
         }
     }
     const formatDateTime = (date) => {
         if (!date) return ""; // Trả về chuỗi rỗng nếu giá trị không hợp lệ
         const isoString = date.toISOString();
         return isoString.substring(0, 16); // Lấy phần YYYY-MM-DDTHH:MM
-      };
+    };
+    const getCurrentDateTime = () => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+        const date = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        return `${year}-${month}-${date}T${hours}:${minutes}`;
+    };
 
     return (
         <div className={`modal fade ${show ? "show d-block" : "d-none"}`} tabIndex="-1">
@@ -175,6 +184,7 @@ const AddTripDialog = ({ show, onClose }) => {
                                 </label>
                                 <input type="datetime-local" className="form-control"
                                     onChange={(e) => setDepartureTime(new Date(e.target.value))}
+                                    min={getCurrentDateTime()} // Giới hạn ngày giờ nhỏ nhất
                                 />
                             </div>
 
@@ -183,7 +193,7 @@ const AddTripDialog = ({ show, onClose }) => {
                                 <label htmlFor="arrival-time" className="form-label">
                                     Thời Gian Dự Kiến Đến:
                                 </label>
-                                <input type="datetime-local" className="form-control" disabled value={formatDateTime(estimatedArrivalTime) } />
+                                <input type="datetime-local" className="form-control" disabled value={formatDateTime(estimatedArrivalTime)} />
                             </div>
                         </form>
                     </div>

@@ -34,9 +34,9 @@ const Homepage = () => {
       if (numberRoute > 0) { // Ensure that limit is positive before making the request
         try {
           const response = await ApiService.get(`/api/routes/popular/${currentPage}/${numberRoute}`);
-          if (response){
-          setRoutes(Array.isArray(response.data) ? response.data : []);
-          setNumberPage(Math.ceil(response.totalElements / routesPerPage));
+          if (response) {
+            setRoutes(Array.isArray(response.data) ? response.data : []);
+            setNumberPage(Math.ceil(response.totalElements / routesPerPage));
           }
 
         } catch (error) {
@@ -67,7 +67,7 @@ const Homepage = () => {
         <div className="col"></div>
       </div>
       <div>
-        \        <SearchInput />
+        <SearchInput />
       </div>
       <div className="container p-0">
         <h2 className="section-title text-center my-5"></h2>
