@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Container, Box, Typography, Table, TableBody, TableCell, TableContainer, TableRow, Button, Paper } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ApiService from "../Utils/apiService";
 
 
@@ -75,7 +76,7 @@ const PaymentSuccess = () => {
                         <Typography variant="h4" color="error" gutterBottom>
                             Thanh toán thất bại
                         </Typography>
-                        <CheckCircleOutlineIcon color="error" style={{ fontSize: 60 }} />
+                        <ErrorOutlineIcon  color="error" style={{ fontSize: 60 }} />
                         <Typography variant="h6">Vui lòng thử lại hoặc liên hệ với chúng tôi để được hỗ trợ</Typography>
                     </Box>
                     <Box textAlign="center">
