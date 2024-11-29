@@ -1,13 +1,77 @@
 import "./Header.css"; // Optional: For additional custom styling
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons"; // Import the solid icons\
+import { faUser, faBell } from "@fortawesome/free-solid-svg-icons"; // Import the solid icons\
 import { usePageContext } from "../../Context/PageProvider";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../../Context/UserProvider";
-
+import React, { useState, useRef, useEffect } from 'react';
+import ApiService from "../Utils/apiService";
+import axios from 'axios';
+import { Api } from "@mui/icons-material";
 const Header = () => {
   const { page, setPage } = usePageContext();
   const { state: user } = useUserContext();
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  // Reference for the notification box
+  const notificationRef = useRef(null);
+  const [notiData, setNotiData] = useState([]);
+
+  // Xử lý khi click vào một thông báo bất kì 
+  const handleNotificationClick = async (notification) => {
+    try {
+      const notificationId = notification.id;
+      // const response = await axios.put(`http://localhost:8080/api/notification/${notificationId}`);
+      const response = await ApiService.put(`/api/notification/${notificationId}`);
+      setSelectedNotification(notification);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  //Đóng modal 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedNotification(null);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // const response = user?.id ? await axios.get(`http://localhost:8080/api/notification/${user?.id}`) : [];
+        const response = user?.id ? await ApiService.get(`/api/notification/${user.id}`) : [];
+        setNotiData(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+
+  }, [showNotifications])
+
+
+
+  //Hiển thị box thông báo 
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
+  };
+
+  // Đóng box thông báo khi người dùng click bên ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target) && !event.target.closest('button')) {
+        setShowNotifications(false);
+      }
+    };
+    // Add event listener to the document
+    document.addEventListener('mousedown', handleClickOutside);
+    // Cleanup event listener on component unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []); // Empty dependency array ensures the effect runs only once when the component mounts
+
 
   return (
     <div className="header-container">
@@ -46,10 +110,10 @@ const Header = () => {
                   </li>
                   <li className="nav-item">
                     <Link
-                      className={`nav-link homepage-nav-link ${page === "search" && "active"
+                      className={`nav-link homepage-nav-link ${page === "schedule" && "active"
                         }`}
                       onClick={() => {
-                        setPage("search");
+                        setPage("schedule");
                       }}
                       to="/schedule"
                     >
@@ -81,21 +145,21 @@ const Header = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                  {
-                    user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF" || user?.role?.name === "CUSTOMER") && (
-                      <Link
-                      className={`nav-link homepage-nav-link ${page === "history" && "active"
-                        }`}
-                      onClick={() => {
-                        setPage("history");
-                      }}
-                      to="history"
-                    >
-                      Lịch sử chuyến đi
-                    </Link>
-                    )
-                  }
-                    
+                    {
+                      user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF" || user?.role?.name === "CUSTOMER") && (
+                        <Link
+                          className={`nav-link homepage-nav-link ${page === "history" && "active"
+                            }`}
+                          onClick={() => {
+                            setPage("history");
+                          }}
+                          to="history"
+                        >
+                          Lịch sử chuyến đi
+                        </Link>
+                      )
+                    }
+
                   </li>
                   <li className="nav-item">
                     <Link
@@ -122,36 +186,42 @@ const Header = () => {
                     </Link>
                   </li>
                 </ul>
-                <div className="d-flex align-items-center">
-                  {
-                    user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF") && (
-                      <Link
-                        className={`nav-link homepage-nav-link ${
-                          page === "staff" && "active"
-                        }`}
-                        style={{
-                          marginRight: "25px"
-                        }}
-                        onClick={() => {
-                          setPage("staff");
-                        }}
-                        to="staff"
-                      >
-                        Trang quản lý
-                      </Link>
-                    )
-                  }
+                <div >
                   {
                     user?.id ? (
-                      <Link to="/profile"
-                        onClick={() => {
-                          setPage("profile");
-                        }}
-                        className={`nav-link homepage-nav-link text-decoration-none text-white ${page === "profile" && "active"
-                          } `}
-                      >
-                        {user?.name}
-                      </Link>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div className="nav-item dropdown-wrapper">
+                          {user?.name}
+                          <div className="dropdown-content">
+                            {
+                              user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF") && (
+                                <Link
+                                  className={`nav-link homepage-nav-link ${page === "staff" && "active"
+                                    }`}
+                                  style={{
+                                    marginRight: "25px"
+                                  }}
+                                  onClick={() => {
+                                    setPage("staff");
+                                  }}
+                                  to="staff"
+                                >
+                                  Trang quản lý
+                                </Link>
+                              )
+                            }
+                            <Link
+                              to="/profile"
+                              onClick={() => setPage("profile")}
+                              className={`nav-link homepage-nav-link text-decoration-none text-white ${page === "profile" ? "active" : ""}`}
+                            >
+                              Profile
+                            </Link>
+                          </div>
+                        </div>
+
+                        <FontAwesomeIcon icon={faBell} style={{ margin: "0 10px 3px 10px", cursor: "pointer", fontSize: "18px", color: "white" }} onClick={toggleNotifications} />
+                      </div>
                     ) : (
                       <Link
                         to="/login"
@@ -171,8 +241,59 @@ const Header = () => {
             </div>
           </nav>
         </div>
-      </header>
-    </div>
+      </header >
+      {
+        showNotifications && (
+          <div
+            ref={notificationRef}
+            style={{
+              position: 'absolute',
+              top: '55px',
+              right: '20px',
+              width: '300px',
+              backgroundColor: '#f9f9f9',
+              border: '1px solid #ccc',
+              borderRadius: '5px',
+              boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+              padding: '10px',
+              maxHeight: '300px',
+              overflowY: 'auto',
+              zIndex: 1
+            }}
+          >
+            <h4>Thông báo</h4>
+            <ul style={{ listStyleType: 'none', paddingLeft: '0' }}>
+              {notiData.length ? (
+                notiData.map((notification, index) => (
+                  <li
+                    key={index}
+                    className={notification.readAt ? "notification-item notification-item_readed" : "notification-item"}
+                    onClick={() => handleNotificationClick(notification)}
+                  >
+                    {notification.title}
+                  </li>
+                ))
+              ) : (
+                <li style={{ textAlign: "center" }}>
+                  Chưa có thông báo
+                </li>
+              )}
+            </ul>
+
+            {/* Modal to display the selected notification details */}
+            {isModalOpen && selectedNotification && (
+              <div className="modal">
+                <div className="modal-content">
+                  <span style={{ backgroundColor: "#f0f0f0", width: "30px", textAlign: "center", borderRadius: "3px" }} className="close-btn" onClick={handleCloseModal}>&times;</span>
+                  <h5>Chi tiết thông báo</h5>
+                  <p>{selectedNotification.message}</p>
+                  {/* Add more notification details as needed */}
+                </div>
+              </div>
+            )}
+          </div>)
+      }
+    </div >
   );
 };
 export default Header;

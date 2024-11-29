@@ -1,0 +1,43 @@
+.isSelected{
+    background-color:#080e0f !important;
+    color: #fff;
+}
+
+
+
+.btn-for-all:hover{
+    background-color: aliceblue;
+}
+
+.btn-for-all{
+    min-width: 15px;
+    border-radius: 6px;
+    padding: 4px;
+    background-color:#fff;
+    border: 0.5px solid black;
+}
+
+
+.select-for-all{
+    padding: 4px;
+}
+
+
+
+.isError{
+    color:red;
+    border: 1px solid red;
+  }
+
+
+.text-noted{
+    font-style:italic ;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+
+
+  .text-noted-isError{
+    color: red;
+  }

@@ -86,3 +86,32 @@
     color: gray;
     font-style: italic;
 }
+
+
+.badge {
+    margin-top: 8px;
+    padding: 8px 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 20px;
+    color: #fff;
+  }
+  
+  .badge-primary {
+    background-color: #007bff; /* Blue for top 1 */
+  }
+  
+  .badge-secondary {
+    background-color: #6c757d; /* Grey for top 2 */
+  }
+  
+  .badge-tertiary {
+    background-color: #f39c12; /* Yellow for top 3 */
+  }
+  
+  .rank {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 8px;
+  }
+  

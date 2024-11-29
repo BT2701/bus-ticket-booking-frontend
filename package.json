@@ -34,6 +34,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bus-ticket-booking-frontend": "file:",
+    "chart.js": "^4.4.6",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
@@ -46,6 +47,7 @@
     "qrcode.react": "^4.0.1",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
+    "react-chartjs-2": "^5.2.0",
     "react-datetime-picker": "^6.0.1",
     "react-dom": "^18.3.1",
     "react-google-recaptcha": "^3.1.0",
@@ -60,6 +62,7 @@
     "react-select": "^5.8.3",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.6",
+    "recharts": "^2.13.3",
     "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"
