@@ -20,6 +20,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
   const [averageRating, setAverageRating] = useState(0); // Số sao trung bình
   const [ratingFilter, setRatingFilter] = useState(0); // State để lưu số sao cần lọc
   const { schedule, updateSchedule } = useSchedule();
+  const [busImg, setBusImg] = useState("");
 
   const handleSelectSchedule = (scheduleId) => {
     const fetchData = async () => {
@@ -132,6 +133,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
     setTotalFeedback(0); // Đặt lại tổng số feedback
     setAverageRating(0); // Đặt lại số sao trung bình
     setRatingFilter(0); // Đặt lại bộ lọc sao
+    setBusImg(`http://localhost:8080/api/buses/img/${busData[9]}`);
   }, [busData]);
 
 
@@ -141,7 +143,7 @@ const CarriageWay = ({ busData }) => { // Nhận busData từ props
         <div className="row g-0">
           <div className="col-md-3 position-relative">
             <img
-            src={`http://localhost:8080/api/buses/img/${schedule?.bus.img}` || "https://via.placeholder.com/150"}
+            src={busImg || "https://via.placeholder.com/150"}
             className="img-fluid"
               alt="Bus"
               style={{
