@@ -26,7 +26,7 @@ const PaymentSuccess = () => {
     const hasRun = useRef(false); // Flag để kiểm tra
 
     useEffect(() => {    
-        if (!hasRun.current) {
+        if (!hasRun.current && transactionId !== null && transactionId !== '0') {
             const savePaymentDetails = async () => {
                 const paymentDetails = {
                     email: email,
@@ -67,7 +67,26 @@ const PaymentSuccess = () => {
         if (!amount) return "[total price]";
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount / 100);
     };
-
+    if (transactionId === null || transactionId === '0'){
+        return (
+            <Box py={5}>
+                <Container maxWidth="sm">
+                    <Box textAlign="center" mb={4}>
+                        <Typography variant="h4" color="error" gutterBottom>
+                            Thanh toán thất bại
+                        </Typography>
+                        <CheckCircleOutlineIcon color="error" style={{ fontSize: 60 }} />
+                        <Typography variant="h6">Vui lòng thử lại hoặc liên hệ với chúng tôi để được hỗ trợ</Typography>
+                    </Box>
+                    <Box textAlign="center">
+                        <Button variant="contained" color="primary" href="/schedule">
+                            Thoát
+                        </Button>
+                    </Box>
+                </Container>
+            </Box>
+        );
+    }
     return (
         <Box py={5}>
             <Container maxWidth="sm">
