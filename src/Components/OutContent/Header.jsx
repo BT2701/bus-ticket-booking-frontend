@@ -6,8 +6,6 @@ import { Link } from "react-router-dom";
 import { useUserContext } from "../../Context/UserProvider";
 import React, { useState, useRef, useEffect } from 'react';
 import ApiService from "../Utils/apiService";
-import axios from 'axios';
-import { Api } from "@mui/icons-material";
 const Header = () => {
   const { page, setPage } = usePageContext();
   const { state: user } = useUserContext();
@@ -191,16 +189,13 @@ const Header = () => {
                     user?.id ? (
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div className="nav-item dropdown-wrapper">
-                          {user?.name}
+                          <div className="text-truncate" style={{ color: "white", fontSize: '18px', maxWidth: '200px', cursor: 'pointer' }}> {user?.name}</div>
                           <div className="dropdown-content">
                             {
                               user?.role?.name && (user?.role?.name === "ADMIN" || user?.role?.name === "STAFF") && (
                                 <Link
-                                  className={`nav-link homepage-nav-link ${page === "staff" && "active"
+                                  className={`dropdown-link text-white ${page === "staff" && "active"
                                     }`}
-                                  style={{
-                                    marginRight: "25px"
-                                  }}
                                   onClick={() => {
                                     setPage("staff");
                                   }}
@@ -213,14 +208,14 @@ const Header = () => {
                             <Link
                               to="/profile"
                               onClick={() => setPage("profile")}
-                              className={`nav-link homepage-nav-link text-decoration-none text-white ${page === "profile" ? "active" : ""}`}
+                              className={`dropdown-link text-white ${page === "profile" ? "active" : ""}`}
                             >
                               Profile
                             </Link>
                           </div>
                         </div>
 
-                        <FontAwesomeIcon icon={faBell} style={{ margin: "0 10px 3px 10px", cursor: "pointer", fontSize: "18px", color: "white" }} onClick={toggleNotifications} />
+                        <FontAwesomeIcon icon={faBell} className="notification-icon" onClick={toggleNotifications} />
                       </div>
                     ) : (
                       <Link
