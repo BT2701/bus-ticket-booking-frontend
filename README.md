@@ -34,30 +34,27 @@ This is the frontend system for a bus ticket booking website. It supports three 
     <tr>
         <td><img src="README_IMG/xe1.gif" alt="Login"></td>
         <td><img src="README_IMG/xe2.gif" alt="Homepage"></td>
+        <td><img src="README_IMG/xe3.gif" alt="Homepage"></td>
     </tr>
     <tr>
-        <td><img src="README_IMG/xe3.gif" alt="product"></td>
-        <td><img src="README_IMG/xe4.gif" alt="profile"></td>
+        <td><img src="README_IMG/xe4.gif" alt="product"></td>
+        <td><img src="README_IMG/xe5.gif" alt="profile"></td>
+        <td><img src="README_IMG/xe6.gif" alt="Homepage"></td>
     </tr>
     <tr>
-        <td><img src="README_IMG/xe5.gif" alt="cart"></td>
-        <td><img src="README_IMG/xe6.gif" alt="history"></td>
+        <td><img src="README_IMG/xe7.gif" alt="cart"></td>
+        <td><img src="README_IMG/xe8.gif" alt="history"></td>
+        <td><img src="README_IMG/xe9.gif" alt="Homepage"></td>
     </tr>
     <tr>
-        <td><img src="README_IMG/xe7.gif" alt="contact"></td>
-        <td><img src="README_IMG/xe8.gif" alt="Login"></td>        
+        <td><img src="README_IMG/xe10.gif" alt="contact"></td>
+        <td><img src="README_IMG/xe11.gif" alt="Login"></td>   
+        <td><img src="README_IMG/xe12.gif" alt="Homepage"></td>     
     </tr>
     <tr>
-        <td><img src="README_IMG/xe9.gif" alt="Login"></td>
-        <td><img src="README_IMG/xe10.gif" alt="Homepage"></td>
-    </tr>
-    <tr>
-        <td><img src="README_IMG/xe11.gif" alt="product"></td>
-        <td><img src="README_IMG/xe12.gif" alt="product"></td>
-    </tr>
-    <tr>
-        <td><img src="README_IMG/xe13.gif" alt="product"></td>
-        <td><img src="README_IMG/xe14.gif" alt="product"></td>
+        <td><img src="README_IMG/xe13.gif" alt="Login"></td>
+        <td><img src="README_IMG/xe14.gif" alt="Homepage"></td>
+        <td></td>
     </tr>
         
 </table>
@@ -67,19 +64,18 @@ This is the frontend system for a bus ticket booking website. It supports three 
         <tr>
             <td><img src="README_IMG/xe15.gif" alt="Login"></td>
             <td><img src="README_IMG/xe16.gif" alt="Homepage"></td>
+            <td><img src="README_IMG/xe17.gif" alt="Homepage"></td>
         </tr>
         <tr>
-            <td><img src="README_IMG/xe17.gif" alt="product"></td>
-            <td><img src="README_IMG/xe18.gif" alt="profile"></td>
+            <td><img src="README_IMG/xe18.gif" alt="product"></td>
+            <td><img src="README_IMG/xe19.gif" alt="profile"></td>
+            <td><img src="README_IMG/xe20.gif" alt="Homepage"></td>
         </tr>
         <tr>
-            <td><img src="README_IMG/xe19.gif" alt="cart"></td>
-            <td><img src="README_IMG/xe20.gif" alt="history"></td>
+            <td><img src="README_IMG/xe21.gif" alt="cart"></td>
+            <td><img src="README_IMG/xe22.gif" alt="history"></td>
+            <td></td>
         </tr>
-        <tr>
-            <td><img src="README_IMG/xe21.gif" alt="contact"></td>
-            <td><img src="README_IMG/xe22.gif" alt="Login"></td>        
-        </tr> 
 </table>
 
 ## Architecture
