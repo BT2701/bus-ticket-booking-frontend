@@ -43,9 +43,9 @@ ApiService.interceptors.response.use(
     // Kiểm tra lỗi 403 Forbidden
     if (error.response.status === 403) {
       notificationWithIcon('error', 'Lỗi', 'Bạn không có quyền truy cập vào địa chỉ này!');
+      window.location.href = '/homepage';
       return Promise.reject(error.response?.data || 'Bạn không có quyền thực hiện hành động này!'); 
     }
-    
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; // Đảm bảo không lặp lại request
       try {

@@ -50,8 +50,11 @@ const RankRoutes = () => {
         const fetchData = async () => {
             try {
                 const response = await ApiService.get(`/api/statistic/tuyenxephobien/${timeStart}/${timeEnd}`);
-                console.log("data test ", response);
-                response && response.length !== 0 ? setRoutesData(response) : setRoutesData([]);
+                if (response) {
+                    console.log("data test ", response);
+                    response && response.length !== 0 ? setRoutesData(response) : setRoutesData([]);
+                }
+
             } catch (error) {
                 setRoutesData([]);
                 console.error("Error fetching data:", error);

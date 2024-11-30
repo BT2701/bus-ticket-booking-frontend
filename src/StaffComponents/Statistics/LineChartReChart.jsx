@@ -39,12 +39,14 @@ const LineChartReChart = () => {
         const fetchData = async () => {
             try {
                 const response = await ApiService.get(`/api/statistic/${typeRevenue}/${typeTime}/${defaultTime}`);
-                const transformedData = typeRevenue === "doanhthuhethong" ? convertDataForLineChartRechar(response, typeTime) : transformDataForLineChartMutil(response);
-                setLineChartData(transformedData);
-                const objectWithMostFields = transformedData.reduce((maxObj, currentObj) => {
-                    return Object.keys(currentObj).length > Object.keys(maxObj).length ? currentObj : maxObj;
-                }, {});
-                setLineNames(Object.keys(objectWithMostFields).filter(key => key !== "name"));
+                if (response) {
+                    const transformedData = typeRevenue === "doanhthuhethong" ? convertDataForLineChartRechar(response, typeTime) : transformDataForLineChartMutil(response);
+                    setLineChartData(transformedData);
+                    const objectWithMostFields = transformedData.reduce((maxObj, currentObj) => {
+                        return Object.keys(currentObj).length > Object.keys(maxObj).length ? currentObj : maxObj;
+                    }, {});
+                    setLineNames(Object.keys(objectWithMostFields).filter(key => key !== "name"));
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

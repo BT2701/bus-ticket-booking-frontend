@@ -35,7 +35,6 @@ const Login = () => {
             ApiService.get('/api/customers/verify?verifyToken=' + verifyToken)
                 .then((response) => {
                     notificationWithIcon('success', 'Xác thực tài khoản', 'Xác thực tài khoản thành công!');
-                    
                     form.resetFields();
                     navigate("/login");
                 })
@@ -74,7 +73,11 @@ const Login = () => {
 
                 form.resetFields();
                 notificationWithIcon('success', 'Login', 'Đăng nhập thành công!');
-                navigate("/profile");
+                if(userDetail?.data.role.name === "CUSTOMER") {
+                    navigate("/profile");
+                } else {
+                    navigate("/staff");
+                }
             })
             .catch((err) => {
                 console.log(err);
