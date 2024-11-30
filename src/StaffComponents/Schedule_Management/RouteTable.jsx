@@ -43,7 +43,7 @@ const RouteTable = ({ routes, handleDeleteRoute }) => {
 
     return (
         <table className="table table-hover table-bordered">
-            <thead className="table-success">
+            <thead className="table-white">
                 <tr>
                     <th scope="col" onClick={() => handleSort('id')}>
                         STT {getSortIcon('id')}
