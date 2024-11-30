@@ -40,6 +40,7 @@
     "dayjs": "^1.11.13",
     "font-awesome": "^4.7.0",
     "formik": "^2.4.6",
+    "geolib": "^3.3.4",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "leaflet": "^1.9.4",

@@ -35,7 +35,7 @@ const AdminStatistics = () => {
       console.log("test", response);
       const dataPieChart = convertDataForPieChart(response[0], labels);
       dataPieChart.length !== 0 ? setPieData(dataPieChart) : setPieData([]);
-      setToTal(dataPieChart.reduce((acc, item) => acc + item.value, 0))
+      setToTal(dataPieChart.reduce((acc, item) => acc + item.value, labels.length))
     })
   }, [])
 

@@ -42,7 +42,7 @@ ApiService.interceptors.response.use(
 
     // Kiểm tra lỗi 403 Forbidden
     if (error.response.status === 403) {
-      // notificationWithIcon('error', 'Lỗi', 'Bạn không có quyền truy cập vào địa chỉ này!');
+      notificationWithIcon('error', 'Lỗi', 'Bạn không có quyền truy cập vào địa chỉ này!');
       return Promise.reject(error.response?.data || 'Bạn không có quyền thực hiện hành động này!'); 
     }
     

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 
-const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
+const RouteTable = ({ routes, handleDeleteRoute }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
     const getNestedValue = (obj, key) => {
         const keys = key.split('.');
@@ -43,7 +43,7 @@ const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
 
     return (
         <table className="table table-hover table-bordered">
-            <thead className="table-success">
+            <thead className="table-white">
                 <tr>
                     <th scope="col" onClick={() => handleSort('id')}>
                         STT {getSortIcon('id')}
@@ -72,7 +72,7 @@ const RouteTable = ({ routes, handleEditRoute, handleDeleteRoute }) => {
                         <td>{route.distance} km</td>
                         <td>{route.duration}</td>
                         <td>
-                            <button className="btn btn-info btn-sm me-2" onClick={() => handleEditRoute(route.id)}>
+                            <button className="btn btn-info btn-sm me-2" >
                             <i className="fa fa-eye"></i>
                             </button>
                             <button className="btn btn-danger btn-sm" onClick={() => handleDeleteRoute(route.id)}>
