@@ -215,10 +215,11 @@ function Team() {
           >
             {role && role.name ? (
               <>
-                {role.name === "ADMIN" && <AdminPanelSettingsOutlined />}
-                {role.name === "STAFF" && <SecurityOutlined />}
-                {role.name === "CUSTOMER" && <LockOpenOutlined />}
-                <Typography color={colors.grey[100]} sx={{ ml: "0.2rem" }}>
+                <Typography color={colors.grey[100]} sx={{ ml: "0.2rem", p: "0.2rem 4rem"}}>
+                  {role.name === "ADMIN" && <AdminPanelSettingsOutlined />}
+                  {role.name === "STAFF" && <SecurityOutlined />}
+                  {role.name === "CUSTOMER" && <LockOpenOutlined />}
+
                   {role.name === "ADMIN" && "Quản trị viên"}
                   {role.name === "CUSTOMER" && "Khách hàng"}
                   {role.name === "STAFF" && "Nhân viên"}
