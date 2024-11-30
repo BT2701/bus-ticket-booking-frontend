@@ -63,7 +63,7 @@ const TripTable = ({ trips, onDelete }) => {
     return (
         <>
             <table className="table table-hover table-bordered">
-                <thead className="table-success">
+                <thead className="table-white" style={{color: 'black'}}>
                     <tr>
                         <th scope="col" onClick={() => handleSort('id')}>
                             ID {getSortIcon('id')}

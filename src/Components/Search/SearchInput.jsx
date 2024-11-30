@@ -28,7 +28,8 @@ const SearchInput = ({  handleSearch }) => { // Nhận handleSearch từ compone
     window.history.pushState(null, '', `?${searchParams}`);
     
     // Gọi hàm handleSearch để thực hiện tìm kiếm
-    handleSearch(); 
+    // handleSearch(); 
+    window.location.href = `/schedule?${searchParams}`;
   };
 
   useEffect(() => {

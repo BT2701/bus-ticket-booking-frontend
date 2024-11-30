@@ -46,14 +46,11 @@ import Bus from "./StaffComponents/bus/Bus";
 import BookingManagement from "./StaffComponents/Booking_Management/Booking_management";
 import CenterPage from "./StaffComponents/Schedule_Management/Center_Page";
 import { ToastContainer } from "react-bootstrap";
+import AdminStatistics from "./StaffComponents/Statistics/AdminStatistics";
 import { BookingProvider } from "./Context/BookingContex";
 import PaymentSuccess from "./Components/Payment/PaymentSuccess";
 import { useEffect, useState } from "react";
-
 const App = () => {
-  
-
-
   return (
     <Router>
       <BookingProvider>
@@ -63,23 +60,23 @@ const App = () => {
               <ScheduleProvider>
                 <Routes>
                   <Route path="/*" element={<MainApp />} />
-                    <Route path="/staff/*" element={<StaffLayout />}>
-                      <Route path="" element={<Dashboard />} />
-                      <Route path="users" element={<Team />} />
-                      <Route path="drivers" element={<Driver />} />
-                      <Route path="buses" element={<Bus />} />
-                      <Route path="booking-management" element={<BookingManagement />} />
-                      <Route path="schedule-management" element={<CenterPage />} />
-                      <Route path="handle-contact" element={<HandleContact />} />
-                      <Route path="print-ticket" element={<PrintTicket />} />
-                    </Route>
-                </Routes>
-              </ScheduleProvider>
-            </UserProvider>
-          </PageProvider>
-        </FeedbackProvider>
-      </BookingProvider>
-    </Router>
+                  <Route path="/staff/*" element={<StaffLayout />}>
+                    <Route path="" element={<AdminStatistics />} />
+                    <Route path="users" element={<Team />} />
+                    <Route path="drivers" element={<Driver />} />
+                    <Route path="buses" element={<Bus />} />
+                    <Route path="booking-management" element={<BookingManagement />} />
+                    <Route path="schedule-management" element={<CenterPage />} />
+                    <Route path="handle-contact" element={<HandleContact />} />
+                    <Route path="print-ticket" element={<PrintTicket />} />
+                  </Route>
+                </Routes >
+              </ScheduleProvider >
+            </UserProvider >
+          </PageProvider >
+        </FeedbackProvider >
+      </BookingProvider >
+    </Router >
   );
 };
 
@@ -127,7 +124,7 @@ function StaffLayout() {
     setRole(user?.role?.name)
   }, [user])
 
-  if(role === "CUSTOMER") {
+  if (role === "CUSTOMER") {
     navigate("/homepage");
   }
 

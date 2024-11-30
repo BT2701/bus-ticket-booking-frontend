@@ -105,7 +105,7 @@ const NewsPage = () => {
                                 <h2>Thời sự trong nước và quốc tế</h2>
                             </div>
                             {news.map((article, index) => (
-                                <NewsItem article={article} />
+                                <NewsItem article={article} key={index} />
                             ))}
                         </div>
                         <div className="col-md-4">
