@@ -132,7 +132,7 @@ const HistoryScheduleItem = ({ scheduleData }) => {
             </Modal.Header>
             <Modal.Body>
               <div className="star-rating">
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[1, 2, 3, 4, 5]?.map((star) => (
                   <span key={star}>
                     <input
                       type="radio"

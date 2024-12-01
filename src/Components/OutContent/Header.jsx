@@ -78,7 +78,7 @@ const Header = () => {
           <nav className="navbar navbar-expand-lg navbar-light">
             <div className="container-fluid">
               <Link className="navbar-brand text-light" to="/">
-                <h2 style={{ marginBottom: 0 }}> SGU Bus Lines</h2>
+                <h3 style={{ marginBottom: 0, fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)' }}> SGU BUS LINES</h3>
               </Link>
               <button
                 className="navbar-toggler homepage-navbar-toggler"
