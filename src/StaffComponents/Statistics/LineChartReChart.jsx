@@ -42,10 +42,21 @@ const LineChartReChart = () => {
                 if (response) {
                     const transformedData = typeRevenue === "doanhthuhethong" ? convertDataForLineChartRechar(response, typeTime) : transformDataForLineChartMutil(response);
                     setLineChartData(transformedData);
-                    const objectWithMostFields = transformedData.reduce((maxObj, currentObj) => {
-                        return Object.keys(currentObj).length > Object.keys(maxObj).length ? currentObj : maxObj;
-                    }, {});
-                    setLineNames(Object.keys(objectWithMostFields).filter(key => key !== "name"));
+                    console.log("tê", transformedData);
+                    // const objectWithMostFields = transformedData.reduce((maxObj, currentObj) => {
+                    //     return Object.keys(currentObj).length > Object.keys(maxObj).length ? currentObj : maxObj;
+                    // }, {});
+                    // setLineNames(Object.keys(objectWithMostFields).filter(key => key !== "name"));
+                    const uniqueNames = new Set();
+
+                    transformedData.forEach(entry => {
+                        Object.keys(entry).forEach(key => {
+                            if (key !== 'name') {
+                                uniqueNames.add(key);
+                            }
+                        });
+                    });
+                    setLineNames(Array.from(uniqueNames));
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -89,10 +100,20 @@ const LineChartReChart = () => {
                     const transformedData = typeRevenue === "doanhthuhethong" ? convertDataForLineChartRechar(response, typeTime) : transformDataForLineChartMutil(response);
 
                     setLineChartData(transformedData);
-                    const objectWithMostFields = transformedData.reduce((maxObj, currentObj) => {
-                        return Object.keys(currentObj).length > Object.keys(maxObj).length ? currentObj : maxObj;
-                    }, {});
-                    setLineNames(Object.keys(objectWithMostFields).filter(key => key !== "name"));
+                    // const objectWithMostFields = transformedData.reduce((maxObj, currentObj) => {
+                    //     return Object.keys(currentObj).length > Object.keys(maxObj).length ? currentObj : maxObj;
+                    // }, {});
+                    // setLineNames(Object.keys(objectWithMostFields).filter(key => key !== "name"));
+                    const uniqueNames = new Set();
+
+                    transformedData.forEach(entry => {
+                        Object.keys(entry).forEach(key => {
+                            if (key !== 'name') {
+                                uniqueNames.add(key);
+                            }
+                        });
+                    });
+                    setLineNames(Array.from(uniqueNames));
                 }
 
             } catch (error) {
