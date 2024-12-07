@@ -9,10 +9,7 @@ const About = () => {
                 <h2 className="display-5 fw-bold">SGU Bus Lines</h2>
                 <h4>Chất lượng là danh dự</h4>
                 <p className="lead">
-                  Lorem ipsum dolor, sit amet elit Quamnitm veniam dicta
-                  architecto, quos id nemo minima nulla ducimus officii nulla
-                  ducimus officiis! Lorem ipsum dolor, sit amet elit Quamnitm
-                  veniam dicta architecto.
+                  Hệ thống bán vé xe buýt trực tuyến cung cấp giải pháp tiện lợi, nhanh chóng, giúp hành khách dễ dàng tra cứu lộ trình, chọn chỗ ngồi và thanh toán an toàn mọi lúc, mọi nơi.
                 </p>
               </div>
             </div>
@@ -24,15 +21,10 @@ const About = () => {
                   Giá Trị Cốt Lõi
                 </h2>
                 <p className="lead">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris .
+
+                  Giá trị cốt lõi của chúng tôi là cam kết mang đến sự tin cậy, chất lượng và trải nghiệm vượt trội, không ngừng đổi mới để đáp ứng nhu cầu của khách hàng, đồng thời xây dựng mối quan hệ bền vững dựa trên sự tôn trọng, trách nhiệm và tận tâm trong từng dịch vụ cung cấp.
                 </p>
-                <p className="lead">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt.
-                </p>
+
               </div>
             </div>
             <div className="col-md-6 offset-md-1 order-1 order-md-2">
@@ -67,15 +59,9 @@ const About = () => {
                   Tầm Nhìn Và Sứ Mệnh
                 </h2>
                 <p className="lead">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris .
+                  Tầm nhìn của chúng tôi là trở thành đơn vị tiên phong trong lĩnh vực vận tải, mang lại những giải pháp thông minh và bền vững; sứ mệnh của chúng tôi là kết nối con người, tạo nên những hành trình an toàn, tiện lợi và thân thiện với môi trường, góp phần xây dựng cộng đồng văn minh và phát triển
                 </p>
-                <p className="lead">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt.
-                </p>
+
               </div>
             </div>
           </div>
